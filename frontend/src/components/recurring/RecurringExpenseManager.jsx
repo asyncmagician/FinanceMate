@@ -30,7 +30,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
   const loadRecurringExpenses = async () => {
     try {
       const data = await api.getRecurringExpenses();
-      setRecurringExpenses(data);
+      setRecurringExpenses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load recurring expenses:', err);
     }
@@ -100,7 +100,9 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
   };
 
   const handleApplyToMonth = () => {
-    onApply(recurringExpenses);
+    if (recurringExpenses && recurringExpenses.length > 0) {
+      onApply(recurringExpenses);
+    }
     onClose();
   };
 

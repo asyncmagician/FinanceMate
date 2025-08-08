@@ -31,12 +31,24 @@ exports.findOrCreate = async (userId, year, month) => {
       return existing;
     }
     
-    return await exports.create({
-      user_id: userId,
-      year,
-      month,
-      starting_balance: 0
-    });
+    try {
+      return await exports.create({
+        user_id: userId,
+        year,
+        month,
+        starting_balance: 0
+      });
+    } catch (createError) {
+      // If we get a duplicate entry error, try to fetch again
+      // This handles race conditions where multiple requests create the same month
+      if (createError.code === 'ER_DUP_ENTRY') {
+        const existingAfterError = await exports.findByYearMonth(userId, year, month);
+        if (existingAfterError) {
+          return existingAfterError;
+        }
+      }
+      throw createError;
+    }
   } catch (error) {
     throw error;
   }

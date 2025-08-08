@@ -87,36 +87,45 @@ export default function MonthView() {
 
   const handleApplyRecurring = async (recurringExpenses) => {
     try {
-      console.log('Applying recurring expenses:', recurringExpenses);
       
       if (!recurringExpenses || recurringExpenses.length === 0) {
-        console.log('No recurring expenses to apply');
         return;
       }
       
+      let appliedCount = 0;
+      let skippedCount = 0;
+      
+      // Process expenses sequentially to avoid race conditions
       for (const recurring of recurringExpenses) {
-        const expenseDate = new Date(year, month - 1, recurring.day_of_month || 1);
+        const dayOfMonth = recurring.day_of_month || 1;
+        const expenseDate = new Date(year, month - 1, dayOfMonth);
         
+        // Check if expense already exists for this month
         const existingExpense = expenses.find(e => 
           e.description === recurring.description && 
-          new Date(e.date).getDate() === (recurring.day_of_month || 1)
+          new Date(e.date).getDate() === dayOfMonth
         );
         
         if (!existingExpense) {
           await api.createExpense({
             description: recurring.description,
-            amount: recurring.amount,
-            category_id: recurring.category_id,
+            amount: parseFloat(recurring.amount),
+            category_id: recurring.category_id || 1,
             subcategory: recurring.subcategory || null,
             date: expenseDate.toISOString().split('T')[0],
             is_deducted: false
           });
+          appliedCount++;
+        } else {
+          skippedCount++;
         }
       }
+      
       await loadMonthData();
       setShowRecurringManager(false);
     } catch (err) {
       console.error('Failed to apply recurring expenses:', err);
+      alert('Erreur lors de l\'application des dépenses récurrentes');
     }
   };
 

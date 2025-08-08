@@ -33,7 +33,7 @@ export default function RecurringView() {
   const loadRecurringExpenses = async () => {
     try {
       const data = await api.getRecurringExpenses();
-      setRecurringExpenses(data || []);
+      setRecurringExpenses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load recurring expenses:', err);
     } finally {
