@@ -129,10 +129,10 @@ exports.findRecurringById = async (id) => {
 
 exports.createRecurring = async (recurringData) => {
   try {
-    const { user_id, category_id, description, amount, day_of_month, start_date, end_date } = recurringData;
+    const { user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date } = recurringData;
     const [result] = await pool.execute(
-      'INSERT INTO recurring_expenses (user_id, category_id, description, amount, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [user_id, category_id, description, amount, day_of_month || 1, start_date, end_date || null]
+      'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [user_id, category_id, subcategory || null, description, amount, day_of_month || 1, start_date, end_date || null]
     );
     return { id: result.insertId, ...recurringData };
   } catch (error) {
