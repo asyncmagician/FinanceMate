@@ -43,9 +43,9 @@ export default function ExpenseList({ expenses, onUpdate, onDelete }) {
 
   const categoryOrder = ['fixed', 'variable', 'reimbursement'];
   const categoryLabels = {
-    fixed: 'Fixed Expenses',
-    variable: 'Variable Expenses',
-    reimbursement: 'Reimbursements'
+    fixed: 'Dépenses Fixes',
+    variable: 'Dépenses Variables',
+    reimbursement: 'Remboursements'
   };
 
   return (
@@ -124,7 +124,7 @@ export default function ExpenseList({ expenses, onUpdate, onDelete }) {
 
       {expenses.length === 0 && (
         <div className="text-center py-8 text-obsidian-text-muted">
-          No expenses for this month
+          Aucune dépense pour ce mois
         </div>
       )}
     </div>

@@ -22,7 +22,7 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Starting Balance</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Solde de départ</div>
           {editing ? (
             <div className="flex gap-2">
               <input
@@ -61,21 +61,21 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Fixed Expenses</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses fixes</div>
           <div className="text-xl font-semibold text-red-400">
             -{formatCurrency(previsionnel?.fixed_total || 0)}
           </div>
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Variable Expenses</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses variables</div>
           <div className="text-xl font-semibold text-orange-400">
             -{formatCurrency(previsionnel?.variable_total || 0)}
           </div>
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Reimbursements</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Remboursements</div>
           <div className="text-xl font-semibold text-green-400">
             +{formatCurrency(previsionnel?.reimbursements_received || 0)}
             {previsionnel?.reimbursements_pending > 0 && (
@@ -88,7 +88,7 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
       </div>
 
       <div className="mt-6 pt-4 border-t border-obsidian-border">
-        <div className="text-obsidian-text-muted text-sm mb-1">Final Prévisionnel</div>
+        <div className="text-obsidian-text-muted text-sm mb-1">Prévisionnel final</div>
         <div className={`text-3xl font-bold ${
           previsionnel?.previsionnel >= 0 ? 'text-green-400' : 'text-red-400'
         }`}>

@@ -14,8 +14,8 @@ export default function MonthView() {
   const [showAddExpense, setShowAddExpense] = useState(false);
 
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function MonthView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-obsidian-text-muted">Loading...</div>
+        <div className="text-obsidian-text-muted">Chargement...</div>
       </div>
     );
   }
@@ -109,12 +109,12 @@ export default function MonthView() {
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-obsidian-text">Expenses</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text">Dépenses</h2>
           <button
             onClick={() => setShowAddExpense(true)}
             className="btn-primary"
           >
-            Add Expense
+            Ajouter une dépense
           </button>
         </div>
 
