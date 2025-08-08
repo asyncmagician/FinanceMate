@@ -15,6 +15,14 @@ export default function MainLayout() {
 
   return (
     <div className="flex h-screen bg-obsidian-bg">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 sm:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       <Sidebar open={sidebarOpen} />
       
       <div className="flex-1 flex flex-col">

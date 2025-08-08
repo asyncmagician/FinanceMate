@@ -6,9 +6,11 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     amount: '',
     category_id: 2,  // Default to Variable
     subcategory: '',
+    customSubcategory: '',
     day: new Date().getDate(),
     is_deducted: false
   });
+  const [showCustomSubcategory, setShowCustomSubcategory] = useState(false);
 
   const fixedSubcategories = [
     'Logement',
@@ -16,7 +18,8 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     'Crédit',
     'Santé',
     'Serveurs',
-    'Abonnements'
+    'Abonnements',
+    'Autre'
   ];
 
   const variableSubcategories = [
@@ -32,13 +35,24 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     e.preventDefault();
     onSubmit({
       ...formData,
+      subcategory: showCustomSubcategory ? formData.customSubcategory : formData.subcategory,
       amount: parseFloat(formData.amount)
     });
   };
 
+  const handleSubcategoryChange = (value) => {
+    if (value === 'Autre') {
+      setShowCustomSubcategory(true);
+      setFormData({ ...formData, subcategory: value, customSubcategory: '' });
+    } else {
+      setShowCustomSubcategory(false);
+      setFormData({ ...formData, subcategory: value, customSubcategory: '' });
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="card w-full max-w-md">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-obsidian-text">Ajouter une dépense</h3>
           <button
@@ -105,7 +119,7 @@ export default function ExpenseForm({ onSubmit, onClose }) {
                 </label>
                 <select
                   value={formData.subcategory}
-                  onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                  onChange={(e) => handleSubcategoryChange(e.target.value)}
                   className="input-field w-full"
                 >
                   <option value="">-- Choisir --</option>
@@ -113,6 +127,22 @@ export default function ExpenseForm({ onSubmit, onClose }) {
                     <option key={sub} value={sub}>{sub}</option>
                   ))}
                 </select>
+              </div>
+            )}
+
+            {showCustomSubcategory && (
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
+                  Nom de la sous-catégorie
+                </label>
+                <input
+                  type="text"
+                  value={formData.customSubcategory}
+                  onChange={(e) => setFormData({ ...formData, customSubcategory: e.target.value })}
+                  className="input-field w-full"
+                  placeholder="Ex: Cadeaux"
+                  required
+                />
               </div>
             )}
           </div>

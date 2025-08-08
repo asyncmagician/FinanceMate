@@ -48,10 +48,10 @@ export default function Sidebar({ open }) {
   const currentDate = new Date();
   const years = [currentDate.getFullYear(), currentDate.getFullYear() + 1];
 
-  if (!open) return null;
-
   return (
-    <div className="w-64 bg-obsidian-bg-secondary border-r border-obsidian-border">
+    <div className={`${
+      open ? 'translate-x-0' : '-translate-x-full'
+    } fixed sm:relative sm:translate-x-0 z-40 w-64 h-full bg-obsidian-bg-secondary border-r border-obsidian-border transition-transform duration-300 sm:transition-none`}>
       <div className="p-4">
         <h2 className="text-lg font-semibold text-obsidian-text mb-4">FinanceMate</h2>
         

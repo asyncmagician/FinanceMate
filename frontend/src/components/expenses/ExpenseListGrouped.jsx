@@ -119,24 +119,24 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                         </span>
                       </div>
                       
-                      <div className="ml-4 space-y-1">
+                      <div className="ml-2 sm:ml-4 space-y-1">
                         {subcategoryExpenses.map(expense => (
                           <div
                             key={expense.id}
-                            className="flex items-center justify-between p-2 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
                           >
-                            <div className="flex items-center gap-3 flex-1">
-                              <label className="flex items-center gap-1 cursor-pointer">
+                            <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1">
+                              <label className="flex items-center gap-1 cursor-pointer mt-1 sm:mt-0">
                                 <input
                                   type="checkbox"
                                   checked={expense.is_deducted}
                                   onChange={() => handleDeductedToggle(expense)}
-                                  className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
+                                  className="w-5 h-5 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
                                 />
                               </label>
                               
                               <div className="flex-1">
-                                <span className="text-obsidian-text">{expense.description}</span>
+                                <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
                               </div>
 
                               {category === 'reimbursement' && (
@@ -154,16 +154,16 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                               )}
                             </div>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0">
                               <span className={`font-semibold text-yellow-400`}>
                                 {formatCurrency(expense.amount)}
                               </span>
                               
                               <button
                                 onClick={() => onDelete(expense.id)}
-                                className="text-obsidian-text-muted hover:text-obsidian-error transition-colors"
+                                className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-1"
                               >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>

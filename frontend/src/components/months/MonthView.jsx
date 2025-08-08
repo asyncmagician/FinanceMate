@@ -141,15 +141,25 @@ export default function MonthView() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowRecurringManager(true)}
-              className="btn-secondary"
+              className="btn-secondary p-2 sm:px-4"
+              title="Dépenses récurrentes"
             >
-              Dépenses récurrentes
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="hidden sm:inline">Dépenses récurrentes</span>
             </button>
             <button
               onClick={() => setShowAddExpense(true)}
-              className="btn-primary"
+              className="btn-primary p-2 sm:px-4"
+              title="Ajouter une dépense"
             >
-              Ajouter une dépense
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="hidden sm:inline">Ajouter une dépense</span>
             </button>
           </div>
         </div>
