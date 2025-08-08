@@ -67,7 +67,7 @@ export default function ExpenseList({ expenses, onUpdate, onDelete }) {
                   className="flex items-center justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="text-obsidian-text-muted text-sm">
+                    <div className="text-obsidian-text-muted text-sm w-12">
                       {formatDate(expense.date)}
                     </div>
                     
@@ -76,31 +76,31 @@ export default function ExpenseList({ expenses, onUpdate, onDelete }) {
                     </div>
 
                     {category === 'reimbursement' && (
-                      <label className="flex items-center gap-2 text-sm">
+                      <label className="flex items-center gap-2 text-sm cursor-pointer">
                         <input
                           type="checkbox"
                           checked={expense.is_received}
                           onChange={() => handleReimbursementToggle(expense)}
-                          className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+                          className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
                         />
                         <span className={expense.is_received ? 'text-green-400' : 'text-obsidian-text-muted'}>
-                          {expense.is_received ? 'Received' : 'Incoming'}
+                          {expense.is_received ? 'Reçu' : 'En attente'}
                         </span>
                       </label>
                     )}
 
-                    <label className="flex items-center gap-2 text-sm">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer ml-4">
                       <input
                         type="checkbox"
                         checked={expense.is_deducted}
                         onChange={() => handleDeductedToggle(expense)}
-                        className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+                        className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
                       />
-                      <span className="text-obsidian-text-muted">Deducted</span>
+                      <span className="text-obsidian-text-muted">Déduit</span>
                     </label>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 ml-4">
                     <span className={`font-semibold ${getCategoryColor(category)}`}>
                       {formatCurrency(expense.amount)}
                     </span>
