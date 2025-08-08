@@ -4,6 +4,7 @@ import api from '../../services/api';
 import ExpenseList from '../expenses/ExpenseList';
 import ExpenseForm from '../expenses/ExpenseForm';
 import PrevisionnelCard from './PrevisionnelCard';
+import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
 
 export default function MonthView() {
   const { year, month } = useParams();
@@ -12,6 +13,7 @@ export default function MonthView() {
   const [previsionnel, setPrevisionnel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showRecurringManager, setShowRecurringManager] = useState(false);
 
   const monthNames = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
@@ -83,6 +85,32 @@ export default function MonthView() {
     }
   };
 
+  const handleApplyRecurring = async (recurringExpenses) => {
+    try {
+      for (const recurring of recurringExpenses) {
+        const expenseDate = new Date(year, month - 1, recurring.day_of_month);
+        
+        const existingExpense = expenses.find(e => 
+          e.description === recurring.description && 
+          new Date(e.date).getDate() === recurring.day_of_month
+        );
+        
+        if (!existingExpense) {
+          await api.createExpense({
+            description: recurring.description,
+            amount: recurring.amount,
+            category_id: recurring.category_id,
+            date: expenseDate.toISOString().split('T')[0],
+            is_deducted: false
+          });
+        }
+      }
+      await loadMonthData();
+    } catch (err) {
+      console.error('Failed to apply recurring expenses:', err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -110,12 +138,20 @@ export default function MonthView() {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-obsidian-text">Dépenses</h2>
-          <button
-            onClick={() => setShowAddExpense(true)}
-            className="btn-primary"
-          >
-            Ajouter une dépense
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowRecurringManager(true)}
+              className="btn-secondary"
+            >
+              Dépenses récurrentes
+            </button>
+            <button
+              onClick={() => setShowAddExpense(true)}
+              className="btn-primary"
+            >
+              Ajouter une dépense
+            </button>
+          </div>
         </div>
 
         <ExpenseList
@@ -129,6 +165,13 @@ export default function MonthView() {
         <ExpenseForm
           onSubmit={handleAddExpense}
           onClose={() => setShowAddExpense(false)}
+        />
+      )}
+
+      {showRecurringManager && (
+        <RecurringExpenseManager
+          onClose={() => setShowRecurringManager(false)}
+          onApply={handleApplyRecurring}
         />
       )}
     </div>

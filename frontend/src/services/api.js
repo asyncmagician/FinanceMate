@@ -115,6 +115,23 @@ class ApiService {
   async getForecast(months) {
     return this.request(`/months/forecast/${months}`);
   }
+
+  async getRecurringExpenses() {
+    return this.request('/expenses/recurring');
+  }
+
+  async createRecurringExpense(expense) {
+    return this.request('/expenses/recurring', {
+      method: 'POST',
+      body: JSON.stringify(expense),
+    });
+  }
+
+  async deleteRecurringExpense(id) {
+    return this.request(`/expenses/recurring/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default new ApiService();
