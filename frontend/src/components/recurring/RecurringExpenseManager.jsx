@@ -100,8 +100,6 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
   };
 
   const handleApplyToMonth = () => {
-    console.log('[RecurringExpenseManager] Applying expenses:', recurringExpenses);
-    console.log('[RecurringExpenseManager] Number of expenses:', recurringExpenses.length);
     if (recurringExpenses && recurringExpenses.length > 0) {
       onApply(recurringExpenses);
     }

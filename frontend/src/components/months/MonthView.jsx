@@ -8,7 +8,6 @@ import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
 
 export default function MonthView() {
   const { year, month } = useParams();
-  console.log('[MonthView] URL params - year:', year, 'month:', month);
   const [monthData, setMonthData] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [previsionnel, setPrevisionnel] = useState(null);
@@ -28,14 +27,12 @@ export default function MonthView() {
   const loadMonthData = async () => {
     setLoading(true);
     try {
-      console.log(`[MonthView] Loading data for ${year}/${month}`);
       const [monthRes, expensesRes, previsionnelRes] = await Promise.all([
         api.getMonth(year, month).catch(() => null),
         api.getMonthExpenses(year, month),
         api.getPrevisionnel(year, month)
       ]);
 
-      console.log('[MonthView] Expenses loaded:', expensesRes.expenses?.length || 0);
       setMonthData(monthRes?.month || { starting_balance: 0 });
       setExpenses(expensesRes.expenses || []);
       setPrevisionnel(previsionnelRes);
@@ -90,43 +87,32 @@ export default function MonthView() {
 
   const handleApplyRecurring = async (recurringExpenses) => {
     try {
-      console.log('[MonthView] Received expenses:', recurringExpenses);
-      console.log('[MonthView] Number of expenses:', recurringExpenses?.length);
-      
       if (!recurringExpenses || recurringExpenses.length === 0) {
-        console.log('[MonthView] No expenses to apply');
         return;
       }
       
-      let appliedCount = 0;
-      let skippedCount = 0;
+      // Get fresh expenses data before processing
+      const expensesRes = await api.getMonthExpenses(year, month);
+      let currentExpenses = expensesRes.expenses || [];
       
       // Process expenses sequentially to avoid race conditions
       for (let i = 0; i < recurringExpenses.length; i++) {
         const recurring = recurringExpenses[i];
-        console.log(`[MonthView] Processing expense ${i + 1}/${recurringExpenses.length}:`, recurring);
         
         const dayOfMonth = recurring.day_of_month || 1;
-        // Create date in local timezone to avoid UTC offset issues
         const yearNum = parseInt(year);
         const monthNum = parseInt(month);
-        // Create date string directly without using Date object to avoid timezone issues
         const paddedMonth = String(monthNum).padStart(2, '0');
         const paddedDay = String(dayOfMonth).padStart(2, '0');
         const dateString = `${yearNum}-${paddedMonth}-${paddedDay}`;
         
-        console.log(`[MonthView] Checking for existing expense: ${recurring.description} on day ${dayOfMonth}`);
         // Check if expense already exists for this month
-        const existingExpense = expenses.find(e => {
-          const existingDate = new Date(e.date + 'T00:00:00'); // Force local timezone
-          return e.description === recurring.description && 
-                 existingDate.getDate() === dayOfMonth &&
-                 existingDate.getMonth() + 1 === monthNum &&
-                 existingDate.getFullYear() === yearNum;
+        const existingExpense = currentExpenses.find(e => {
+          const expenseDate = e.date ? e.date.split('T')[0] : '';
+          return e.description === recurring.description && expenseDate === dateString;
         });
         
         if (!existingExpense) {
-          console.log(`[MonthView] Creating expense: ${recurring.description} for date ${dateString}`);
           const expenseData = {
             description: recurring.description,
             amount: parseFloat(recurring.amount),
@@ -135,22 +121,21 @@ export default function MonthView() {
             date: dateString,
             is_deducted: false
           };
-          console.log('[MonthView] Expense data:', expenseData);
           
-          await api.createExpense(expenseData);
-          appliedCount++;
-          console.log(`[MonthView] Successfully created expense ${appliedCount}`);
-        } else {
-          console.log(`[MonthView] Skipping existing: ${recurring.description} (already exists)`);
-          skippedCount++;
+          const newExpense = await api.createExpense(expenseData);
+          // Add the new expense to our local tracking array
+          currentExpenses.push({
+            ...newExpense,
+            description: recurring.description,
+            date: dateString
+          });
         }
       }
       
-      console.log(`[MonthView] Finished: Applied ${appliedCount}, Skipped ${skippedCount}`);
       await loadMonthData();
       setShowRecurringManager(false);
     } catch (err) {
-      console.error('[MonthView] Failed to apply recurring expenses:', err);
+      console.error('Failed to apply recurring expenses:', err);
       alert('Erreur lors de l\'application des dépenses récurrentes: ' + err.message);
     }
   };

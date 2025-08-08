@@ -3,7 +3,10 @@ const pool = require('../config/database');
 exports.findById = async (id) => {
   try {
     const [rows] = await pool.execute(
-      'SELECT * FROM expenses WHERE id = ?',
+      `SELECT id, month_id, category_id, subcategory, description, 
+              amount, is_deducted, is_received,
+              DATE_FORMAT(date, '%Y-%m-%d') as date
+       FROM expenses WHERE id = ?`,
       [id]
     );
     return rows[0] || null;
@@ -15,7 +18,10 @@ exports.findById = async (id) => {
 exports.getByMonth = async (monthId) => {
   try {
     const [rows] = await pool.execute(
-      `SELECT e.*, c.name as category_name, c.type as category_type 
+      `SELECT e.id, e.month_id, e.category_id, e.subcategory, e.description, 
+              e.amount, e.is_deducted, e.is_received,
+              DATE_FORMAT(e.date, '%Y-%m-%d') as date,
+              c.name as category_name, c.type as category_type 
        FROM expenses e 
        JOIN categories c ON e.category_id = c.id 
        WHERE e.month_id = ? 
