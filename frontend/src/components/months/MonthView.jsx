@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../services/api';
-import ExpenseList from '../expenses/ExpenseList';
+import ExpenseListGrouped from '../expenses/ExpenseListGrouped';
 import ExpenseForm from '../expenses/ExpenseForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
@@ -154,7 +154,7 @@ export default function MonthView() {
           </div>
         </div>
 
-        <ExpenseList
+        <ExpenseListGrouped
           expenses={expenses}
           onUpdate={handleUpdateExpense}
           onDelete={handleDeleteExpense}

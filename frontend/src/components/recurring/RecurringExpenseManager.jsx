@@ -8,9 +8,19 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
     description: '',
     amount: '',
     category_id: 1,
+    subcategory: '',
     day_of_month: 1,
     start_date: new Date().toISOString().split('T')[0]
   });
+
+  const fixedSubcategories = [
+    'Logement',
+    'Voiture', 
+    'Crédit',
+    'Santé',
+    'Serveurs',
+    'Abonnements'
+  ];
 
   useEffect(() => {
     loadRecurringExpenses();

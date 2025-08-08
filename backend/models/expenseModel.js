@@ -19,7 +19,7 @@ exports.getByMonth = async (monthId) => {
        FROM expenses e 
        JOIN categories c ON e.category_id = c.id 
        WHERE e.month_id = ? 
-       ORDER BY e.date DESC`,
+       ORDER BY e.subcategory, e.date DESC`,
       [monthId]
     );
     return rows;
@@ -30,10 +30,10 @@ exports.getByMonth = async (monthId) => {
 
 exports.create = async (expenseData) => {
   try {
-    const { month_id, category_id, description, amount, is_deducted, is_received, date } = expenseData;
+    const { month_id, category_id, subcategory, description, amount, is_deducted, is_received, date } = expenseData;
     const [result] = await pool.execute(
-      'INSERT INTO expenses (month_id, category_id, description, amount, is_deducted, is_received, date) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [month_id, category_id, description, amount, is_deducted || false, is_received || false, date]
+      'INSERT INTO expenses (month_id, category_id, subcategory, description, amount, is_deducted, is_received, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [month_id, category_id, subcategory || null, description, amount, is_deducted || false, is_received || false, date]
     );
     return { id: result.insertId, ...expenseData };
   } catch (error) {

@@ -22,7 +22,7 @@ exports.getMonthExpenses = async (req, res) => {
 exports.createExpense = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { description, amount, category_id, date, is_deducted, is_received } = req.body;
+    const { description, amount, category_id, subcategory, date, is_deducted, is_received } = req.body;
     
     const expenseDate = new Date(date);
     const year = expenseDate.getFullYear();
@@ -35,6 +35,7 @@ exports.createExpense = async (req, res) => {
       description,
       amount,
       category_id,
+      subcategory,
       date,
       is_deducted: is_deducted || false,
       is_received: is_received || false

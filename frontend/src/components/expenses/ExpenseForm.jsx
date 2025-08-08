@@ -5,9 +5,28 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     description: '',
     amount: '',
     category_id: 2,  // Default to Variable
+    subcategory: '',
     day: new Date().getDate(),
     is_deducted: false
   });
+
+  const fixedSubcategories = [
+    'Logement',
+    'Voiture', 
+    'Crédit',
+    'Santé',
+    'Serveurs',
+    'Abonnements'
+  ];
+
+  const variableSubcategories = [
+    'Courses',
+    'Restaurant',
+    'Sorties',
+    'Essence',
+    'Shopping',
+    'Autre'
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,7 +89,7 @@ export default function ExpenseForm({ onSubmit, onClose }) {
               </label>
               <select
                 value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: parseInt(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, category_id: parseInt(e.target.value), subcategory: '' })}
                 className="input-field w-full"
               >
                 <option value={1}>Fixe</option>
@@ -78,6 +97,24 @@ export default function ExpenseForm({ onSubmit, onClose }) {
                 <option value={3}>Remboursement</option>
               </select>
             </div>
+
+            {(formData.category_id === 1 || formData.category_id === 2) && (
+              <div>
+                <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
+                  Sous-catégorie
+                </label>
+                <select
+                  value={formData.subcategory}
+                  onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                  className="input-field w-full"
+                >
+                  <option value="">-- Choisir --</option>
+                  {(formData.category_id === 1 ? fixedSubcategories : variableSubcategories).map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">
