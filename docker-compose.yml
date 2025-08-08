@@ -6,10 +6,10 @@ services:
     container_name: financemate-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-financemate}
       MYSQL_DATABASE: ${DB_NAME:-financemate}
       MYSQL_USER: ${DB_USER:-financemate}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-financemate123}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-financemate}
     ports:
       - "${DB_PORT:-3306}:3306"
     volumes:
