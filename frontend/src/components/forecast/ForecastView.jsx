@@ -1,5 +1,30 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 export default function ForecastView() {
   const [forecast, setForecast] = useState([]);
@@ -75,6 +100,85 @@ export default function ForecastView() {
     );
   }
 
+  const chartData = {
+    labels: forecast.map((_, index) => {
+      const currentDate = new Date();
+      const futureDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + index + 1, 1);
+      return monthNames[futureDate.getMonth()].substring(0, 3);
+    }),
+    datasets: [
+      {
+        label: 'Prévisionnel',
+        data: forecast.map(month => calculateProjectedPrevisionnel(month)),
+        borderColor: 'rgb(74, 222, 128)',
+        backgroundColor: 'rgba(74, 222, 128, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Dépenses totales',
+        data: forecast.map(month => -(month.fixed_total + averageVariable)),
+        borderColor: 'rgb(248, 113, 113)',
+        backgroundColor: 'rgba(248, 113, 113, 0.1)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#a1a1aa',
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const label = context.dataset.label || '';
+            const value = new Intl.NumberFormat('fr-FR', {
+              style: 'currency',
+              currency: 'EUR'
+            }).format(context.parsed.y);
+            return `${label}: ${value}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          color: 'rgba(161, 161, 170, 0.1)'
+        },
+        ticks: {
+          color: '#a1a1aa'
+        }
+      },
+      y: {
+        grid: {
+          color: 'rgba(161, 161, 170, 0.1)'
+        },
+        ticks: {
+          color: '#a1a1aa',
+          callback: (value) => {
+            return new Intl.NumberFormat('fr-FR', {
+              style: 'currency',
+              currency: 'EUR',
+              minimumFractionDigits: 0
+            }).format(value);
+          }
+        }
+      }
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
@@ -108,6 +212,17 @@ export default function ForecastView() {
           </div>
         </div>
       </div>
+
+      {forecast.length > 0 && (
+        <div className="card mb-6">
+          <h3 className="text-lg font-semibold text-obsidian-text mb-4">
+            Évolution prévisionnelle
+          </h3>
+          <div className="h-64 sm:h-80">
+            <Line data={chartData} options={chartOptions} />
+          </div>
+        </div>
+      )}
 
       {recurringExpenses.length > 0 && (
         <div className="card mb-6">

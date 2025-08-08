@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function DashboardView() {
   const [currentMonthData, setCurrentMonthData] = useState(null);
@@ -165,18 +184,81 @@ export default function DashboardView() {
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
             Historique des dépenses
           </h3>
-          <div className="space-y-2">
-            {monthlyTotals.map(({ year, month, total }) => (
-              <div key={`${year}-${month}`} className="flex justify-between">
-                <span className="text-obsidian-text-muted">
-                  {monthNames[month - 1]} {year}
-                </span>
-                <span className="text-obsidian-text font-semibold">
-                  {formatCurrency(total)}
-                </span>
-              </div>
-            ))}
-          </div>
+          {monthlyTotals.length > 0 && (
+            <div className="h-40">
+              <Bar 
+                data={{
+                  labels: monthlyTotals.map(({ month }) => monthNames[month - 1].substring(0, 3)),
+                  datasets: [{
+                    label: 'Dépenses',
+                    data: monthlyTotals.map(({ total }) => total),
+                    backgroundColor: [
+                      'rgba(248, 113, 113, 0.8)',
+                      'rgba(251, 146, 60, 0.8)',
+                      'rgba(250, 204, 21, 0.8)'
+                    ],
+                    borderColor: [
+                      'rgb(248, 113, 113)',
+                      'rgb(251, 146, 60)',
+                      'rgb(250, 204, 21)'
+                    ],
+                    borderWidth: 1
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: (context) => {
+                          return new Intl.NumberFormat('fr-FR', {
+                            style: 'currency',
+                            currency: 'EUR'
+                          }).format(context.parsed.y);
+                        }
+                      }
+                    }
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false
+                      },
+                      ticks: {
+                        color: '#a1a1aa',
+                        font: {
+                          size: 11
+                        }
+                      }
+                    },
+                    y: {
+                      grid: {
+                        color: 'rgba(161, 161, 170, 0.1)'
+                      },
+                      ticks: {
+                        color: '#a1a1aa',
+                        font: {
+                          size: 10
+                        },
+                        callback: (value) => {
+                          return new Intl.NumberFormat('fr-FR', {
+                            notation: 'compact',
+                            style: 'currency',
+                            currency: 'EUR',
+                            minimumFractionDigits: 0
+                          }).format(value);
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          )}
         </div>
 
         <div className="card lg:col-span-2">
