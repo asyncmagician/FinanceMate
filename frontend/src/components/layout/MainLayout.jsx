@@ -45,7 +45,7 @@ export default function MainLayout() {
               onClick={handleLogout}
               className="text-obsidian-text-muted hover:text-obsidian-text text-sm"
             >
-              Logout
+              Déconnexion
             </button>
           </div>
         </header>

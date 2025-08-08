@@ -4,6 +4,7 @@ import Login from './components/auth/Login';
 import MainLayout from './components/layout/MainLayout';
 import Dashboard from './components/Dashboard';
 import MonthView from './components/months/MonthView';
+import Forecast from './components/Forecast';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -35,7 +36,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="month/:year/:month" element={<MonthView />} />
-            <Route path="forecast" element={<div className="text-obsidian-text">Forecast View (Coming Soon)</div>} />
+            <Route path="forecast" element={<Forecast />} />
           </Route>
         </Routes>
       </AuthProvider>

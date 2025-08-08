@@ -41,8 +41,8 @@ export default function Sidebar({ open }) {
   };
 
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
   const currentDate = new Date();
@@ -60,19 +60,19 @@ export default function Sidebar({ open }) {
             onClick={() => navigate('/')}
             className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
           >
-            Dashboard
+            Tableau de bord
           </button>
           
           <button
             onClick={() => navigate('/forecast')}
             className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
           >
-            Forecast
+            Prévisions
           </button>
           
           <div className="pt-4">
             <h3 className="text-xs font-semibold text-obsidian-text-muted uppercase tracking-wider mb-2">
-              Months
+              Mois
             </h3>
             
             {years.map(year => (
