@@ -27,11 +27,15 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
   };
 
   const handleReimbursementToggle = (expense) => {
-    onUpdate(expense.id, { is_received: !expense.is_received });
+    // Convert to boolean in case it comes as 0/1 from database
+    const currentValue = Boolean(expense.is_received);
+    onUpdate(expense.id, { is_received: !currentValue });
   };
 
   const handleDeductedToggle = (expense) => {
-    onUpdate(expense.id, { is_deducted: !expense.is_deducted });
+    // Convert to boolean in case it comes as 0/1 from database
+    const currentValue = Boolean(expense.is_deducted);
+    onUpdate(expense.id, { is_deducted: !currentValue });
   };
 
   // Group expenses by category and subcategory
@@ -126,14 +130,15 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
                           >
                             <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1">
-                              <label className="flex items-center gap-1 cursor-pointer mt-1 sm:mt-0">
+                              <div className="flex items-center mt-1 sm:mt-0">
                                 <input
                                   type="checkbox"
-                                  checked={expense.is_deducted}
+                                  id={`deducted-${expense.id}`}
+                                  checked={Boolean(expense.is_deducted)}
                                   onChange={() => handleDeductedToggle(expense)}
                                   className="w-5 h-5 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
                                 />
-                              </label>
+                              </div>
                               
                               <div className="flex-1">
                                 <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
@@ -143,12 +148,13 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                                   <input
                                     type="checkbox"
-                                    checked={expense.is_received}
+                                    id={`received-${expense.id}`}
+                                    checked={Boolean(expense.is_received)}
                                     onChange={() => handleReimbursementToggle(expense)}
                                     className="rounded border-obsidian-border bg-obsidian-bg-secondary text-green-400 focus:ring-green-400 cursor-pointer"
                                   />
-                                  <span className={expense.is_received ? 'text-green-400' : 'text-obsidian-text-muted'}>
-                                    {expense.is_received ? 'Reçu' : 'En attente'}
+                                  <span className={Boolean(expense.is_received) ? 'text-green-400' : 'text-obsidian-text-muted'}>
+                                    {Boolean(expense.is_received) ? 'Reçu' : 'En attente'}
                                   </span>
                                 </label>
                               )}

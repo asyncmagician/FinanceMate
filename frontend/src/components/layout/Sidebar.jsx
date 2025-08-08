@@ -23,8 +23,15 @@ export default function Sidebar({ open }) {
       
       setMonths(grouped);
       
-      const currentYear = new Date().getFullYear();
-      setExpandedYears(new Set([currentYear]));
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      
+      // Auto-expand current year and next year if we're in Q4
+      const toExpand = currentMonth >= 9 
+        ? [currentYear, currentYear + 1]
+        : [currentYear];
+      setExpandedYears(new Set(toExpand));
     } catch (err) {
       console.error('Failed to load months:', err);
     }
@@ -46,7 +53,14 @@ export default function Sidebar({ open }) {
   ];
 
   const currentDate = new Date();
-  const years = [currentDate.getFullYear(), currentDate.getFullYear() + 1];
+  const currentYearNum = currentDate.getFullYear();
+  const currentMonthNum = currentDate.getMonth() + 1;
+  
+  // Show current year and next year, but if we're in September or later,
+  // also prepare for showing next year prominently
+  const years = currentMonthNum >= 9 
+    ? [currentYearNum, currentYearNum + 1, currentYearNum + 2]
+    : [currentYearNum, currentYearNum + 1];
 
   return (
     <div className={`${
