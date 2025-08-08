@@ -5,6 +5,7 @@ import MainLayout from './components/layout/MainLayout';
 import Dashboard from './components/Dashboard';
 import MonthView from './components/months/MonthView';
 import Forecast from './components/Forecast';
+import RecurringView from './components/recurring/RecurringView';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -37,6 +38,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="month/:year/:month" element={<MonthView />} />
             <Route path="forecast" element={<Forecast />} />
+            <Route path="recurring" element={<RecurringView />} />
           </Route>
         </Routes>
       </AuthProvider>

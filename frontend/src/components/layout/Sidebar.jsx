@@ -65,8 +65,8 @@ export default function Sidebar({ open }) {
   return (
     <div className={`${
       open ? 'translate-x-0' : '-translate-x-full'
-    } fixed sm:relative sm:translate-x-0 z-40 w-64 h-full bg-obsidian-bg-secondary border-r border-obsidian-border transition-transform duration-300 sm:transition-none`}>
-      <div className="p-4">
+    } fixed sm:relative z-40 w-64 h-full bg-obsidian-bg-secondary border-r border-obsidian-border transition-transform duration-300 overflow-hidden`}>
+      <div className="p-4 h-full overflow-y-auto">
         <h2 className="text-lg font-semibold text-obsidian-text mb-4">FinanceMate</h2>
         
         <nav className="space-y-1">
@@ -84,13 +84,21 @@ export default function Sidebar({ open }) {
             Prévisions
           </button>
           
+          <button
+            onClick={() => navigate('/recurring')}
+            className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
+          >
+            Dépenses récurrentes
+          </button>
+          
           <div className="pt-4">
             <h3 className="text-xs font-semibold text-obsidian-text-muted uppercase tracking-wider mb-2">
               Mois
             </h3>
             
-            {years.map(year => (
-              <div key={year}>
+            <div className="space-y-1">
+              {years.map(year => (
+                <div key={year}>
                 <button
                   onClick={() => toggleYear(year)}
                   className="w-full flex items-center justify-between px-3 py-1 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
@@ -128,8 +136,9 @@ export default function Sidebar({ open }) {
                     })}
                   </div>
                 )}
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
         </nav>
       </div>

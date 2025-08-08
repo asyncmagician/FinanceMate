@@ -91,13 +91,11 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
   };
 
   const handleDelete = async (id) => {
-    if (confirm('Supprimer cette dépense récurrente ?')) {
-      try {
-        await api.deleteRecurringExpense(id);
-        await loadRecurringExpenses();
-      } catch (err) {
-        console.error('Failed to delete recurring expense:', err);
-      }
+    try {
+      await api.deleteRecurringExpense(id);
+      await loadRecurringExpenses();
+    } catch (err) {
+      console.error('Failed to delete recurring expense:', err);
     }
   };
 

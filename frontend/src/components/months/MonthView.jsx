@@ -87,12 +87,19 @@ export default function MonthView() {
 
   const handleApplyRecurring = async (recurringExpenses) => {
     try {
+      console.log('Applying recurring expenses:', recurringExpenses);
+      
+      if (!recurringExpenses || recurringExpenses.length === 0) {
+        console.log('No recurring expenses to apply');
+        return;
+      }
+      
       for (const recurring of recurringExpenses) {
-        const expenseDate = new Date(year, month - 1, recurring.day_of_month);
+        const expenseDate = new Date(year, month - 1, recurring.day_of_month || 1);
         
         const existingExpense = expenses.find(e => 
           e.description === recurring.description && 
-          new Date(e.date).getDate() === recurring.day_of_month
+          new Date(e.date).getDate() === (recurring.day_of_month || 1)
         );
         
         if (!existingExpense) {
@@ -100,12 +107,14 @@ export default function MonthView() {
             description: recurring.description,
             amount: recurring.amount,
             category_id: recurring.category_id,
+            subcategory: recurring.subcategory || null,
             date: expenseDate.toISOString().split('T')[0],
             is_deducted: false
           });
         }
       }
       await loadMonthData();
+      setShowRecurringManager(false);
     } catch (err) {
       console.error('Failed to apply recurring expenses:', err);
     }

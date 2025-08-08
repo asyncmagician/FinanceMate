@@ -23,7 +23,7 @@ export default function MainLayout() {
         />
       )}
       
-      <Sidebar open={sidebarOpen} />
+      {sidebarOpen && <Sidebar open={sidebarOpen} />}
       
       <div className="flex-1 flex flex-col">
         <header className="bg-obsidian-bg-secondary border-b border-obsidian-border px-6 py-3 flex items-center justify-between">

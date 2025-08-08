@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import ConfirmModal from '../common/ConfirmModal';
 
 export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
   const [editingId, setEditingId] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -166,7 +168,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                               </span>
                               
                               <button
-                                onClick={() => onDelete(expense.id)}
+                                onClick={() => setDeleteConfirm(expense)}
                                 className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-1"
                               >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,6 +193,22 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
           Aucune dépense pour ce mois
         </div>
       )}
+      
+      <ConfirmModal
+        isOpen={!!deleteConfirm}
+        onConfirm={() => {
+          if (deleteConfirm) {
+            onDelete(deleteConfirm.id);
+            setDeleteConfirm(null);
+          }
+        }}
+        onCancel={() => setDeleteConfirm(null)}
+        title="Supprimer la dépense"
+        message={deleteConfirm ? `Voulez-vous vraiment supprimer "${deleteConfirm.description}" ?` : ''}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        confirmStyle="danger"
+      />
     </div>
   );
 }
