@@ -12,6 +12,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
     day_of_month: 1,
     start_date: new Date().toISOString().split('T')[0]
   });
+  const [errors, setErrors] = useState({});
 
   const fixedSubcategories = [
     'Logement',
@@ -35,8 +36,39 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.description.trim()) {
+      newErrors.description = 'La description est requise';
+    } else if (formData.description.length > 200) {
+      newErrors.description = 'Maximum 200 caractères';
+    }
+    
+    const amountNum = parseFloat(formData.amount);
+    if (!formData.amount) {
+      newErrors.amount = 'Le montant est requis';
+    } else if (isNaN(amountNum) || amountNum <= 0) {
+      newErrors.amount = 'Montant invalide';
+    } else if (amountNum > 999999) {
+      newErrors.amount = 'Montant trop élevé';
+    }
+    
+    if (formData.day_of_month < 1 || formData.day_of_month > 31) {
+      newErrors.day_of_month = 'Jour invalide (1-31)';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     try {
       await api.createRecurringExpense({
         ...formData,
@@ -48,9 +80,11 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
         description: '',
         amount: '',
         category_id: 1,
+        subcategory: '',
         day_of_month: 1,
         start_date: new Date().toISOString().split('T')[0]
       });
+      setErrors({});
     } catch (err) {
       console.error('Failed to create recurring expense:', err);
     }

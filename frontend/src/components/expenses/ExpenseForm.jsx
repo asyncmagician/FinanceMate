@@ -11,6 +11,7 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     is_deducted: false
   });
   const [showCustomSubcategory, setShowCustomSubcategory] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fixedSubcategories = [
     'Logement',
@@ -31,8 +32,44 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     'Autre'
   ];
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate description
+    if (!formData.description.trim()) {
+      newErrors.description = 'La description est requise';
+    } else if (formData.description.length > 200) {
+      newErrors.description = 'La description ne peut pas dépasser 200 caractères';
+    }
+    
+    // Validate amount
+    const amountNum = parseFloat(formData.amount);
+    if (!formData.amount) {
+      newErrors.amount = 'Le montant est requis';
+    } else if (isNaN(amountNum)) {
+      newErrors.amount = 'Le montant doit être un nombre valide';
+    } else if (amountNum <= 0) {
+      newErrors.amount = 'Le montant doit être supérieur à 0';
+    } else if (amountNum > 999999) {
+      newErrors.amount = 'Le montant est trop élevé';
+    }
+    
+    // Validate custom subcategory if shown
+    if (showCustomSubcategory && !formData.customSubcategory.trim()) {
+      newErrors.customSubcategory = 'Le nom de la sous-catégorie est requis';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     onSubmit({
       ...formData,
       subcategory: showCustomSubcategory ? formData.customSubcategory : formData.subcategory,
@@ -74,12 +111,19 @@ export default function ExpenseForm({ onSubmit, onClose }) {
               <input
                 type="text"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="input-field w-full"
+                onChange={(e) => {
+                  setFormData({ ...formData, description: e.target.value });
+                  if (errors.description) setErrors({ ...errors, description: '' });
+                }}
+                className={`input-field w-full ${errors.description ? 'border-red-500' : ''}`}
                 placeholder="Ex: Courses Carrefour"
+                maxLength="200"
                 required
                 autoFocus
               />
+              {errors.description && (
+                <p className="text-red-400 text-xs mt-1">{errors.description}</p>
+              )}
             </div>
 
             <div>
@@ -89,12 +133,20 @@ export default function ExpenseForm({ onSubmit, onClose }) {
               <input
                 type="number"
                 step="0.01"
+                min="0.01"
+                max="999999"
                 value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="input-field w-full"
+                onChange={(e) => {
+                  setFormData({ ...formData, amount: e.target.value });
+                  if (errors.amount) setErrors({ ...errors, amount: '' });
+                }}
+                className={`input-field w-full ${errors.amount ? 'border-red-500' : ''}`}
                 placeholder="0.00"
                 required
               />
+              {errors.amount && (
+                <p className="text-red-400 text-xs mt-1">{errors.amount}</p>
+              )}
             </div>
 
             <div>
@@ -138,11 +190,18 @@ export default function ExpenseForm({ onSubmit, onClose }) {
                 <input
                   type="text"
                   value={formData.customSubcategory}
-                  onChange={(e) => setFormData({ ...formData, customSubcategory: e.target.value })}
-                  className="input-field w-full"
+                  onChange={(e) => {
+                    setFormData({ ...formData, customSubcategory: e.target.value });
+                    if (errors.customSubcategory) setErrors({ ...errors, customSubcategory: '' });
+                  }}
+                  className={`input-field w-full ${errors.customSubcategory ? 'border-red-500' : ''}`}
                   placeholder="Ex: Cadeaux"
+                  maxLength="100"
                   required
                 />
+                {errors.customSubcategory && (
+                  <p className="text-red-400 text-xs mt-1">{errors.customSubcategory}</p>
+                )}
               </div>
             )}
           </div>

@@ -3,10 +3,24 @@ import { useState } from 'react';
 export default function PrevisionnelCard({ previsionnel, startingBalance, onUpdateBalance }) {
   const [editing, setEditing] = useState(false);
   const [balance, setBalance] = useState(startingBalance);
+  const [error, setError] = useState('');
 
   const handleSave = () => {
-    onUpdateBalance(parseFloat(balance));
+    const balanceNum = parseFloat(balance);
+    
+    if (isNaN(balanceNum)) {
+      setError('Le montant doit être un nombre valide');
+      return;
+    }
+    
+    if (balanceNum < -999999 || balanceNum > 999999) {
+      setError('Le montant est hors limites');
+      return;
+    }
+    
+    onUpdateBalance(balanceNum);
     setEditing(false);
+    setError('');
   };
 
   const formatCurrency = (amount) => {
@@ -24,20 +38,34 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
         <div>
           <div className="text-obsidian-text-muted text-sm mb-1">Solde de départ</div>
           {editing ? (
-            <div className="flex gap-2">
-              <input
-                type="number"
-                value={balance}
-                onChange={(e) => setBalance(e.target.value)}
-                className="input-field text-sm px-2 py-1"
-                step="0.01"
-              />
-              <button onClick={handleSave} className="text-obsidian-success">
-                ✓
-              </button>
-              <button onClick={() => setEditing(false)} className="text-obsidian-error">
-                ✕
-              </button>
+            <div>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={balance}
+                  onChange={(e) => {
+                    setBalance(e.target.value);
+                    setError('');
+                  }}
+                  className={`input-field text-sm px-2 py-1 ${error ? 'border-red-500' : ''}`}
+                  step="0.01"
+                  min="-999999"
+                  max="999999"
+                />
+                <button onClick={handleSave} className="text-obsidian-success">
+                  ✓
+                </button>
+                <button onClick={() => {
+                  setEditing(false);
+                  setError('');
+                  setBalance(startingBalance);
+                }} className="text-obsidian-error">
+                  ✕
+                </button>
+              </div>
+              {error && (
+                <p className="text-red-400 text-xs mt-1">{error}</p>
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-2">

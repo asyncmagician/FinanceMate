@@ -31,9 +31,12 @@ class ApiService {
     const response = await fetch(url, config);
     
     if (response.status === 401) {
-      this.setToken(null);
-      window.location.href = '/login';
-      throw new Error('Unauthorized');
+      // Only redirect if we're not already on the login page
+      if (!window.location.pathname.includes('/login')) {
+        this.setToken(null);
+        window.location.href = '/login';
+      }
+      throw new Error('Identifiants invalides');
     }
 
     if (!response.ok) {

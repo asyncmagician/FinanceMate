@@ -19,7 +19,8 @@ export default function Login() {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Login failed');
+      // Generic error message for security - don't reveal if email exists or not
+      setError('Identifiants invalides. Veuillez vérifier votre email et mot de passe.');
     } finally {
       setLoading(false);
     }
@@ -39,7 +40,7 @@ export default function Login() {
           
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Email
+              Adresse email
             </label>
             <input
               id="email"
@@ -54,7 +55,7 @@ export default function Login() {
           
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Password
+              Mot de passe
             </label>
             <input
               id="password"
@@ -72,7 +73,7 @@ export default function Login() {
             className="btn-primary w-full"
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
       </div>
