@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-obsidian-bg text-obsidian-text;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-obsidian-accent text-white rounded-md hover:bg-obsidian-accent-hover transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-obsidian-bg-secondary text-obsidian-text border border-obsidian-border rounded-md hover:bg-obsidian-bg-hover transition-colors duration-200;
+  }
+  
+  .input-field {
+    @apply bg-obsidian-bg-secondary border border-obsidian-border rounded-md px-3 py-2 text-obsidian-text placeholder-obsidian-text-faint focus:outline-none focus:ring-2 focus:ring-obsidian-accent focus:border-transparent;
+  }
+  
+  .card {
+    @apply bg-obsidian-bg-secondary border border-obsidian-border rounded-lg p-4;
+  }
+}

@@ -1,0 +1,128 @@
+import { useState } from 'react';
+
+export default function PrevisionnelCard({ previsionnel, startingBalance, onUpdateBalance }) {
+  const [editing, setEditing] = useState(false);
+  const [balance, setBalance] = useState(startingBalance);
+  const [error, setError] = useState('');
+
+  const handleSave = () => {
+    const balanceNum = parseFloat(balance);
+    
+    if (isNaN(balanceNum)) {
+      setError('Le montant doit être un nombre valide');
+      return;
+    }
+    
+    if (balanceNum < -999999 || balanceNum > 999999) {
+      setError('Le montant est hors limites');
+      return;
+    }
+    
+    onUpdateBalance(balanceNum);
+    setEditing(false);
+    setError('');
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  };
+
+  return (
+    <div className="card lg:col-span-3">
+      <h3 className="text-lg font-semibold text-obsidian-text mb-4">Prévisionnel</h3>
+      
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Solde de départ</div>
+          {editing ? (
+            <div>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={balance}
+                  onChange={(e) => {
+                    setBalance(e.target.value);
+                    setError('');
+                  }}
+                  className={`input-field text-sm px-2 py-1 ${error ? 'border-red-500' : ''}`}
+                  step="0.01"
+                  min="-999999"
+                  max="999999"
+                />
+                <button onClick={handleSave} className="text-obsidian-success">
+                  ✓
+                </button>
+                <button onClick={() => {
+                  setEditing(false);
+                  setError('');
+                  setBalance(startingBalance);
+                }} className="text-obsidian-error">
+                  ✕
+                </button>
+              </div>
+              {error && (
+                <p className="text-red-400 text-xs mt-1">{error}</p>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-semibold text-obsidian-text">
+                {formatCurrency(startingBalance)}
+              </span>
+              <button
+                onClick={() => {
+                  setBalance(startingBalance);
+                  setEditing(true);
+                }}
+                className="text-obsidian-text-muted hover:text-obsidian-text"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses fixes</div>
+          <div className="text-xl font-semibold text-red-400">
+            -{formatCurrency(previsionnel?.fixed_total || 0)}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses variables</div>
+          <div className="text-xl font-semibold text-orange-400">
+            -{formatCurrency(previsionnel?.variable_total || 0)}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-obsidian-text-muted text-sm mb-1">Remboursements</div>
+          <div className="text-xl font-semibold text-green-400">
+            +{formatCurrency(previsionnel?.reimbursements_received || 0)}
+            {previsionnel?.reimbursements_pending > 0 && (
+              <span className="text-sm text-obsidian-text-muted ml-2">
+                (+{formatCurrency(previsionnel.reimbursements_pending)})
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 pt-4 border-t border-obsidian-border">
+        <div className="text-obsidian-text-muted text-sm mb-1">Prévisionnel final</div>
+        <div className={`text-3xl font-bold ${
+          previsionnel?.previsionnel >= 0 ? 'text-green-400' : 'text-red-400'
+        }`}>
+          {formatCurrency(previsionnel?.previsionnel || 0)}
+        </div>
+      </div>
+    </div>
+  );
+}
