@@ -12,4 +12,8 @@ router.delete('/data', userController.deleteUserData);
 // Delete user account (and all data)
 router.delete('/account', userController.deleteAccount);
 
+// Salary management endpoints
+router.get('/salary', userController.getSalary);
+router.put('/salary', userController.updateSalary);
+
 module.exports = router;
