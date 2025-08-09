@@ -25,7 +25,9 @@ const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5, // Only 5 login attempts per 15 minutes
   message: 'Too many login attempts, please try again later.',
-  skipSuccessfulRequests: true
+  skipSuccessfulRequests: false, // Count all requests to prevent credential stuffing
+  standardHeaders: true, // Return rate limit info in headers
+  legacyHeaders: false
 });
 
 // Enhanced security headers
