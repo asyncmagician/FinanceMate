@@ -4,6 +4,7 @@ import api from '../../services/api';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ExpenseListGrouped from '../expenses/ExpenseListGrouped';
 import ExpenseForm from '../expenses/ExpenseForm';
+import ReimbursementForm from '../expenses/ReimbursementForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
 
@@ -15,6 +16,7 @@ export default function MonthView() {
   const [previsionnel, setPrevisionnel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showAddReimbursement, setShowAddReimbursement] = useState(false);
   const [showRecurringManager, setShowRecurringManager] = useState(false);
 
   const monthNames = [
@@ -60,6 +62,19 @@ export default function MonthView() {
     }
   };
 
+  const handleAddReimbursement = async (reimbursement) => {
+    try {
+      await api.createExpense({
+        ...reimbursement,
+        date: `${year}-${String(month).padStart(2, '0')}-${String(reimbursement.day).padStart(2, '0')}`
+      });
+      await loadMonthData();
+      setShowAddReimbursement(false);
+    } catch (err) {
+      console.error('Failed to add reimbursement:', err);
+    }
+  };
+
   const handleUpdateExpense = async (id, updates) => {
     try {
       // Optimistically update the UI
@@ -73,7 +88,7 @@ export default function MonthView() {
       await api.updateExpense(id, updates);
       
       // Only reload if it's a significant update (amount changes affect totals)
-      if (updates.amount !== undefined) {
+      if (updates.amount !== undefined || updates.description !== undefined || updates.category_id !== undefined) {
         await loadMonthData();
       }
     } catch (err) {
@@ -196,6 +211,17 @@ export default function MonthView() {
               <span className="hidden sm:inline">{t('expenses.recurring')}</span>
             </button>
             <button
+              onClick={() => setShowAddReimbursement(true)}
+              className="btn-secondary p-2 sm:px-4"
+              title={t('reimbursement.add', 'Ajouter un remboursement')}
+            >
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+              </svg>
+              <span className="hidden sm:inline">{t('reimbursement.add', 'Remboursement')}</span>
+            </button>
+            <button
               onClick={() => setShowAddExpense(true)}
               className="btn-primary p-2 sm:px-4"
               title={t('expenses.add')}
@@ -212,6 +238,7 @@ export default function MonthView() {
         <ExpenseListGrouped
           expenses={expenses}
           onUpdate={handleUpdateExpense}
+          onEdit={handleUpdateExpense}
           onDelete={handleDeleteExpense}
         />
       </div>
@@ -220,6 +247,13 @@ export default function MonthView() {
         <ExpenseForm
           onSubmit={handleAddExpense}
           onClose={() => setShowAddExpense(false)}
+        />
+      )}
+
+      {showAddReimbursement && (
+        <ReimbursementForm
+          onSubmit={handleAddReimbursement}
+          onClose={() => setShowAddReimbursement(false)}
         />
       )}
 
