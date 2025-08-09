@@ -80,13 +80,11 @@ export default function MonthView() {
   };
 
   const handleDeleteExpense = async (id) => {
-    if (confirm('Delete this expense?')) {
-      try {
-        await api.deleteExpense(id);
-        await loadMonthData();
-      } catch (err) {
-        console.error('Failed to delete expense:', err);
-      }
+    try {
+      await api.deleteExpense(id);
+      await loadMonthData();
+    } catch (err) {
+      console.error('Failed to delete expense:', err);
     }
   };
 
