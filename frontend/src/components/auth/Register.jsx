@@ -166,13 +166,13 @@ function Register() {
               required
             />
             <label htmlFor="acceptTerms" className="text-sm text-obsidian-text-muted">
-              {t('register.acceptTerms', 'J\'accepte les ')}
+              {t('consent.acceptTerms', 'J\'accepte les ')}
               <a href="/terms" target="_blank" className="text-obsidian-accent hover:underline">
-                {t('register.termsOfService', 'Conditions d\'Utilisation')}
+                {t('consent.termsOfService', 'Conditions d\'Utilisation')}
               </a>
-              {t('register.and', ' et la ')}
+              {t('consent.and', ' et la ')}
               <a href="/privacy" target="_blank" className="text-obsidian-accent hover:underline">
-                {t('register.privacyPolicy', 'Politique de Confidentialité')}
+                {t('consent.privacyPolicy', 'Politique de Confidentialité')}
               </a>
             </label>
           </div>

@@ -276,8 +276,8 @@ export const translations = {
       accept: 'Accepter'
     },
     
-    // Registration
-    register: {
+    // Registration consent
+    consent: {
       acceptTerms: 'J\'accepte les ',
       termsOfService: 'Conditions d\'Utilisation',
       and: ' et la ',
@@ -569,8 +569,8 @@ export const translations = {
       accept: 'Accept'
     },
     
-    // Registration  
-    register: {
+    // Registration consent
+    consent: {
       acceptTerms: 'I accept the ',
       termsOfService: 'Terms of Service',
       and: ' and the ',
