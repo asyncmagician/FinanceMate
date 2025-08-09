@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import ConfirmModal from '../common/ConfirmModal';
 
 export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
+  const { t } = useLanguage();
   const [editingId, setEditingId] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
@@ -43,7 +45,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
   // Group expenses by category and subcategory
   const groupedExpenses = expenses.reduce((acc, expense) => {
     const type = expense.category_type;
-    const subcategory = expense.subcategory || 'Sans catégorie';
+    const subcategory = expense.subcategory || t('expenses.noCategory', 'Sans catégorie');
     
     if (!acc[type]) acc[type] = {};
     if (!acc[type][subcategory]) acc[type][subcategory] = [];
@@ -54,20 +56,20 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
 
   const categoryOrder = ['fixed', 'variable', 'reimbursement'];
   const categoryLabels = {
-    fixed: 'Dépenses Fixes',
-    variable: 'Dépenses Variables',
-    reimbursement: 'Remboursements'
+    fixed: t('expenses.fixed'),
+    variable: t('expenses.variable'),
+    reimbursement: t('expenses.reimbursement')
   };
 
   // Predefined subcategory order for fixed expenses
   const fixedSubcategoryOrder = [
-    'Logement',
-    'Voiture',
-    'Crédit',
-    'Santé',
-    'Serveurs',
-    'Abonnements',
-    'Sans catégorie'
+    t('expenses.housing'),
+    t('expenses.car'),
+    t('expenses.credit'),
+    t('expenses.health'),
+    t('expenses.servers'),
+    t('expenses.subscriptions'),
+    t('expenses.noCategory', 'Sans catégorie')
   ];
 
   const sortSubcategories = (a, b, categoryType) => {
@@ -100,7 +102,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                 {categoryLabels[category]}
               </h3>
               <span className={`text-lg font-bold ${getCategoryColor(category)}`}>
-                Total: {formatCurrency(categoryTotal)}
+                {t('expenses.total')}: {formatCurrency(categoryTotal)}
               </span>
             </div>
             
@@ -156,7 +158,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                                     className="rounded border-obsidian-border bg-obsidian-bg-secondary text-green-400 focus:ring-green-400 cursor-pointer"
                                   />
                                   <span className={Boolean(expense.is_received) ? 'text-green-400' : 'text-obsidian-text-muted'}>
-                                    {Boolean(expense.is_received) ? 'Reçu' : 'En attente'}
+                                    {Boolean(expense.is_received) ? t('expenses.received') : t('expenses.pending')}
                                   </span>
                                 </label>
                               )}
@@ -190,7 +192,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
 
       {expenses.length === 0 && (
         <div className="text-center py-8 text-obsidian-text-muted">
-          Aucune dépense pour ce mois
+          {t('expenses.noExpenses')}
         </div>
       )}
       
@@ -203,10 +205,10 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
           }
         }}
         onCancel={() => setDeleteConfirm(null)}
-        title="Supprimer la dépense"
-        message={deleteConfirm ? `Voulez-vous vraiment supprimer "${deleteConfirm.description}" ?` : ''}
-        confirmText="Supprimer"
-        cancelText="Annuler"
+        title={t('expenses.delete')}
+        message={deleteConfirm ? `${t('confirm.deleteExpense')} "${deleteConfirm.description}" ?` : ''}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
         confirmStyle="danger"
       />
     </div>

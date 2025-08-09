@@ -324,10 +324,10 @@ export default function ProfileView() {
         isOpen={showDeleteData}
         onConfirm={handleDeleteData}
         onCancel={() => setShowDeleteData(false)}
-        title="Supprimer toutes les données"
-        message="Êtes-vous sûr de vouloir supprimer toutes vos données ? Cette action supprimera tous vos mois, dépenses et dépenses récurrentes, mais conservera votre compte."
-        confirmText="Supprimer les données"
-        cancelText="Annuler"
+        title={t('profile.deleteAllDataTitle', 'Supprimer toutes les données')}
+        message={t('confirm.deleteData')}
+        confirmText={t('profile.deleteDataButton', 'Supprimer les données')}
+        cancelText={t('cancel')}
         confirmStyle="danger"
       />
 
@@ -335,10 +335,10 @@ export default function ProfileView() {
         isOpen={showDeleteAccount}
         onConfirm={handleDeleteAccount}
         onCancel={() => setShowDeleteAccount(false)}
-        title="Supprimer le compte"
-        message="Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et supprimera toutes vos données."
-        confirmText="Supprimer mon compte"
-        cancelText="Annuler"
+        title={t('profile.deleteAccountTitle', 'Supprimer le compte')}
+        message={t('confirm.deleteAccount')}
+        confirmText={t('profile.deleteAccountButton', 'Supprimer mon compte')}
+        cancelText={t('cancel')}
         confirmStyle="danger"
       />
     </div>

@@ -11,12 +11,12 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
     const balanceNum = parseFloat(balance);
     
     if (isNaN(balanceNum)) {
-      setError('Le montant doit être un nombre valide');
+      setError(t('previsionnel.amountInvalid', 'Le montant doit être un nombre valide'));
       return;
     }
     
     if (balanceNum < -999999 || balanceNum > 999999) {
-      setError('Le montant est hors limites');
+      setError(t('previsionnel.amountOutOfBounds', 'Le montant est hors limites'));
       return;
     }
     
@@ -91,21 +91,21 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses fixes</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">{t('expenses.fixed').replace(' Expenses', '').replace(' Dépenses', '')}</div>
           <div className="text-xl font-semibold text-red-400">
             -{formatCurrency(previsionnel?.fixed_total || 0)}
           </div>
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Dépenses variables</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">{t('expenses.variable').replace(' Expenses', '').replace(' Dépenses', '')}</div>
           <div className="text-xl font-semibold text-orange-400">
             -{formatCurrency(previsionnel?.variable_total || 0)}
           </div>
         </div>
 
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Remboursements</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">{t('expenses.reimbursement')}</div>
           <div className="text-xl font-semibold text-green-400">
             +{formatCurrency(previsionnel?.reimbursements_received || 0)}
             {previsionnel?.reimbursements_pending > 0 && (
@@ -118,7 +118,7 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
       </div>
 
       <div className="mt-6 pt-4 border-t border-obsidian-border">
-        <div className="text-obsidian-text-muted text-sm mb-1">Prévisionnel final</div>
+        <div className="text-obsidian-text-muted text-sm mb-1">{t('previsionnel.finalBalance', 'Prévisionnel final')}</div>
         <div className={`text-3xl font-bold ${
           previsionnel?.previsionnel >= 0 ? 'text-green-400' : 'text-red-400'
         }`}>

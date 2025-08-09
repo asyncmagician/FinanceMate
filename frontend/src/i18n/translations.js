@@ -12,6 +12,11 @@ export const translations = {
     back: 'Retour',
     logout: 'Déconnexion',
     
+    common: {
+      add: 'Ajouter',
+      choose: 'Choisir'
+    },
+    
     // Auth
     login: {
       title: 'FinanceMate',
@@ -85,7 +90,12 @@ export const translations = {
       sourceCode: 'Code source',
       
       language: 'Langue',
-      selectLanguage: 'Sélectionner la langue'
+      selectLanguage: 'Sélectionner la langue',
+      comingSoon: 'Fonctionnalité bientôt disponible',
+      deleteAllDataTitle: 'Supprimer toutes les données',
+      deleteDataButton: 'Supprimer les données',
+      deleteAccountTitle: 'Supprimer le compte',
+      deleteAccountButton: 'Supprimer mon compte'
     },
     
     // Dashboard
@@ -125,7 +135,10 @@ export const translations = {
       startingBalance: 'Solde de départ',
       update: 'Mettre à jour',
       updateBalance: 'Mettre à jour le solde',
-      formula: 'Calcul: Solde de départ - Dépenses fixes - Dépenses variables + Remboursements'
+      formula: 'Calcul: Solde de départ - Dépenses fixes - Dépenses variables + Remboursements',
+      amountInvalid: 'Le montant doit être un nombre valide',
+      amountOutOfBounds: 'Le montant est hors limites',
+      finalBalance: 'Prévisionnel final'
     },
     
     // Expenses
@@ -154,7 +167,29 @@ export const translations = {
       descriptionPlaceholder: 'Description de la dépense',
       amountPlaceholder: 'Montant en EUR',
       customSubcategory: 'Nom personnalisé',
-      customSubcategoryPlaceholder: 'Entrez le nom de la sous-catégorie'
+      customSubcategoryPlaceholder: 'Entrez le nom de la sous-catégorie',
+      // Subcategories
+      housing: 'Logement',
+      car: 'Voiture',
+      credit: 'Crédit',
+      health: 'Santé',
+      servers: 'Serveurs',
+      subscriptions: 'Abonnements',
+      groceries: 'Courses',
+      restaurant: 'Restaurant',
+      outings: 'Sorties',
+      gas: 'Essence',
+      shopping: 'Shopping',
+      other: 'Autre',
+      noCategory: 'Sans catégorie',
+      // Validation
+      descriptionRequired: 'La description est requise',
+      descriptionTooLong: 'La description ne peut pas dépasser 200 caractères',
+      amountRequired: 'Le montant est requis',
+      amountInvalid: 'Le montant doit être un nombre valide',
+      amountTooSmall: 'Le montant doit être supérieur à 0',
+      amountTooLarge: 'Le montant est trop élevé',
+      subcategoryRequired: 'Le nom de la sous-catégorie est requis'
     },
     
     // Forecast
@@ -165,7 +200,23 @@ export const translations = {
       months12: '12 mois',
       projectedBalance: 'Solde projeté',
       averageExpenses: 'Dépenses moyennes',
-      explanation: 'Explication du calcul'
+      explanation: 'Explication du calcul',
+      loading: 'Chargement des prévisions...',
+      subtitle: 'Projection de vos finances futures basée sur vos dépenses moyennes',
+      settings: 'Paramètres de prévision',
+      averageVariableExpenses: 'Moyenne des dépenses variables',
+      numberOfMonths: 'Nombre de mois',
+      evolutionTitle: 'Évolution prévisionnelle',
+      plannedRecurring: 'Dépenses récurrentes prévues',
+      monthlyRecurringTotal: 'Total mensuel récurrent',
+      inMonths: 'Dans {{months}} mois',
+      variablesEstimated: 'Variables (estimé)',
+      estimatedPrevisionnel: 'Prévisionnel estimé',
+      howCalculated: 'Comment sont calculées les prévisions ?',
+      explanationFixed: 'Les dépenses fixes sont basées sur vos dépenses récurrentes configurées',
+      explanationVariable: 'Les dépenses variables sont estimées sur la moyenne des 3 derniers mois',
+      explanationBalance: 'Le solde de départ de chaque mois est le prévisionnel du mois précédent',
+      explanationReimbursements: 'Les remboursements ne sont pas inclus dans les projections futures'
     },
     
     // Recurring
@@ -178,7 +229,11 @@ export const translations = {
       dayOfMonth: 'Jour du mois',
       startDate: 'Date de début',
       noRecurring: 'Aucune dépense récurrente configurée',
-      description: 'Ces dépenses seront automatiquement ajoutées chaque mois'
+      description: 'Ces dépenses seront automatiquement ajoutées chaque mois',
+      invalidDay: 'Jour invalide (1-31)',
+      cancelEdit: "Annuler l'édition",
+      descriptionPlaceholder: 'Description (ex: Loyer)',
+      dayLabel: 'Jour'
     },
     
     // Confirmations
@@ -201,6 +256,11 @@ export const translations = {
     confirm: 'Confirm',
     back: 'Back',
     logout: 'Logout',
+    
+    common: {
+      add: 'Add',
+      choose: 'Choose'
+    },
     
     // Auth
     login: {
@@ -275,7 +335,12 @@ export const translations = {
       sourceCode: 'Source code',
       
       language: 'Language',
-      selectLanguage: 'Select language'
+      selectLanguage: 'Select language',
+      comingSoon: 'Coming soon',
+      deleteAllDataTitle: 'Delete all data',
+      deleteDataButton: 'Delete data',
+      deleteAccountTitle: 'Delete account',
+      deleteAccountButton: 'Delete my account'
     },
     
     // Dashboard
@@ -315,7 +380,10 @@ export const translations = {
       startingBalance: 'Starting balance',
       update: 'Update',
       updateBalance: 'Update balance',
-      formula: 'Calculation: Starting balance - Fixed expenses - Variable expenses + Reimbursements'
+      formula: 'Calculation: Starting balance - Fixed expenses - Variable expenses + Reimbursements',
+      amountInvalid: 'Amount must be a valid number',
+      amountOutOfBounds: 'Amount is out of bounds',
+      finalBalance: 'Final forecast'
     },
     
     // Expenses
@@ -344,7 +412,29 @@ export const translations = {
       descriptionPlaceholder: 'Expense description',
       amountPlaceholder: 'Amount in EUR',
       customSubcategory: 'Custom name',
-      customSubcategoryPlaceholder: 'Enter subcategory name'
+      customSubcategoryPlaceholder: 'Enter subcategory name',
+      // Subcategories
+      housing: 'Housing',
+      car: 'Car',
+      credit: 'Credit',
+      health: 'Health',
+      servers: 'Servers',
+      subscriptions: 'Subscriptions',
+      groceries: 'Groceries',
+      restaurant: 'Restaurant',
+      outings: 'Outings',
+      gas: 'Gas',
+      shopping: 'Shopping',
+      other: 'Other',
+      noCategory: 'No category',
+      // Validation
+      descriptionRequired: 'Description is required',
+      descriptionTooLong: 'Description cannot exceed 200 characters',
+      amountRequired: 'Amount is required',
+      amountInvalid: 'Amount must be a valid number',
+      amountTooSmall: 'Amount must be greater than 0',
+      amountTooLarge: 'Amount is too large',
+      subcategoryRequired: 'Subcategory name is required'
     },
     
     // Forecast
@@ -355,7 +445,23 @@ export const translations = {
       months12: '12 months',
       projectedBalance: 'Projected balance',
       averageExpenses: 'Average expenses',
-      explanation: 'Calculation explanation'
+      explanation: 'Calculation explanation',
+      loading: 'Loading forecast...',
+      subtitle: 'Projection of your future finances based on your average expenses',
+      settings: 'Forecast settings',
+      averageVariableExpenses: 'Average variable expenses',
+      numberOfMonths: 'Number of months',
+      evolutionTitle: 'Forecast evolution',
+      plannedRecurring: 'Planned recurring expenses',
+      monthlyRecurringTotal: 'Monthly recurring total',
+      inMonths: 'In {{months}} months',
+      variablesEstimated: 'Variables (estimated)',
+      estimatedPrevisionnel: 'Estimated forecast',
+      howCalculated: 'How are forecasts calculated?',
+      explanationFixed: 'Fixed expenses are based on your configured recurring expenses',
+      explanationVariable: 'Variable expenses are estimated based on the 3-month average',
+      explanationBalance: 'The starting balance of each month is the previous month\'s forecast',
+      explanationReimbursements: 'Reimbursements are not included in future projections'
     },
     
     // Recurring
@@ -368,7 +474,11 @@ export const translations = {
       dayOfMonth: 'Day of month',
       startDate: 'Start date',
       noRecurring: 'No recurring expenses configured',
-      description: 'These expenses will be automatically added each month'
+      description: 'These expenses will be automatically added each month',
+      invalidDay: 'Invalid day (1-31)',
+      cancelEdit: 'Cancel edit',
+      descriptionPlaceholder: 'Description (e.g. Rent)',
+      dayLabel: 'Day'
     },
     
     // Confirmations

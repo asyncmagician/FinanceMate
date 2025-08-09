@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import {
   Chart as ChartJS,
@@ -27,6 +28,7 @@ ChartJS.register(
 );
 
 export default function ForecastView() {
+  const { t } = useLanguage();
   const [forecast, setForecast] = useState([]);
   const [averageVariable, setAverageVariable] = useState(0);
   const [recurringExpenses, setRecurringExpenses] = useState([]);
@@ -79,8 +81,10 @@ export default function ForecastView() {
   };
 
   const monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    t('months.january'), t('months.february'), t('months.march'),
+    t('months.april'), t('months.may'), t('months.june'),
+    t('months.july'), t('months.august'), t('months.september'),
+    t('months.october'), t('months.november'), t('months.december')
   ];
 
   const calculateProjectedPrevisionnel = (monthData) => {
@@ -95,7 +99,7 @@ export default function ForecastView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-obsidian-text-muted">Chargement des prévisions...</div>
+        <div className="text-obsidian-text-muted">{t('forecast.loading', 'Chargement des prévisions...')}</div>
       </div>
     );
   }
@@ -108,7 +112,7 @@ export default function ForecastView() {
     }),
     datasets: [
       {
-        label: 'Prévisionnel',
+        label: t('previsionnel.title'),
         data: forecast.map(month => calculateProjectedPrevisionnel(month)),
         borderColor: 'rgb(74, 222, 128)',
         backgroundColor: 'rgba(74, 222, 128, 0.1)',
@@ -116,7 +120,7 @@ export default function ForecastView() {
         tension: 0.4
       },
       {
-        label: 'Dépenses totales',
+        label: t('expenses.total', 'Dépenses totales'),
         data: forecast.map(month => -(month.fixed_total + averageVariable)),
         borderColor: 'rgb(248, 113, 113)',
         backgroundColor: 'rgba(248, 113, 113, 0.1)',
@@ -182,9 +186,9 @@ export default function ForecastView() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-obsidian-text">Prévisions</h1>
+        <h1 className="text-3xl font-bold text-obsidian-text">{t('forecast.title')}</h1>
         <p className="text-obsidian-text-muted mt-2">
-          Projection de vos finances futures basée sur vos dépenses moyennes
+          {t('forecast.subtitle', 'Projection de vos finances futures basée sur vos dépenses moyennes')}
         </p>
       </div>
 
@@ -192,22 +196,22 @@ export default function ForecastView() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h3 className="text-lg font-semibold text-obsidian-text mb-2">
-              Paramètres de prévision
+              {t('forecast.settings', 'Paramètres de prévision')}
             </h3>
             <p className="text-sm text-obsidian-text-muted">
-              Moyenne des dépenses variables: {formatCurrency(averageVariable)}
+              {t('forecast.averageVariableExpenses', 'Moyenne des dépenses variables')}: {formatCurrency(averageVariable)}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="text-obsidian-text">Nombre de mois:</label>
+            <label className="text-obsidian-text">{t('forecast.numberOfMonths', 'Nombre de mois')}:</label>
             <select
               value={monthsToForecast}
               onChange={(e) => setMonthsToForecast(Number(e.target.value))}
               className="input-field"
             >
-              <option value={3}>3 mois</option>
-              <option value={6}>6 mois</option>
-              <option value={12}>12 mois</option>
+              <option value={3}>{t('forecast.months3')}</option>
+              <option value={6}>{t('forecast.months6')}</option>
+              <option value={12}>{t('forecast.months12')}</option>
             </select>
           </div>
         </div>
@@ -216,7 +220,7 @@ export default function ForecastView() {
       {forecast.length > 0 && (
         <div className="card mb-6">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Évolution prévisionnelle
+            {t('forecast.evolutionTitle', 'Évolution prévisionnelle')}
           </h3>
           <div className="h-64 sm:h-80">
             <Line data={chartData} options={chartOptions} />
@@ -227,7 +231,7 @@ export default function ForecastView() {
       {recurringExpenses.length > 0 && (
         <div className="card mb-6">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Dépenses récurrentes prévues
+            {t('forecast.plannedRecurring', 'Dépenses récurrentes prévues')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {recurringExpenses.map(expense => (
@@ -242,7 +246,7 @@ export default function ForecastView() {
           <div className="mt-4 pt-4 border-t border-obsidian-border">
             <div className="flex justify-between">
               <span className="text-obsidian-text font-semibold">
-                Total mensuel récurrent
+                {t('forecast.monthlyRecurringTotal', 'Total mensuel récurrent')}
               </span>
               <span className="text-red-400 font-bold text-lg">
                 {formatCurrency(
@@ -267,27 +271,27 @@ export default function ForecastView() {
                   {monthNames[futureDate.getMonth()]} {futureDate.getFullYear()}
                 </h3>
                 <span className="text-sm text-obsidian-text-muted">
-                  Dans {index + 1} mois
+                  {t('forecast.inMonths', 'Dans {{months}} mois').replace('{{months}}', index + 1)}
                 </span>
               </div>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-obsidian-text-muted">Solde de départ</span>
+                  <span className="text-obsidian-text-muted">{t('previsionnel.startingBalance')}</span>
                   <span className="text-obsidian-text">
                     {formatCurrency(month.starting_balance || 0)}
                   </span>
                 </div>
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-obsidian-text-muted">Dépenses fixes</span>
+                  <span className="text-obsidian-text-muted">{t('expenses.fixed').replace(' Expenses', '').replace(' Dépenses', '')}</span>
                   <span className="text-red-400">
                     -{formatCurrency(month.fixed_total || 0)}
                   </span>
                 </div>
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-obsidian-text-muted">Variables (estimé)</span>
+                  <span className="text-obsidian-text-muted">{t('forecast.variablesEstimated', 'Variables (estimé)')}</span>
                   <span className="text-orange-400">
                     -{formatCurrency(averageVariable)}
                   </span>
@@ -296,7 +300,7 @@ export default function ForecastView() {
                 <div className="pt-2 mt-2 border-t border-obsidian-border">
                   <div className="flex justify-between">
                     <span className="font-semibold text-obsidian-text">
-                      Prévisionnel estimé
+                      {t('forecast.estimatedPrevisionnel', 'Prévisionnel estimé')}
                     </span>
                     <span className={`font-bold text-lg ${
                       projectedPrevisionnel >= 0 ? 'text-green-400' : 'text-red-400'
@@ -319,13 +323,13 @@ export default function ForecastView() {
           </svg>
           <div className="text-sm text-obsidian-text-muted">
             <p className="mb-2">
-              <strong>Comment sont calculées les prévisions ?</strong>
+              <strong>{t('forecast.howCalculated', 'Comment sont calculées les prévisions ?')}</strong>
             </p>
             <ul className="space-y-1 ml-4">
-              <li>• Les dépenses fixes sont basées sur vos dépenses récurrentes configurées</li>
-              <li>• Les dépenses variables sont estimées sur la moyenne des 3 derniers mois</li>
-              <li>• Le solde de départ de chaque mois est le prévisionnel du mois précédent</li>
-              <li>• Les remboursements ne sont pas inclus dans les projections futures</li>
+              <li>• {t('forecast.explanationFixed', 'Les dépenses fixes sont basées sur vos dépenses récurrentes configurées')}</li>
+              <li>• {t('forecast.explanationVariable', 'Les dépenses variables sont estimées sur la moyenne des 3 derniers mois')}</li>
+              <li>• {t('forecast.explanationBalance', 'Le solde de départ de chaque mois est le prévisionnel du mois précédent')}</li>
+              <li>• {t('forecast.explanationReimbursements', 'Les remboursements ne sont pas inclus dans les projections futures')}</li>
             </ul>
           </div>
         </div>
