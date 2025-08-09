@@ -1,14 +1,22 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+    }
+  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +40,12 @@ export default function Login() {
         <h1 className="text-2xl font-bold text-obsidian-text mb-6">FinanceMate</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          {successMessage && (
+            <div className="bg-green-900/20 border border-green-500 text-green-400 px-4 py-2 rounded">
+              {successMessage}
+            </div>
+          )}
+          
           {error && (
             <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-2 rounded">
               {error}
@@ -76,6 +90,15 @@ export default function Login() {
             {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <Link 
+            to="/register" 
+            className="text-obsidian-link hover:text-obsidian-link-hover text-sm"
+          >
+            Pas encore de compte ? S'inscrire
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import MainLayout from './components/layout/MainLayout';
 import Dashboard from './components/Dashboard';
 import MonthView from './components/months/MonthView';
@@ -27,6 +28,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={

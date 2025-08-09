@@ -9,6 +9,13 @@ const loginValidation = [
   body('password').notEmpty().trim()
 ];
 
+const registerValidation = [
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
+  body('firstName').notEmpty().trim().withMessage('Le prénom est requis'),
+  body('lastName').notEmpty().trim().withMessage('Le nom est requis')
+];
+
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -17,6 +24,7 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+router.post('/register', registerValidation, handleValidationErrors, authController.register);
 router.post('/login', loginValidation, handleValidationErrors, authController.login);
 router.post('/logout', authMiddleware, authController.logout);
 router.get('/me', authMiddleware, authController.getCurrentUser);

@@ -10,6 +10,35 @@ const generateToken = (user) => {
   );
 };
 
+exports.register = async (req, res) => {
+  try {
+    const { email, password, firstName, lastName } = req.body;
+    
+    const existingUser = await userModel.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Cette adresse e-mail est déjà utilisée' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const newUser = await userModel.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      role: 'user'
+    });
+
+    res.status(201).json({ 
+      message: 'Compte créé avec succès. Vous pouvez maintenant vous connecter.',
+      success: true 
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Erreur lors de la création du compte' });
+  }
+};
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
