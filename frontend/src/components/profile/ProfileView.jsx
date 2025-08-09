@@ -106,13 +106,13 @@ export default function ProfileView() {
               <span className="font-medium">Email:</span> {user?.email}
             </p>
             <p>
-              <span className="font-medium">Nom:</span> {user?.firstName} {user?.lastName}
+              <span className="font-medium">{t('profile.name')}:</span> {user?.firstName} {user?.lastName}
             </p>
             <p>
-              <span className="font-medium">Rôle:</span> {user?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+              <span className="font-medium">{t('profile.role')}:</span> {user?.role === 'admin' ? t('profile.admin') : t('profile.user')}
             </p>
             <p>
-              <span className="font-medium">Membre depuis:</span> {new Date(user?.created_at).toLocaleDateString('fr-FR')}
+              <span className="font-medium">{t('profile.memberSince')}:</span> {new Date(user?.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}
             </p>
           </div>
         </div>

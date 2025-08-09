@@ -117,7 +117,8 @@ export const translations = {
       variableExpenses: 'Dépenses variables',
       noExpensesThisMonth: 'Aucune dépense ce mois-ci',
       toReceiveSoon: 'À recevoir prochainement',
-      noPendingReimbursements: 'Aucun remboursement en attente'
+      noPendingReimbursements: 'Aucun remboursement en attente',
+      viewFullMonth: 'Voir le mois complet'
     },
     
     // Months
@@ -380,7 +381,8 @@ export const translations = {
       variableExpenses: 'Variable expenses',
       noExpensesThisMonth: 'No expenses this month',
       toReceiveSoon: 'To receive soon',
-      noPendingReimbursements: 'No pending reimbursements'
+      noPendingReimbursements: 'No pending reimbursements',
+      viewFullMonth: 'View full month'
     },
     
     // Months
