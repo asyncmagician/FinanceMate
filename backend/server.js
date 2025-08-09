@@ -9,6 +9,7 @@ const expenseRoutes = require('./routes/expenses');
 const monthRoutes = require('./routes/months');
 const userRoutes = require('./routes/user');
 const exportRoutes = require('./routes/export');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -67,6 +68,7 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/months', monthRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
