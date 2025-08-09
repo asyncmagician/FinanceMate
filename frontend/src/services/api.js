@@ -142,6 +142,25 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async changePassword(currentPassword, newPassword) {
+    return this.request('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  }
+
+  async deleteUserData() {
+    return this.request('/user/data', {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteAccount() {
+    return this.request('/user/account', {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default new ApiService();

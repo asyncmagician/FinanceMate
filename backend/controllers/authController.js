@@ -62,7 +62,8 @@ exports.login = async (req, res) => {
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
-        role: user.role
+        role: user.role,
+        created_at: user.created_at
       }
     });
   } catch (error) {
@@ -87,7 +88,8 @@ exports.getCurrentUser = async (req, res) => {
       email: user.email,
       firstName: user.first_name,
       lastName: user.last_name,
-      role: user.role
+      role: user.role,
+      created_at: user.created_at
     });
   } catch (error) {
     console.error('Get current user error:', error);
@@ -115,5 +117,30 @@ exports.refreshToken = async (req, res) => {
   } catch (error) {
     console.error('Refresh token error:', error);
     res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+    
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+    
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Mot de passe actuel incorrect' });
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userModel.updatePassword(userId, hashedPassword);
+    
+    res.json({ message: 'Mot de passe modifié avec succès' });
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({ error: 'Erreur lors du changement de mot de passe' });
   }
 };

@@ -61,3 +61,24 @@ exports.update = async (id, userData) => {
     throw error;
   }
 };
+
+exports.updatePassword = async (id, hashedPassword) => {
+  try {
+    await pool.execute(
+      'UPDATE users SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.deleteById = async (id) => {
+  try {
+    await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -179,3 +179,21 @@ exports.deleteRecurring = async (id) => {
     throw error;
   }
 };
+
+exports.deleteByMonth = async (monthId) => {
+  try {
+    await pool.execute('DELETE FROM expenses WHERE month_id = ?', [monthId]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.deleteRecurringByUser = async (userId) => {
+  try {
+    await pool.execute('DELETE FROM recurring_expenses WHERE user_id = ?', [userId]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};

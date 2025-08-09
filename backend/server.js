@@ -7,6 +7,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const expenseRoutes = require('./routes/expenses');
 const monthRoutes = require('./routes/months');
+const userRoutes = require('./routes/user');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +29,7 @@ app.use('/api', limiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/months', monthRoutes);
+app.use('/api/user', userRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -16,6 +16,11 @@ const registerValidation = [
   body('lastName').notEmpty().trim().withMessage('Le nom est requis')
 ];
 
+const changePasswordValidation = [
+  body('currentPassword').notEmpty().withMessage('Le mot de passe actuel est requis'),
+  body('newPassword').isLength({ min: 6 }).withMessage('Le nouveau mot de passe doit contenir au moins 6 caractères')
+];
+
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -29,5 +34,6 @@ router.post('/login', loginValidation, handleValidationErrors, authController.lo
 router.post('/logout', authMiddleware, authController.logout);
 router.get('/me', authMiddleware, authController.getCurrentUser);
 router.post('/refresh', authController.refreshToken);
+router.post('/change-password', authMiddleware, changePasswordValidation, handleValidationErrors, authController.changePassword);
 
 module.exports = router;
