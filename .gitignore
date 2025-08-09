@@ -40,3 +40,6 @@ temp/
 
 # Production deployment files
 UPDATE_PRODUCTION.md
+
+# Security audit files
+audit_*.md
