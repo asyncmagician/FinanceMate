@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import {
   Chart as ChartJS,
@@ -22,6 +23,7 @@ ChartJS.register(
 );
 
 export default function DashboardView() {
+  const { t } = useLanguage();
   const [currentMonthData, setCurrentMonthData] = useState(null);
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState({});
@@ -304,7 +306,7 @@ export default function DashboardView() {
             </div>
           ) : (
             <p className="text-obsidian-text-muted text-sm">
-              Aucun remboursement en attente
+              {t('dashboard.noPendingReimbursements', 'Aucun remboursement en attente')}
             </p>
           )}
         </div>

@@ -97,7 +97,7 @@ export default function Sidebar({ open }) {
           
           <div className="pt-4">
             <h3 className="text-xs font-semibold text-obsidian-text-muted uppercase tracking-wider mb-2">
-              {t('months.title', 'Mois')}
+              {t('sidebar.months', 'Mois')}
             </h3>
             
             <div className="space-y-1">

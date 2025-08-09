@@ -233,7 +233,7 @@ export default function ProfileView() {
                 onClick={() => setShowDeleteData(true)}
                 className="text-orange-400 hover:text-orange-300 transition-colors"
               >
-                Supprimer toutes mes données
+                {t('profile.deleteAllData')}
               </button>
             </div>
           </div>
@@ -241,15 +241,15 @@ export default function ProfileView() {
 
         {/* Account Deletion */}
         <div className="card border-red-900/20">
-          <h2 className="text-xl font-semibold text-obsidian-text mb-4">Zone dangereuse</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.dangerZone')}</h2>
           <p className="text-obsidian-text-muted mb-4">
-            Ces actions sont irréversibles. Veuillez procéder avec prudence.
+            {t('profile.dangerWarning')}
           </p>
           <button
             onClick={() => setShowDeleteAccount(true)}
             className="bg-red-900/20 text-red-400 px-4 py-2 rounded hover:bg-red-900/30 transition-colors"
           >
-            Supprimer mon compte
+            {t('profile.deleteAccount')}
           </button>
         </div>
 
@@ -258,15 +258,14 @@ export default function ProfileView() {
           <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.about')}</h2>
           <div className="space-y-3 text-obsidian-text-muted">
             <p>
-              FinanceMate est une application de gestion budgétaire personnelle développée pour simplifier 
-              le suivi des dépenses mensuelles et la planification financière.
+              {t('profile.aboutText')}
             </p>
             <div className="pt-2 space-y-2">
               <p>
-                <span className="font-medium">Version:</span> 1.0.0
+                <span className="font-medium">{t('profile.version')}:</span> 1.0.0
               </p>
               <p>
-                <span className="font-medium">Créé par:</span> Antony BARTOLOMUCCI
+                <span className="font-medium">{t('profile.createdBy')}:</span> Antony BARTOLOMUCCI
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
                 <a 

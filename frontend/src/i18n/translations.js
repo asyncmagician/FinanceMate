@@ -49,7 +49,8 @@ export const translations = {
     sidebar: {
       dashboard: 'Tableau de bord',
       forecast: 'Prévisions',
-      recurring: 'Dépenses récurrentes'
+      recurring: 'Dépenses récurrentes',
+      months: 'Mois'
     },
     
     // Profile
@@ -110,7 +111,13 @@ export const translations = {
       addExpense: 'Ajouter une dépense',
       viewForecast: 'Voir les prévisions',
       manageRecurring: 'Gérer les récurrentes',
-      spendingHistory: 'Historique des dépenses'
+      spendingHistory: 'Historique des dépenses',
+      overview: 'Vue d\'ensemble de vos finances',
+      fixedExpenses: 'Dépenses fixes',
+      variableExpenses: 'Dépenses variables',
+      noExpensesThisMonth: 'Aucune dépense ce mois-ci',
+      toReceiveSoon: 'À recevoir prochainement',
+      noPendingReimbursements: 'Aucun remboursement en attente'
     },
     
     // Months
@@ -233,7 +240,18 @@ export const translations = {
       invalidDay: 'Jour invalide (1-31)',
       cancelEdit: "Annuler l'édition",
       descriptionPlaceholder: 'Description (ex: Loyer)',
-      dayLabel: 'Jour'
+      dayLabel: 'Jour',
+      pageTitle: 'Dépenses Récurrentes',
+      pageDescription: 'Gérez vos dépenses fixes mensuelles. Ces dépenses peuvent être appliquées automatiquement à chaque mois.',
+      templates: 'Templates de dépenses',
+      addRecurringExpense: 'Ajouter une dépense récurrente',
+      ofMonth: 'du mois',
+      howToTitle: 'Comment utiliser les dépenses récurrentes ?',
+      howTo1: 'Ajoutez vos dépenses fixes mensuelles (loyer, abonnements, etc.)',
+      howTo2: 'Naviguez vers un mois spécifique',
+      howTo3: 'Cliquez sur "Dépenses récurrentes" puis "Appliquer au mois actuel"',
+      howTo4: 'Les dépenses seront ajoutées automatiquement (sans doublon)',
+      deleteTitle: 'Supprimer la dépense récurrente'
     },
     
     // Confirmations
@@ -294,7 +312,8 @@ export const translations = {
     sidebar: {
       dashboard: 'Dashboard',
       forecast: 'Forecast',
-      recurring: 'Recurring expenses'
+      recurring: 'Recurring expenses',
+      months: 'Months'
     },
     
     // Profile
@@ -355,7 +374,13 @@ export const translations = {
       addExpense: 'Add expense',
       viewForecast: 'View forecast',
       manageRecurring: 'Manage recurring',
-      spendingHistory: 'Spending history'
+      spendingHistory: 'Spending history',
+      overview: 'Overview of your finances',
+      fixedExpenses: 'Fixed expenses',
+      variableExpenses: 'Variable expenses',
+      noExpensesThisMonth: 'No expenses this month',
+      toReceiveSoon: 'To receive soon',
+      noPendingReimbursements: 'No pending reimbursements'
     },
     
     // Months
@@ -478,7 +503,18 @@ export const translations = {
       invalidDay: 'Invalid day (1-31)',
       cancelEdit: 'Cancel edit',
       descriptionPlaceholder: 'Description (e.g. Rent)',
-      dayLabel: 'Day'
+      dayLabel: 'Day',
+      pageTitle: 'Recurring Expenses',
+      pageDescription: 'Manage your monthly fixed expenses. These expenses can be applied automatically each month.',
+      templates: 'Expense templates',
+      addRecurringExpense: 'Add a recurring expense',
+      ofMonth: 'of month',
+      howToTitle: 'How to use recurring expenses?',
+      howTo1: 'Add your monthly fixed expenses (rent, subscriptions, etc.)',
+      howTo2: 'Navigate to a specific month',
+      howTo3: 'Click on "Recurring expenses" then "Apply to current month"',
+      howTo4: 'Expenses will be added automatically (without duplicates)',
+      deleteTitle: 'Delete recurring expense'
     },
     
     // Confirmations
