@@ -244,9 +244,16 @@ function Register() {
         </form>
 
         <div className="mt-6 text-center">
-          <Link to="/login" className="text-obsidian-link hover:text-obsidian-link-hover text-sm">
-            {t('register.hasAccount')} {t('register.login')}
-          </Link>
+          <p className="text-sm text-obsidian-text-muted mb-2">
+            {t('register.hasAccount')}
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="btn-secondary w-full"
+          >
+            {t('register.login')}
+          </button>
         </div>
       </div>
     </div>
