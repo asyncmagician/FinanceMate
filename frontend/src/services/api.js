@@ -175,6 +175,17 @@ class ApiService {
     });
   }
 
+  async getSalary() {
+    return this.request('/user/salary');
+  }
+
+  async updateSalary(salary) {
+    return this.request('/user/salary', {
+      method: 'PUT',
+      body: JSON.stringify({ salary }),
+    });
+  }
+
   async exportUserData(format = 'json') {
     return this.request(`/export/${format}`);
   }
@@ -192,6 +203,35 @@ class ApiService {
     }
     
     return response.text();
+  }
+
+  // Admin methods
+  async getAllUsers() {
+    return this.request('/admin/users');
+  }
+
+  async getUserById(id) {
+    return this.request(`/admin/users/${id}`);
+  }
+
+  async createUser(userData) {
+    return this.request('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async updateUser(id, userData) {
+    return this.request(`/admin/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async deleteUser(id) {
+    return this.request(`/admin/users/${id}`, {
+      method: 'DELETE',
+    });
   }
 }
 

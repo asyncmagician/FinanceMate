@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/api';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Sidebar({ open }) {
   const [months, setMonths] = useState({});
   const [expandedYears, setExpandedYears] = useState(new Set());
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const { year: currentYear, month: currentMonth } = useParams();
 
   useEffect(() => {
@@ -94,6 +96,15 @@ export default function Sidebar({ open }) {
           >
             {t('sidebar.recurring')}
           </button>
+          
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
+            >
+              {t('admin.title')}
+            </button>
+          )}
           
           <div className="pt-4">
             <h3 className="text-xs font-semibold text-obsidian-text-muted uppercase tracking-wider mb-2">
