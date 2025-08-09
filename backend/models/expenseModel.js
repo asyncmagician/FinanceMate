@@ -135,12 +135,37 @@ exports.findRecurringById = async (id) => {
 
 exports.createRecurring = async (recurringData) => {
   try {
-    const { user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date } = recurringData;
+    const { user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date, share_type, share_value, share_with } = recurringData;
     const [result] = await pool.execute(
-      'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [user_id, category_id, subcategory || null, description, amount, day_of_month || 1, start_date, end_date || null]
+      'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, share_type, share_value, share_with, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [user_id, category_id, subcategory || null, description, amount, share_type || 'none', share_value || null, share_with || null, day_of_month || 1, start_date, end_date || null]
     );
     return { id: result.insertId, ...recurringData };
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateRecurring = async (id, recurringData) => {
+  try {
+    const fields = [];
+    const values = [];
+    
+    Object.keys(recurringData).forEach(key => {
+      if (key !== 'id' && recurringData[key] !== undefined) {
+        fields.push(`${key} = ?`);
+        values.push(recurringData[key]);
+      }
+    });
+    
+    values.push(id);
+    
+    await pool.execute(
+      `UPDATE recurring_expenses SET ${fields.join(', ')} WHERE id = ?`,
+      values
+    );
+    
+    return exports.findRecurringById(id);
   } catch (error) {
     throw error;
   }
@@ -149,6 +174,24 @@ exports.createRecurring = async (recurringData) => {
 exports.deleteRecurring = async (id) => {
   try {
     await pool.execute('DELETE FROM recurring_expenses WHERE id = ?', [id]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.deleteByMonth = async (monthId) => {
+  try {
+    await pool.execute('DELETE FROM expenses WHERE month_id = ?', [monthId]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.deleteRecurringByUser = async (userId) => {
+  try {
+    await pool.execute('DELETE FROM recurring_expenses WHERE user_id = ?', [userId]);
     return true;
   } catch (error) {
     throw error;

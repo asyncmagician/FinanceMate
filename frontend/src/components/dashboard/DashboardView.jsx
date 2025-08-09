@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import {
   Chart as ChartJS,
@@ -22,6 +23,7 @@ ChartJS.register(
 );
 
 export default function DashboardView() {
+  const { t } = useLanguage();
   const [currentMonthData, setCurrentMonthData] = useState(null);
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState({});
@@ -107,9 +109,9 @@ export default function DashboardView() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-obsidian-text">Tableau de bord</h1>
+        <h1 className="text-3xl font-bold text-obsidian-text">{t('dashboard.title')}</h1>
         <p className="text-obsidian-text-muted mt-2">
-          Vue d'ensemble de vos finances
+          {t('dashboard.overview')}
         </p>
       </div>
 
@@ -117,11 +119,11 @@ export default function DashboardView() {
         
         <div className="card">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Mois actuel - {monthNames[currentMonth - 1]} {currentYear}
+            {t('dashboard.currentMonth')} - {monthNames[currentMonth - 1]} {currentYear}
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-obsidian-text-muted">Prévisionnel</span>
+              <span className="text-obsidian-text-muted">{t('dashboard.previsionnel')}</span>
               <span className={`font-bold ${
                 currentMonthData?.previsionnel >= 0 ? 'text-green-400' : 'text-red-400'
               }`}>
@@ -129,13 +131,13 @@ export default function DashboardView() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-obsidian-text-muted">Dépenses fixes</span>
+              <span className="text-obsidian-text-muted">{t('dashboard.fixedExpenses')}</span>
               <span className="text-red-400">
                 {formatCurrency(currentMonthData?.fixed_total || 0)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-obsidian-text-muted">Dépenses variables</span>
+              <span className="text-obsidian-text-muted">{t('dashboard.variableExpenses')}</span>
               <span className="text-orange-400">
                 {formatCurrency(currentMonthData?.variable_total || 0)}
               </span>
@@ -145,7 +147,7 @@ export default function DashboardView() {
                 onClick={() => navigate(`/month/${currentYear}/${currentMonth}`)}
                 className="btn-primary w-full"
               >
-                Voir le mois complet
+                {t('dashboard.viewFullMonth', 'Voir le mois complet')}
               </button>
             </div>
           </div>
@@ -153,7 +155,7 @@ export default function DashboardView() {
 
         <div className="card">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Dernières dépenses
+            {t('dashboard.recentExpenses')}
           </h3>
           <div className="space-y-2">
             {recentExpenses.length > 0 ? (
@@ -174,7 +176,7 @@ export default function DashboardView() {
               ))
             ) : (
               <p className="text-obsidian-text-muted text-sm">
-                Aucune dépense ce mois-ci
+                {t('dashboard.noExpensesThisMonth')}
               </p>
             )}
           </div>
@@ -182,7 +184,7 @@ export default function DashboardView() {
 
         <div className="card">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Historique des dépenses
+            {t('dashboard.spendingHistory')}
           </h3>
           {monthlyTotals.length > 0 && (
             <div className="h-40">
@@ -190,7 +192,7 @@ export default function DashboardView() {
                 data={{
                   labels: monthlyTotals.map(({ month }) => monthNames[month - 1].substring(0, 3)),
                   datasets: [{
-                    label: 'Dépenses',
+                    label: t('expenses.title'),
                     data: monthlyTotals.map(({ total }) => total),
                     backgroundColor: [
                       'rgba(248, 113, 113, 0.8)',
@@ -263,7 +265,7 @@ export default function DashboardView() {
 
         <div className="card lg:col-span-2">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Actions rapides
+            {t('dashboard.quickActions')}
           </h3>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -274,7 +276,7 @@ export default function DashboardView() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M12 4v16m8-8H4" />
               </svg>
-              Ajouter une dépense
+              {t('dashboard.addExpense')}
             </button>
             <button
               onClick={() => navigate('/forecast')}
@@ -284,14 +286,14 @@ export default function DashboardView() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              Voir les prévisions
+              {t('dashboard.viewForecast')}
             </button>
           </div>
         </div>
 
         <div className="card">
           <h3 className="text-lg font-semibold text-obsidian-text mb-4">
-            Remboursements en attente
+            {t('dashboard.pendingReimbursements')}
           </h3>
           {currentMonthData?.reimbursements_pending > 0 ? (
             <div>
@@ -299,12 +301,12 @@ export default function DashboardView() {
                 {formatCurrency(currentMonthData.reimbursements_pending)}
               </p>
               <p className="text-sm text-obsidian-text-muted mt-2">
-                À recevoir prochainement
+                {t('dashboard.toReceiveSoon')}
               </p>
             </div>
           ) : (
             <p className="text-obsidian-text-muted text-sm">
-              Aucun remboursement en attente
+              {t('dashboard.noPendingReimbursements', 'Aucun remboursement en attente')}
             </p>
           )}
         </div>

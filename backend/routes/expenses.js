@@ -104,6 +104,20 @@ router.post('/recurring',
   handleValidationErrors,
   expenseController.createRecurringExpense
 );
+
+router.put('/recurring/:id',
+  param('id').isInt(),
+  body('description').optional().trim().isLength({ min: 1, max: 200 }),
+  body('amount').optional().isFloat({ min: 0.01, max: 999999 }),
+  body('subcategory').optional().trim().isLength({ max: 100 }),
+  body('day_of_month').optional().isInt({ min: 1, max: 31 }),
+  body('share_type').optional().isIn(['none', 'percentage', 'amount', 'equal']),
+  body('share_value').optional().isFloat({ min: 0 }),
+  body('share_with').optional().trim().isLength({ max: 255 }),
+  handleValidationErrors,
+  expenseController.updateRecurringExpense
+);
+
 router.delete('/recurring/:id', expenseController.deleteRecurringExpense);
 
 module.exports = router;

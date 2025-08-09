@@ -26,12 +26,12 @@ exports.findById = async (id) => {
 
 exports.create = async (userData) => {
   try {
-    const { email, password, first_name, last_name, role } = userData;
+    const { email, password, firstName, lastName, role } = userData;
     const [result] = await pool.execute(
       'INSERT INTO users (email, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?)',
-      [email, password, first_name, last_name, role || 'user']
+      [email, password, firstName, lastName, role || 'user']
     );
-    return { id: result.insertId, ...userData };
+    return { id: result.insertId, email, first_name: firstName, last_name: lastName, role: role || 'user' };
   } catch (error) {
     throw error;
   }
@@ -57,6 +57,27 @@ exports.update = async (id, userData) => {
     );
     
     return exports.findById(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updatePassword = async (id, hashedPassword) => {
+  try {
+    await pool.execute(
+      'UPDATE users SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.deleteById = async (id) => {
+  try {
+    await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+    return true;
   } catch (error) {
     throw error;
   }

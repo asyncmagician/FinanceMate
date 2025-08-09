@@ -119,6 +119,28 @@ exports.createRecurringExpense = async (req, res) => {
   }
 };
 
+exports.updateRecurringExpense = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    
+    const recurring = await expenseModel.findRecurringById(id);
+    if (!recurring) {
+      return res.status(404).json({ error: 'Recurring expense not found' });
+    }
+    
+    if (recurring.user_id !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    const updated = await expenseModel.updateRecurring(id, req.body);
+    res.json(updated);
+  } catch (error) {
+    console.error('Update recurring expense error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 exports.deleteRecurringExpense = async (req, res) => {
   try {
     const { id } = req.params;

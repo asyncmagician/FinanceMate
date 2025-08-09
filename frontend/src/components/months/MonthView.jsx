@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../services/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 import ExpenseListGrouped from '../expenses/ExpenseListGrouped';
 import ExpenseForm from '../expenses/ExpenseForm';
 import PrevisionnelCard from './PrevisionnelCard';
@@ -8,6 +9,7 @@ import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
 
 export default function MonthView() {
   const { year, month } = useParams();
+  const { t } = useLanguage();
   const [monthData, setMonthData] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [previsionnel, setPrevisionnel] = useState(null);
@@ -16,8 +18,10 @@ export default function MonthView() {
   const [showRecurringManager, setShowRecurringManager] = useState(false);
 
   const monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    t('months.january'), t('months.february'), t('months.march'),
+    t('months.april'), t('months.may'), t('months.june'),
+    t('months.july'), t('months.august'), t('months.september'),
+    t('months.october'), t('months.november'), t('months.december')
   ];
 
   useEffect(() => {
@@ -58,21 +62,33 @@ export default function MonthView() {
 
   const handleUpdateExpense = async (id, updates) => {
     try {
+      // Optimistically update the UI
+      setExpenses(prevExpenses => 
+        prevExpenses.map(expense => 
+          expense.id === id ? { ...expense, ...updates } : expense
+        )
+      );
+      
+      // Then update the backend
       await api.updateExpense(id, updates);
-      await loadMonthData();
+      
+      // Only reload if it's a significant update (amount changes affect totals)
+      if (updates.amount !== undefined) {
+        await loadMonthData();
+      }
     } catch (err) {
       console.error('Failed to update expense:', err);
+      // Reload on error to restore correct state
+      await loadMonthData();
     }
   };
 
   const handleDeleteExpense = async (id) => {
-    if (confirm('Delete this expense?')) {
-      try {
-        await api.deleteExpense(id);
-        await loadMonthData();
-      } catch (err) {
-        console.error('Failed to delete expense:', err);
-      }
+    try {
+      await api.deleteExpense(id);
+      await loadMonthData();
+    } catch (err) {
+      console.error('Failed to delete expense:', err);
     }
   };
 
@@ -143,7 +159,7 @@ export default function MonthView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-obsidian-text-muted">Chargement...</div>
+        <div className="text-obsidian-text-muted">{t('loading')}</div>
       </div>
     );
   }
@@ -166,29 +182,29 @@ export default function MonthView() {
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-obsidian-text">Dépenses</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text">{t('expenses.title')}</h2>
           <div className="flex gap-2">
             <button
               onClick={() => setShowRecurringManager(true)}
               className="btn-secondary p-2 sm:px-4"
-              title="Dépenses récurrentes"
+              title={t('expenses.recurring')}
             >
               <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="hidden sm:inline">Dépenses récurrentes</span>
+              <span className="hidden sm:inline">{t('expenses.recurring')}</span>
             </button>
             <button
               onClick={() => setShowAddExpense(true)}
               className="btn-primary p-2 sm:px-4"
-              title="Ajouter une dépense"
+              title={t('expenses.add')}
             >
               <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M12 4v16m8-8H4" />
               </svg>
-              <span className="hidden sm:inline">Ajouter une dépense</span>
+              <span className="hidden sm:inline">{t('expenses.add')}</span>
             </button>
           </div>
         </div>

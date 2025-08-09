@@ -103,3 +103,16 @@ exports.update = async (id, monthData) => {
     throw error;
   }
 };
+
+exports.getByUser = async (userId) => {
+  return exports.getAllByUser(userId);
+};
+
+exports.deleteByUser = async (userId) => {
+  try {
+    await pool.execute('DELETE FROM months WHERE user_id = ?', [userId]);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};

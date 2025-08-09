@@ -31,6 +31,11 @@ class ApiService {
     const response = await fetch(url, config);
     
     if (response.status === 401) {
+      // Don't logout for password change endpoint
+      if (endpoint.includes('/change-password')) {
+        const error = await response.json().catch(() => ({ error: 'Mot de passe actuel incorrect' }));
+        throw new Error(error.error || 'Mot de passe actuel incorrect');
+      }
       // Only redirect if we're not already on the login page
       if (!window.location.pathname.includes('/login')) {
         this.setToken(null);
@@ -45,6 +50,14 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  async register(email, password, firstName, lastName) {
+    const data = await this.request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, firstName, lastName }),
+    });
+    return data;
   }
 
   async login(email, password) {
@@ -130,8 +143,34 @@ class ApiService {
     });
   }
 
+  async updateRecurringExpense(id, expense) {
+    return this.request(`/expenses/recurring/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(expense),
+    });
+  }
+
   async deleteRecurringExpense(id) {
     return this.request(`/expenses/recurring/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async changePassword(currentPassword, newPassword) {
+    return this.request('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  }
+
+  async deleteUserData() {
+    return this.request('/user/data', {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteAccount() {
+    return this.request('/user/account', {
       method: 'DELETE',
     });
   }
