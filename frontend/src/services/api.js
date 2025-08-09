@@ -130,6 +130,13 @@ class ApiService {
     });
   }
 
+  async updateRecurringExpense(id, expense) {
+    return this.request(`/expenses/recurring/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(expense),
+    });
+  }
+
   async deleteRecurringExpense(id) {
     return this.request(`/expenses/recurring/${id}`, {
       method: 'DELETE',

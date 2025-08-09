@@ -1,8 +1,9 @@
-exports.calculatePrevisionnel = (startingBalance, expenses) => {
+exports.calculatePrevisionnel = (startingBalance, expenses, recurringExpenses = []) => {
   let fixedTotal = 0;
   let variableTotal = 0;
   let reimbursementsReceived = 0;
   let reimbursementsPending = 0;
+  let sharedReimbursements = 0;
   
   expenses.forEach(expense => {
     const amount = parseFloat(expense.amount);
@@ -20,8 +21,26 @@ exports.calculatePrevisionnel = (startingBalance, expenses) => {
     }
   });
   
+  // Calculate shared expenses from recurring
+  recurringExpenses.forEach(recurring => {
+    if (recurring.share_type && recurring.share_type !== 'none') {
+      const amount = parseFloat(recurring.amount);
+      let reimbursement = 0;
+      
+      if (recurring.share_type === 'equal') {
+        reimbursement = amount / 2;
+      } else if (recurring.share_type === 'percentage' && recurring.share_value) {
+        reimbursement = amount * (parseFloat(recurring.share_value) / 100);
+      } else if (recurring.share_type === 'amount' && recurring.share_value) {
+        reimbursement = parseFloat(recurring.share_value);
+      }
+      
+      sharedReimbursements += reimbursement;
+    }
+  });
+  
   const totalExpenses = fixedTotal + variableTotal;
-  const previsionnel = parseFloat(startingBalance) - totalExpenses + reimbursementsReceived;
+  const previsionnel = parseFloat(startingBalance) - totalExpenses + reimbursementsReceived + sharedReimbursements;
   
   return {
     fixed_total: fixedTotal,
@@ -29,6 +48,7 @@ exports.calculatePrevisionnel = (startingBalance, expenses) => {
     total_expenses: totalExpenses,
     reimbursements_received: reimbursementsReceived,
     reimbursements_pending: reimbursementsPending,
+    shared_reimbursements: sharedReimbursements,
     previsionnel: previsionnel,
     previsionnel_with_pending: previsionnel + reimbursementsPending
   };

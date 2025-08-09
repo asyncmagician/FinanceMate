@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import ShareExpenseModal from './ShareExpenseModal';
 
 export default function RecurringExpenseManager({ onClose, onApply }) {
   const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
     category_id: 1,
     subcategory: '',
     day_of_month: 1,
-    start_date: new Date().toISOString().split('T')[0]
+    start_date: new Date().toISOString().split('T')[0],
+    share_type: 'none',
+    share_value: '',
+    share_with: ''
   });
   const [errors, setErrors] = useState({});
 
