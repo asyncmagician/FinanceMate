@@ -58,10 +58,24 @@ export default function MonthView() {
 
   const handleUpdateExpense = async (id, updates) => {
     try {
+      // Optimistically update the UI
+      setExpenses(prevExpenses => 
+        prevExpenses.map(expense => 
+          expense.id === id ? { ...expense, ...updates } : expense
+        )
+      );
+      
+      // Then update the backend
       await api.updateExpense(id, updates);
-      await loadMonthData();
+      
+      // Only reload if it's a significant update (amount changes affect totals)
+      if (updates.amount !== undefined) {
+        await loadMonthData();
+      }
     } catch (err) {
       console.error('Failed to update expense:', err);
+      // Reload on error to restore correct state
+      await loadMonthData();
     }
   };
 
