@@ -1,12 +1,46 @@
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function TermsOfService() {
   const { language } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const lastUpdated = language === 'en' ? 'August 9th, 2025' : '9 août 2025';
+
+  const Header = () => (
+    <header className="bg-obsidian-bg-secondary border-b border-obsidian-border px-6 py-4 mb-6">
+      <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-obsidian-text-muted hover:text-obsidian-text flex items-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          {language === 'en' ? 'Back' : 'Retour'}
+        </button>
+        
+        <div className="flex gap-4">
+          {user ? (
+            <Link to="/" className="text-obsidian-accent hover:underline">
+              {language === 'en' ? 'Dashboard' : 'Tableau de bord'}
+            </Link>
+          ) : (
+            <Link to="/login" className="text-obsidian-accent hover:underline">
+              {language === 'en' ? 'Sign in' : 'Se connecter'}
+            </Link>
+          )}
+        </div>
+      </div>
+    </header>
+  );
 
   if (language === 'en') {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="min-h-screen bg-obsidian-bg">
+        <Header />
+        <div className="max-w-4xl mx-auto p-6">
         <h1 className="text-3xl font-bold text-obsidian-text mb-6">Terms of Service</h1>
         <p className="text-obsidian-text-muted mb-4">Last updated: {lastUpdated}</p>
 
@@ -136,13 +170,25 @@ export default function TermsOfService() {
             </a>
           </p>
         </section>
+        </div>
+        
+        <footer className="mt-12 py-6 border-t border-obsidian-border">
+          <div className="max-w-4xl mx-auto px-6 text-center text-obsidian-text-muted text-sm">
+            <Link to="/privacy" className="text-obsidian-accent hover:underline mr-4">
+              Privacy Policy
+            </Link>
+            <span>© 2025 FinanceMate</span>
+          </div>
+        </footer>
       </div>
     );
   }
 
   // French version
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-obsidian-bg">
+      <Header />
+      <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-obsidian-text mb-6">Conditions d'Utilisation</h1>
       <p className="text-obsidian-text-muted mb-4">Dernière mise à jour : {lastUpdated}</p>
 
@@ -272,6 +318,16 @@ export default function TermsOfService() {
           </a>
         </p>
       </section>
+      </div>
+      
+      <footer className="mt-12 py-6 border-t border-obsidian-border">
+        <div className="max-w-4xl mx-auto px-6 text-center text-obsidian-text-muted text-sm">
+          <Link to="/privacy" className="text-obsidian-accent hover:underline mr-4">
+            Politique de confidentialité
+          </Link>
+          <span>© 2025 FinanceMate</span>
+        </div>
+      </footer>
     </div>
   );
 }
