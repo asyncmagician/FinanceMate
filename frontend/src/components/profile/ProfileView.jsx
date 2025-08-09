@@ -220,13 +220,63 @@ export default function ProfileView() {
         <div className="card">
           <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.dataManagement')}</h2>
           <div className="space-y-3">
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await api.exportUserData('json');
+                    const blob = new Blob([JSON.stringify(response, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `financemate-export-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    setSuccessMessage(t('profile.exportSuccess', 'Données exportées avec succès'));
+                    setTimeout(() => setSuccessMessage(''), 3000);
+                  } catch (err) {
+                    setErrors({ general: t('profile.exportError', 'Erreur lors de l\'export des données') });
+                  }
+                }}
+                className="btn-secondary"
+                title={t('profile.exportJsonTooltip', 'Exporter toutes vos données au format JSON')}
+              >
+                {t('profile.exportJson', 'Exporter (JSON)')}
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    const csvData = await api.exportUserDataCSV();
+                    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `financemate-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    setSuccessMessage(t('profile.exportSuccess', 'Données exportées avec succès'));
+                    setTimeout(() => setSuccessMessage(''), 3000);
+                  } catch (err) {
+                    setErrors({ general: t('profile.exportError', 'Erreur lors de l\'export des données') });
+                  }
+                }}
+                className="btn-secondary"
+                title={t('profile.exportCsvTooltip', 'Exporter vos dépenses au format CSV')}
+              >
+                {t('profile.exportCsv', 'Exporter (CSV)')}
+              </button>
+            </div>
             <button
               onClick={handleImport}
               disabled={true}
               className="btn-secondary opacity-50 cursor-not-allowed"
               title="Fonctionnalité bientôt disponible"
             >
-              Importer des données (bientôt disponible)
+              {t('profile.importData', 'Importer des données (bientôt disponible)')}
             </button>
             <div className="pt-3 border-t border-obsidian-border">
               <button

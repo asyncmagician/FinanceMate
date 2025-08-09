@@ -2,7 +2,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function PrivacyPolicy() {
   const { language } = useLanguage();
-  const lastUpdated = '09/08/2025';
+  const lastUpdated = language === 'en' ? 'August 9th, 2025' : '9 août 2025';
 
   if (language === 'en') {
     return (
@@ -137,12 +137,16 @@ export default function PrivacyPolicy() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Contact Information</h2>
           <p className="text-obsidian-text-muted mb-4">
-            For questions about this Privacy Policy or to exercise your rights, contact:
+            For questions about this Privacy Policy or to exercise your rights, please contact:
           </p>
           <p className="text-obsidian-text-muted">
-            Antony BARTOLOMUCCI<br />
-            Email: privacy@financemate.app<br />
-            Data Protection Officer
+            Data Controller: Antony BARTOLOMUCCI<br />
+            <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+              LinkedIn Profile
+            </a><br />
+            <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+              GitHub: @asyncmagician
+            </a>
           </p>
         </section>
       </div>
@@ -282,12 +286,16 @@ export default function PrivacyPolicy() {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Coordonnées</h2>
         <p className="text-obsidian-text-muted mb-4">
-          Pour des questions sur cette Politique de Confidentialité ou pour exercer vos droits, contactez :
+          Pour des questions sur cette Politique de Confidentialité ou pour exercer vos droits, veuillez utiliser le formulaire de contact dans les paramètres de votre profil ou nous contacter via :
         </p>
         <p className="text-obsidian-text-muted">
-          Antony BARTOLOMUCCI<br />
-          Email : privacy@financemate.app<br />
-          Délégué à la Protection des Données
+          Responsable du traitement : Antony BARTOLOMUCCI<br />
+          <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+            Profil LinkedIn
+          </a><br />
+          <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+            GitHub : @asyncmagician
+          </a>
         </p>
       </section>
     </div>

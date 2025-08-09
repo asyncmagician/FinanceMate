@@ -77,6 +77,12 @@ export const translations = {
       newPasswordRequired: 'Nouveau mot de passe requis',
       
       dataManagement: 'Gestion des données',
+      exportJson: 'Exporter (JSON)',
+      exportCsv: 'Exporter (CSV)',
+      exportJsonTooltip: 'Exporter toutes vos données au format JSON',
+      exportCsvTooltip: 'Exporter vos dépenses au format CSV',
+      exportSuccess: 'Données exportées avec succès',
+      exportError: 'Erreur lors de l\'export des données',
       importData: 'Importer des données (bientôt disponible)',
       deleteAllData: 'Supprimer toutes mes données',
       
@@ -260,6 +266,29 @@ export const translations = {
       deleteExpense: 'Voulez-vous vraiment supprimer',
       deleteData: 'Êtes-vous sûr de vouloir supprimer toutes vos données ? Cette action supprimera tous vos mois, dépenses et dépenses récurrentes, mais conservera votre compte.',
       deleteAccount: 'Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et supprimera toutes vos données.'
+    },
+    
+    // Cookies
+    cookies: {
+      message: 'Nous utilisons des cookies essentiels pour le fonctionnement de l\'application (authentification et préférences). Ces cookies sont nécessaires et ne peuvent pas être désactivés.',
+      learnMore: 'En savoir plus',
+      essentialOnly: 'Essentiels uniquement',
+      accept: 'Accepter'
+    },
+    
+    // Registration
+    register: {
+      acceptTerms: 'J\'accepte les ',
+      termsOfService: 'Conditions d\'Utilisation',
+      and: ' et la ',
+      privacyPolicy: 'Politique de Confidentialité'
+    },
+    
+    // Footer
+    footer: {
+      allRightsReserved: 'Tous droits réservés',
+      privacy: 'Confidentialité',
+      terms: 'Conditions'
     }
   },
   
@@ -341,6 +370,12 @@ export const translations = {
       newPasswordRequired: 'New password required',
       
       dataManagement: 'Data management',
+      exportJson: 'Export (JSON)',
+      exportCsv: 'Export (CSV)',
+      exportJsonTooltip: 'Export all your data in JSON format',
+      exportCsvTooltip: 'Export your expenses in CSV format',
+      exportSuccess: 'Data exported successfully',
+      exportError: 'Error exporting data',
       importData: 'Import data (coming soon)',
       deleteAllData: 'Delete all my data',
       
@@ -524,6 +559,29 @@ export const translations = {
       deleteExpense: 'Are you sure you want to delete',
       deleteData: 'Are you sure you want to delete all your data? This will delete all your months, expenses and recurring expenses, but keep your account.',
       deleteAccount: 'Are you sure you want to permanently delete your account? This action is irreversible and will delete all your data.'
+    },
+    
+    // Cookies
+    cookies: {
+      message: 'We use essential cookies for the application to function (authentication and preferences). These cookies are necessary and cannot be disabled.',
+      learnMore: 'Learn more',
+      essentialOnly: 'Essential only',
+      accept: 'Accept'
+    },
+    
+    // Registration  
+    register: {
+      acceptTerms: 'I accept the ',
+      termsOfService: 'Terms of Service',
+      and: ' and the ',
+      privacyPolicy: 'Privacy Policy'
+    },
+    
+    // Footer
+    footer: {
+      allRightsReserved: 'All rights reserved',
+      privacy: 'Privacy',
+      terms: 'Terms'
     }
   }
 };

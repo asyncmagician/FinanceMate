@@ -2,7 +2,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function TermsOfService() {
   const { language } = useLanguage();
-  const lastUpdated = '09/08/2025';
+  const lastUpdated = language === 'en' ? 'August 9th, 2025' : '9 août 2025';
 
   if (language === 'en') {
     return (
@@ -128,7 +128,12 @@ export default function TermsOfService() {
           <p className="text-obsidian-text-muted">
             For questions about these Terms, please contact:<br />
             Antony BARTOLOMUCCI<br />
-            Email: legal@financemate.app
+            <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+              LinkedIn Profile
+            </a><br />
+            <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+              GitHub: @asyncmagician
+            </a>
           </p>
         </section>
       </div>
@@ -259,7 +264,12 @@ export default function TermsOfService() {
         <p className="text-obsidian-text-muted">
           Pour des questions sur ces Conditions, veuillez contacter :<br />
           Antony BARTOLOMUCCI<br />
-          Email : legal@financemate.app
+          <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+            Profil LinkedIn
+          </a><br />
+          <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
+            GitHub : @asyncmagician
+          </a>
         </p>
       </section>
     </div>
