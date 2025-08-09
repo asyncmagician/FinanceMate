@@ -37,20 +37,20 @@ function Register() {
 
     setLoading(true);
     try {
-      const response = await api.post('/auth/register', {
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName
-      });
+      const response = await api.register(
+        formData.email,
+        formData.password,
+        formData.firstName,
+        formData.lastName
+      );
 
-      if (response.data.success) {
+      if (response.success) {
         navigate('/login', { 
           state: { message: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.' }
         });
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de la création du compte');
+      setError(err.message || 'Erreur lors de la création du compte');
     } finally {
       setLoading(false);
     }
