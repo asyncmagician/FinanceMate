@@ -107,7 +107,28 @@ export const translations = {
       deleteAllDataTitle: 'Supprimer toutes les données',
       deleteDataButton: 'Supprimer les données',
       deleteAccountTitle: 'Supprimer le compte',
-      deleteAccountButton: 'Supprimer mon compte'
+      deleteAccountButton: 'Supprimer mon compte',
+      
+      // Salary section
+      salary: 'Salaire',
+      salaryInfo: 'Informations salariales',
+      currentSalary: 'Salaire actuel',
+      setSalary: 'Définir le salaire',
+      updateSalary: 'Mettre à jour le salaire',
+      salaryAmount: 'Montant du salaire',
+      salaryPlaceholder: 'Entrez votre salaire mensuel',
+      salaryOptional: 'Cette information est facultative et chiffrée',
+      salaryPrivacy: 'Seul vous pouvez voir cette information',
+      removeSalary: 'Supprimer le salaire',
+      salaryUpdated: 'Salaire mis à jour avec succès',
+      salaryRemoved: 'Salaire supprimé avec succès',
+      salaryError: 'Erreur lors de la mise à jour du salaire',
+      salaryInvalid: 'Le salaire doit être un nombre valide',
+      salaryNegative: 'Le salaire ne peut pas être négatif',
+      salaryTooHigh: 'Le salaire est trop élevé',
+      noSalarySet: 'Aucun salaire défini',
+      euroSymbol: '€',
+      perMonth: 'par mois'
     },
     
     // Dashboard
@@ -187,6 +208,7 @@ export const translations = {
       amountPlaceholder: 'Montant en EUR',
       customSubcategory: 'Nom personnalisé',
       customSubcategoryPlaceholder: 'Entrez le nom de la sous-catégorie',
+      alreadyDeducted: 'Déjà déduit de la banque',
       // Subcategories
       housing: 'Logement',
       car: 'Voiture',
@@ -209,6 +231,16 @@ export const translations = {
       amountTooSmall: 'Le montant doit être supérieur à 0',
       amountTooLarge: 'Le montant est trop élevé',
       subcategoryRequired: 'Le nom de la sous-catégorie est requis'
+    },
+
+    // Reimbursement
+    reimbursement: {
+      add: 'Ajouter un remboursement',
+      addTitle: 'Ajouter un remboursement',
+      descriptionPlaceholder: 'Description du remboursement',
+      markAsReceived: 'Marquer comme reçu',
+      receivedInfo: 'Le remboursement sera ajouté au prévisionnel final',
+      pendingInfo: 'Le remboursement sera affiché entre parenthèses (+montant)'
     },
     
     // Forecast
@@ -296,6 +328,53 @@ export const translations = {
       allRightsReserved: 'Tous droits réservés',
       privacy: 'Confidentialité',
       terms: 'Conditions'
+    },
+    
+    // Administration
+    admin: {
+      title: 'Administration',
+      users: 'Gestion des utilisateurs',
+      userList: 'Liste des utilisateurs',
+      createUser: 'Créer un utilisateur',
+      editUser: 'Modifier l\'utilisateur',
+      deleteUser: 'Supprimer l\'utilisateur',
+      userDetails: 'Détails de l\'utilisateur',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      email: 'Email',
+      role: 'Rôle',
+      createdAt: 'Compte créé le',
+      lastLogin: 'Dernière connexion',
+      neverLoggedIn: 'Jamais connecté',
+      userRole: 'Utilisateur',
+      adminRole: 'Administrateur',
+      actions: 'Actions',
+      edit: 'Modifier',
+      delete: 'Supprimer',
+      save: 'Enregistrer',
+      cancel: 'Annuler',
+      password: 'Mot de passe',
+      confirmPassword: 'Confirmer le mot de passe',
+      changePassword: 'Changer le mot de passe',
+      leaveEmptyToKeepCurrent: 'Laisser vide pour conserver le mot de passe actuel',
+      userCreated: 'Utilisateur créé avec succès',
+      userUpdated: 'Utilisateur modifié avec succès',
+      userDeleted: 'Utilisateur supprimé avec succès',
+      confirmDeleteUser: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée et supprimera toutes ses données.',
+      cannotDeleteSelf: 'Vous ne pouvez pas supprimer votre propre compte depuis cette interface',
+      emailRequired: 'L\'email est requis',
+      emailInvalid: 'Veuillez saisir une adresse email valide',
+      firstNameRequired: 'Le prénom est requis',
+      lastNameRequired: 'Le nom est requis',
+      passwordRequired: 'Le mot de passe est requis pour les nouveaux utilisateurs',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 8 caractères',
+      passwordTooWeak: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      roleRequired: 'Le rôle est requis',
+      emailAlreadyExists: 'Cette adresse email est déjà utilisée',
+      loadingUsers: 'Chargement des utilisateurs...',
+      noUsers: 'Aucun utilisateur trouvé',
+      totalUsers: 'Total des utilisateurs'
     }
   },
   
@@ -407,7 +486,28 @@ export const translations = {
       deleteAllDataTitle: 'Delete all data',
       deleteDataButton: 'Delete data',
       deleteAccountTitle: 'Delete account',
-      deleteAccountButton: 'Delete my account'
+      deleteAccountButton: 'Delete my account',
+      
+      // Salary section
+      salary: 'Salary',
+      salaryInfo: 'Salary information',
+      currentSalary: 'Current salary',
+      setSalary: 'Set salary',
+      updateSalary: 'Update salary',
+      salaryAmount: 'Salary amount',
+      salaryPlaceholder: 'Enter your monthly salary',
+      salaryOptional: 'This information is optional and encrypted',
+      salaryPrivacy: 'Only you can see this information',
+      removeSalary: 'Remove salary',
+      salaryUpdated: 'Salary updated successfully',
+      salaryRemoved: 'Salary removed successfully',
+      salaryError: 'Error updating salary',
+      salaryInvalid: 'Salary must be a valid number',
+      salaryNegative: 'Salary cannot be negative',
+      salaryTooHigh: 'Salary is too high',
+      noSalarySet: 'No salary set',
+      euroSymbol: '€',
+      perMonth: 'per month'
     },
     
     // Dashboard
@@ -487,6 +587,7 @@ export const translations = {
       amountPlaceholder: 'Amount in EUR',
       customSubcategory: 'Custom name',
       customSubcategoryPlaceholder: 'Enter subcategory name',
+      alreadyDeducted: 'Already deducted from bank',
       // Subcategories
       housing: 'Housing',
       car: 'Car',
@@ -509,6 +610,16 @@ export const translations = {
       amountTooSmall: 'Amount must be greater than 0',
       amountTooLarge: 'Amount is too large',
       subcategoryRequired: 'Subcategory name is required'
+    },
+
+    // Reimbursement
+    reimbursement: {
+      add: 'Add reimbursement',
+      addTitle: 'Add reimbursement',
+      descriptionPlaceholder: 'Reimbursement description',
+      markAsReceived: 'Mark as received',
+      receivedInfo: 'The reimbursement will be added to the final previsionnel',
+      pendingInfo: 'The reimbursement will be shown in parentheses (+amount)'
     },
     
     // Forecast
@@ -596,6 +707,53 @@ export const translations = {
       allRightsReserved: 'All rights reserved',
       privacy: 'Privacy',
       terms: 'Terms'
+    },
+    
+    // Administration
+    admin: {
+      title: 'Administration',
+      users: 'User management',
+      userList: 'User list',
+      createUser: 'Create user',
+      editUser: 'Edit user',
+      deleteUser: 'Delete user',
+      userDetails: 'User details',
+      firstName: 'First name',
+      lastName: 'Last name',
+      email: 'Email',
+      role: 'Role',
+      createdAt: 'Account created',
+      lastLogin: 'Last login',
+      neverLoggedIn: 'Never logged in',
+      userRole: 'User',
+      adminRole: 'Administrator',
+      actions: 'Actions',
+      edit: 'Edit',
+      delete: 'Delete',
+      save: 'Save',
+      cancel: 'Cancel',
+      password: 'Password',
+      confirmPassword: 'Confirm password',
+      changePassword: 'Change password',
+      leaveEmptyToKeepCurrent: 'Leave empty to keep current password',
+      userCreated: 'User created successfully',
+      userUpdated: 'User updated successfully',
+      userDeleted: 'User deleted successfully',
+      confirmDeleteUser: 'Are you sure you want to delete this user? This action cannot be undone and will delete all their data.',
+      cannotDeleteSelf: 'You cannot delete your own account from this interface',
+      emailRequired: 'Email is required',
+      emailInvalid: 'Please enter a valid email address',
+      firstNameRequired: 'First name is required',
+      lastNameRequired: 'Last name is required',
+      passwordRequired: 'Password is required for new users',
+      passwordTooShort: 'Password must be at least 8 characters',
+      passwordTooWeak: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+      passwordMismatch: 'Passwords do not match',
+      roleRequired: 'Role is required',
+      emailAlreadyExists: 'This email address is already in use',
+      loadingUsers: 'Loading users...',
+      noUsers: 'No users found',
+      totalUsers: 'Total users'
     }
   }
 };

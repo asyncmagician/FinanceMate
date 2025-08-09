@@ -215,7 +215,7 @@ export default function ExpenseForm({ onSubmit, onClose }) {
               onChange={(e) => setFormData({ ...formData, is_deducted: e.target.checked })}
               className="rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
             />
-            <span className="text-sm text-obsidian-text">{t('expenses.alreadyDeducted', 'Déjà déduit de la banque')}</span>
+            <span className="text-sm text-obsidian-text">{t('expenses.alreadyDeducted')}</span>
           </label>
 
           <div className="flex gap-3">
