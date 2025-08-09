@@ -40,6 +40,13 @@ export const translations = {
       registrationError: 'Erreur lors de la création du compte'
     },
     
+    // Sidebar
+    sidebar: {
+      dashboard: 'Tableau de bord',
+      forecast: 'Prévisions',
+      recurring: 'Dépenses récurrentes'
+    },
+    
     // Profile
     profile: {
       title: 'Profil',
@@ -59,6 +66,9 @@ export const translations = {
       passwordChanged: 'Mot de passe modifié avec succès',
       wrongPassword: 'Mot de passe actuel incorrect',
       passwordsDontMatch: 'Les nouveaux mots de passe ne correspondent pas',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+      passwordRequired: 'Mot de passe actuel requis',
+      newPasswordRequired: 'Nouveau mot de passe requis',
       
       dataManagement: 'Gestion des données',
       importData: 'Importer des données (bientôt disponible)',
@@ -109,6 +119,15 @@ export const translations = {
       december: 'Décembre'
     },
     
+    // Previsionnel
+    previsionnel: {
+      title: 'Prévisionnel',
+      startingBalance: 'Solde de départ',
+      update: 'Mettre à jour',
+      updateBalance: 'Mettre à jour le solde',
+      formula: 'Calcul: Solde de départ - Dépenses fixes - Dépenses variables + Remboursements'
+    },
+    
     // Expenses
     expenses: {
       title: 'Dépenses',
@@ -123,12 +142,19 @@ export const translations = {
       amount: 'Montant',
       category: 'Catégorie',
       subcategory: 'Sous-catégorie',
+      subcategoryOther: 'Autre',
       date: 'Date',
+      day: 'Jour',
       deducted: 'Déduit',
       received: 'Reçu',
       pending: 'En attente',
       noExpenses: 'Aucune dépense pour ce mois',
-      total: 'Total'
+      total: 'Total',
+      addExpenseTitle: 'Ajouter une dépense',
+      descriptionPlaceholder: 'Description de la dépense',
+      amountPlaceholder: 'Montant en EUR',
+      customSubcategory: 'Nom personnalisé',
+      customSubcategoryPlaceholder: 'Entrez le nom de la sous-catégorie'
     },
     
     // Forecast
@@ -204,6 +230,13 @@ export const translations = {
       registrationError: 'Error creating account'
     },
     
+    // Sidebar
+    sidebar: {
+      dashboard: 'Dashboard',
+      forecast: 'Forecast',
+      recurring: 'Recurring expenses'
+    },
+    
     // Profile
     profile: {
       title: 'Profile',
@@ -223,6 +256,9 @@ export const translations = {
       passwordChanged: 'Password changed successfully',
       wrongPassword: 'Current password is incorrect',
       passwordsDontMatch: 'New passwords do not match',
+      passwordTooShort: 'Password must be at least 6 characters',
+      passwordRequired: 'Current password required',
+      newPasswordRequired: 'New password required',
       
       dataManagement: 'Data management',
       importData: 'Import data (coming soon)',
@@ -273,6 +309,15 @@ export const translations = {
       december: 'December'
     },
     
+    // Previsionnel
+    previsionnel: {
+      title: 'Forecast',
+      startingBalance: 'Starting balance',
+      update: 'Update',
+      updateBalance: 'Update balance',
+      formula: 'Calculation: Starting balance - Fixed expenses - Variable expenses + Reimbursements'
+    },
+    
     // Expenses
     expenses: {
       title: 'Expenses',
@@ -287,12 +332,19 @@ export const translations = {
       amount: 'Amount',
       category: 'Category',
       subcategory: 'Subcategory',
+      subcategoryOther: 'Other',
       date: 'Date',
+      day: 'Day',
       deducted: 'Deducted',
       received: 'Received',
       pending: 'Pending',
       noExpenses: 'No expenses for this month',
-      total: 'Total'
+      total: 'Total',
+      addExpenseTitle: 'Add expense',
+      descriptionPlaceholder: 'Expense description',
+      amountPlaceholder: 'Amount in EUR',
+      customSubcategory: 'Custom name',
+      customSubcategoryPlaceholder: 'Enter subcategory name'
     },
     
     // Forecast

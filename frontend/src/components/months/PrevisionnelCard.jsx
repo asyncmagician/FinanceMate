@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function PrevisionnelCard({ previsionnel, startingBalance, onUpdateBalance }) {
+  const { t } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [balance, setBalance] = useState(startingBalance);
   const [error, setError] = useState('');
@@ -32,11 +34,11 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
 
   return (
     <div className="card lg:col-span-3">
-      <h3 className="text-lg font-semibold text-obsidian-text mb-4">Prévisionnel</h3>
+      <h3 className="text-lg font-semibold text-obsidian-text mb-4">{t('previsionnel.title')}</h3>
       
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <div>
-          <div className="text-obsidian-text-muted text-sm mb-1">Solde de départ</div>
+          <div className="text-obsidian-text-muted text-sm mb-1">{t('previsionnel.startingBalance')}</div>
           {editing ? (
             <div>
               <div className="flex gap-2">

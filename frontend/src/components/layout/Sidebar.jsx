@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Sidebar({ open }) {
   const [months, setMonths] = useState({});
   const [expandedYears, setExpandedYears] = useState(new Set());
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { year: currentYear, month: currentMonth } = useParams();
 
   useEffect(() => {
@@ -48,8 +50,10 @@ export default function Sidebar({ open }) {
   };
 
   const monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    t('months.january'), t('months.february'), t('months.march'), 
+    t('months.april'), t('months.may'), t('months.june'),
+    t('months.july'), t('months.august'), t('months.september'), 
+    t('months.october'), t('months.november'), t('months.december')
   ];
 
   const currentDate = new Date();
@@ -74,26 +78,26 @@ export default function Sidebar({ open }) {
             onClick={() => navigate('/')}
             className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
           >
-            Tableau de bord
+            {t('sidebar.dashboard')}
           </button>
           
           <button
             onClick={() => navigate('/forecast')}
             className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
           >
-            Prévisions
+            {t('sidebar.forecast')}
           </button>
           
           <button
             onClick={() => navigate('/recurring')}
             className="w-full text-left px-3 py-2 text-obsidian-text hover:bg-obsidian-bg-hover rounded transition-colors"
           >
-            Dépenses récurrentes
+            {t('sidebar.recurring')}
           </button>
           
           <div className="pt-4">
             <h3 className="text-xs font-semibold text-obsidian-text-muted uppercase tracking-wider mb-2">
-              Mois
+              {t('months.title', 'Mois')}
             </h3>
             
             <div className="space-y-1">

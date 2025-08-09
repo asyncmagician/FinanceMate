@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 function Register() {
   const navigate = useNavigate();
+  const { t, language, changeLanguage } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -26,12 +28,12 @@ function Register() {
     setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
+      setError(t('register.passwordMismatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+      setError(t('register.passwordTooShort'));
       return;
     }
 
@@ -46,11 +48,11 @@ function Register() {
 
       if (response.success) {
         navigate('/login', { 
-          state: { message: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.' }
+          state: { message: t('login.successRegistration') }
         });
       }
     } catch (err) {
-      setError(err.message || 'Erreur lors de la création du compte');
+      setError(err.message || t('register.registrationError'));
     } finally {
       setLoading(false);
     }
@@ -59,9 +61,19 @@ function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-obsidian-bg">
       <div className="card w-full max-w-md">
-        <h2 className="text-2xl font-bold text-obsidian-text mb-6 text-center">
-          Créer un compte
-        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-obsidian-text">
+            {t('register.title')}
+          </h2>
+          <select
+            value={language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="input-field text-sm px-2 py-1"
+          >
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+        </div>
 
         {error && (
           <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-2 rounded mb-4">
@@ -72,7 +84,7 @@ function Register() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Prénom
+              {t('register.firstName')}
             </label>
             <input
               type="text"
@@ -86,7 +98,7 @@ function Register() {
 
           <div>
             <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Nom
+              {t('register.lastName')}
             </label>
             <input
               type="text"
@@ -100,7 +112,7 @@ function Register() {
 
           <div>
             <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Email
+              {t('register.email')}
             </label>
             <input
               type="email"
@@ -114,7 +126,7 @@ function Register() {
 
           <div>
             <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Mot de passe
+              {t('register.password')}
             </label>
             <input
               type="password"
@@ -129,7 +141,7 @@ function Register() {
 
           <div>
             <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Confirmer le mot de passe
+              {t('register.confirmPassword')}
             </label>
             <input
               type="password"
@@ -147,13 +159,13 @@ function Register() {
             disabled={loading}
             className="btn-primary w-full"
           >
-            {loading ? 'Création...' : 'Créer mon compte'}
+            {loading ? t('loading') : t('register.submit')}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <Link to="/login" className="text-obsidian-link hover:text-obsidian-link-hover text-sm">
-            Déjà un compte ? Se connecter
+            {t('register.hasAccount')} {t('register.login')}
           </Link>
         </div>
       </div>
