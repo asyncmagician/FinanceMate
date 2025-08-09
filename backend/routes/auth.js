@@ -11,14 +11,18 @@ const loginValidation = [
 
 const registerValidation = [
   body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('Le mot de passe doit contenir au moins 8 caractères')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'),
   body('firstName').notEmpty().trim().withMessage('Le prénom est requis'),
   body('lastName').notEmpty().trim().withMessage('Le nom est requis')
 ];
 
 const changePasswordValidation = [
   body('currentPassword').notEmpty().withMessage('Le mot de passe actuel est requis'),
-  body('newPassword').isLength({ min: 6 }).withMessage('Le nouveau mot de passe doit contenir au moins 6 caractères')
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('Le nouveau mot de passe doit contenir au moins 8 caractères')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre')
 ];
 
 const handleValidationErrors = (req, res, next) => {

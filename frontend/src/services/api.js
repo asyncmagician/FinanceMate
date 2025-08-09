@@ -174,6 +174,25 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async exportUserData(format = 'json') {
+    return this.request(`/export/${format}`);
+  }
+
+  async exportUserDataCSV() {
+    const url = `${API_BASE_URL}/export/csv`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error('Export failed');
+    }
+    
+    return response.text();
+  }
 }
 
 export default new ApiService();

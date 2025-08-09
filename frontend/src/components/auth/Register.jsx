@@ -11,7 +11,10 @@ function Register() {
     password: '',
     confirmPassword: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    acceptTerms: false,
+    acceptPrivacy: false,
+    ageConfirmation: false
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,8 +35,25 @@ function Register() {
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (formData.password.length < 8) {
       setError(t('register.passwordTooShort'));
+      return;
+    }
+
+    // Check password complexity
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    if (!passwordRegex.test(formData.password)) {
+      setError(t('register.passwordTooWeak', 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'));
+      return;
+    }
+
+    if (!formData.ageConfirmation) {
+      setError(t('register.ageRequired', 'Vous devez confirmer avoir 16 ans ou plus'));
+      return;
+    }
+
+    if (!formData.acceptTerms || !formData.acceptPrivacy) {
+      setError(t('register.consentRequired', 'Vous devez accepter les conditions et la politique de confidentialité'));
       return;
     }
 
@@ -154,9 +174,69 @@ function Register() {
             />
           </div>
 
+          {/* Lawful Basis Notice */}
+          <div className="p-3 bg-obsidian-bg-secondary rounded-lg text-sm text-obsidian-text-muted mb-4">
+            {t('register.lawfulBasis', 'Nous traitons vos données pour fournir des services de gestion budgétaire (exécution du contrat) et sur la base de votre consentement.')}
+          </div>
+
+          {/* Age Verification */}
+          <div className="flex items-start gap-2 mb-3">
+            <input
+              type="checkbox"
+              id="ageConfirmation"
+              name="ageConfirmation"
+              checked={formData.ageConfirmation}
+              onChange={(e) => setFormData({ ...formData, ageConfirmation: e.target.checked })}
+              className="mt-1 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+              required
+            />
+            <label htmlFor="ageConfirmation" className="text-sm text-obsidian-text-muted">
+              {t('register.ageConfirmation', 'Je confirme avoir 16 ans ou plus')}
+            </label>
+          </div>
+
+          {/* Terms of Service Consent */}
+          <div className="flex items-start gap-2 mb-3">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              name="acceptTerms"
+              checked={formData.acceptTerms}
+              onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+              className="mt-1 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+              required
+            />
+            <label htmlFor="acceptTerms" className="text-sm text-obsidian-text-muted">
+              {t('consent.acceptTerms', 'J\'accepte les ')}
+              <a href="/terms" target="_blank" className="text-obsidian-accent hover:underline">
+                {t('consent.termsOfService', 'Conditions d\'Utilisation')}
+              </a>
+            </label>
+          </div>
+
+          {/* Privacy Policy Consent */}
+          <div className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              id="acceptPrivacy"
+              name="acceptPrivacy"
+              checked={formData.acceptPrivacy}
+              onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
+              className="mt-1 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+              required
+            />
+            <label htmlFor="acceptPrivacy" className="text-sm text-obsidian-text-muted">
+              {t('consent.acceptPrivacy', 'J\'accepte la ')}
+              <a href="/privacy" target="_blank" className="text-obsidian-accent hover:underline">
+                {t('consent.privacyPolicy', 'Politique de Confidentialité')}
+              </a>
+              {t('consent.dataProcessing', ' et le traitement de mes données personnelles')}
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !formData.acceptTerms || !formData.acceptPrivacy || !formData.ageConfirmation}
             className="btn-primary w-full"
           >
             {loading ? t('loading') : t('register.submit')}

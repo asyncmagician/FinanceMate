@@ -197,3 +197,38 @@ exports.deleteRecurringByUser = async (userId) => {
     throw error;
   }
 };
+
+// Get all expenses for a user (for export)
+exports.getAllByUser = async (userId) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT e.*, c.name as category_name, c.type as category_type 
+       FROM expenses e 
+       JOIN months m ON e.month_id = m.id 
+       JOIN categories c ON e.category_id = c.id 
+       WHERE m.user_id = ? 
+       ORDER BY e.date DESC`,
+      [userId]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all recurring expenses for a user (for export)
+exports.getRecurringByUser = async (userId) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT r.*, c.name as category_name, c.type as category_type 
+       FROM recurring_expenses r 
+       JOIN categories c ON r.category_id = c.id 
+       WHERE r.user_id = ? 
+       ORDER BY r.day_of_month`,
+      [userId]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};

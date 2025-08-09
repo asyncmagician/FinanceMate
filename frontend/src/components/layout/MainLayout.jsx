@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -62,6 +63,8 @@ export default function MainLayout() {
         <main className="flex-1 overflow-auto p-6">
           <Outlet />
         </main>
+        
+        <Footer />
       </div>
     </div>
   );

@@ -63,7 +63,17 @@ exports.updateExpense = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const updated = await expenseModel.update(id, req.body);
+    // Whitelist allowed fields for update
+    const allowedFields = ['description', 'amount', 'category_id', 'subcategory', 'date', 'is_deducted', 'is_received'];
+    const updateData = {};
+    
+    for (const field of allowedFields) {
+      if (req.body.hasOwnProperty(field)) {
+        updateData[field] = req.body[field];
+      }
+    }
+
+    const updated = await expenseModel.update(id, updateData);
     res.json(updated);
   } catch (error) {
     console.error('Update expense error:', error);

@@ -40,9 +40,14 @@ export const translations = {
       hasAccount: 'Déjà un compte ?',
       login: 'Se connecter',
       passwordMismatch: 'Les mots de passe ne correspondent pas',
-      passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 8 caractères',
+      passwordTooWeak: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
       emailTaken: 'Cette adresse e-mail est déjà utilisée',
-      registrationError: 'Erreur lors de la création du compte'
+      registrationError: 'Erreur lors de la création du compte',
+      lawfulBasis: 'Nous traitons vos données pour fournir des services de gestion budgétaire (exécution du contrat) et sur la base de votre consentement.',
+      ageConfirmation: 'Je confirme avoir 16 ans ou plus',
+      ageRequired: 'Vous devez confirmer avoir 16 ans ou plus',
+      consentRequired: 'Vous devez accepter les conditions et la politique de confidentialité'
     },
     
     // Sidebar
@@ -77,6 +82,12 @@ export const translations = {
       newPasswordRequired: 'Nouveau mot de passe requis',
       
       dataManagement: 'Gestion des données',
+      exportJson: 'Exporter (JSON)',
+      exportCsv: 'Exporter (CSV)',
+      exportJsonTooltip: 'Exporter toutes vos données au format JSON',
+      exportCsvTooltip: 'Exporter vos dépenses au format CSV',
+      exportSuccess: 'Données exportées avec succès',
+      exportError: 'Erreur lors de l\'export des données',
       importData: 'Importer des données (bientôt disponible)',
       deleteAllData: 'Supprimer toutes mes données',
       
@@ -260,6 +271,31 @@ export const translations = {
       deleteExpense: 'Voulez-vous vraiment supprimer',
       deleteData: 'Êtes-vous sûr de vouloir supprimer toutes vos données ? Cette action supprimera tous vos mois, dépenses et dépenses récurrentes, mais conservera votre compte.',
       deleteAccount: 'Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et supprimera toutes vos données.'
+    },
+    
+    // Cookies
+    cookies: {
+      message: 'Nous utilisons des cookies essentiels pour le fonctionnement de l\'application (authentification et préférences). Ces cookies sont nécessaires et ne peuvent pas être désactivés.',
+      learnMore: 'En savoir plus',
+      essentialOnly: 'Essentiels uniquement',
+      accept: 'Accepter'
+    },
+    
+    // Registration consent
+    consent: {
+      acceptTerms: 'J\'accepte les ',
+      termsOfService: 'Conditions d\'Utilisation',
+      and: ' et la ',
+      privacyPolicy: 'Politique de Confidentialité',
+      acceptPrivacy: 'J\'accepte la ',
+      dataProcessing: ' et le traitement de mes données personnelles'
+    },
+    
+    // Footer
+    footer: {
+      allRightsReserved: 'Tous droits réservés',
+      privacy: 'Confidentialité',
+      terms: 'Conditions'
     }
   },
   
@@ -304,9 +340,14 @@ export const translations = {
       hasAccount: 'Already have an account?',
       login: 'Sign in',
       passwordMismatch: 'Passwords do not match',
-      passwordTooShort: 'Password must be at least 6 characters',
+      passwordTooShort: 'Password must be at least 8 characters',
+      passwordTooWeak: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
       emailTaken: 'This email address is already in use',
-      registrationError: 'Error creating account'
+      registrationError: 'Error creating account',
+      lawfulBasis: 'We process your data to provide budget management services (contract performance) and based on your consent.',
+      ageConfirmation: 'I confirm I am 16 years or older',
+      ageRequired: 'You must confirm you are 16 years or older',
+      consentRequired: 'You must accept the terms and privacy policy'
     },
     
     // Sidebar
@@ -341,6 +382,12 @@ export const translations = {
       newPasswordRequired: 'New password required',
       
       dataManagement: 'Data management',
+      exportJson: 'Export (JSON)',
+      exportCsv: 'Export (CSV)',
+      exportJsonTooltip: 'Export all your data in JSON format',
+      exportCsvTooltip: 'Export your expenses in CSV format',
+      exportSuccess: 'Data exported successfully',
+      exportError: 'Error exporting data',
       importData: 'Import data (coming soon)',
       deleteAllData: 'Delete all my data',
       
@@ -524,6 +571,31 @@ export const translations = {
       deleteExpense: 'Are you sure you want to delete',
       deleteData: 'Are you sure you want to delete all your data? This will delete all your months, expenses and recurring expenses, but keep your account.',
       deleteAccount: 'Are you sure you want to permanently delete your account? This action is irreversible and will delete all your data.'
+    },
+    
+    // Cookies
+    cookies: {
+      message: 'We use essential cookies for the application to function (authentication and preferences). These cookies are necessary and cannot be disabled.',
+      learnMore: 'Learn more',
+      essentialOnly: 'Essential only',
+      accept: 'Accept'
+    },
+    
+    // Registration consent
+    consent: {
+      acceptTerms: 'I accept the ',
+      termsOfService: 'Terms of Service',
+      and: ' and the ',
+      privacyPolicy: 'Privacy Policy',
+      acceptPrivacy: 'I accept the ',
+      dataProcessing: ' and the processing of my personal data'
+    },
+    
+    // Footer
+    footer: {
+      allRightsReserved: 'All rights reserved',
+      privacy: 'Privacy',
+      terms: 'Terms'
     }
   }
 };

@@ -1,83 +1,214 @@
 # FinanceMate
 
-A self-hosted personal finance tracker with Obsidian-style navigation, built for simplicity and privacy.
+A self-hosted personal finance management application with Obsidian-style navigation, built for simplicity, privacy, and GDPR compliance.
 
+![Version](https://img.shields.io/badge/version-1.0.0-success)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
 ![React](https://img.shields.io/badge/react-18.x-61dafb)
+![Security](https://img.shields.io/badge/security-enhanced-green)
+![GDPR](https://img.shields.io/badge/GDPR-compliant-blue)
 
-## Features
+## 🚀 Features
 
+### Core Functionality
 - **Obsidian-style Navigation**: Familiar year/month tree structure
-- **Expense Tracking**: Fixed, variable, and reimbursement categories with subcategories
-- **Smart Calculations**: Automatic pr�visionnel (forecast) calculations
+- **Expense Management**: Fixed, variable, and reimbursement categories with custom subcategories
+- **Smart Calculations**: Automatic prévisionnel (forecast) calculations
 - **Recurring Expenses**: Template system for monthly fixed costs
-- **Dashboard & Analytics**: Visual spending overview with charts
+- **Dashboard & Analytics**: Visual spending overview with interactive charts
+- **Financial Forecasting**: 3/6/12 month projections based on spending patterns
+
+### User Experience
+- **Bilingual Support**: Full French and English interface
 - **Mobile-First Design**: Responsive UI optimized for mobile devices
-- **French Localization**: Full french interface
-- **Data Privacy**: Self-hosted solution: your data stays with you
+- **Context-Aware Navigation**: Smart 404 pages and legal document navigation
+- **Data Export**: Export your data in JSON or CSV format (GDPR Article 20)
 
-## Quick Start
+### Security & Privacy
+- **Self-Hosted**: Your data stays on your infrastructure
+- **GDPR Compliant**: Full compliance with EU privacy regulations
+- **Enhanced Security**: Strong password policies, rate limiting, secure tokens
+- **Age Verification**: 16+ requirement with consent management
+- **Data Protection**: bcrypt password hashing, JWT authentication, encrypted connections
 
-### Prerequisites
+## 📋 Requirements
 
 - Node.js 18+ and npm
-- Docker 
+- Docker and Docker Compose
+- MariaDB 11 (via Docker)
+
+## 🛠️ Installation
 
 ### Development Setup
 
 1. **Clone the repository**
 ```bash
-git clone git@github.com:asyncmagician/FinanceMate.git
+git clone https://github.com/asyncmagician/FinanceMate.git
 cd FinanceMate
 ```
 
-2. **Start the database**
+2. **Configure environment**
+```bash
+# Backend configuration
+cd backend
+cp .env.example .env
+# Edit .env with your secure values:
+# - Generate JWT_SECRET: openssl rand -base64 32
+# - Set strong DB_PASSWORD (16+ characters)
+```
+
+3. **Start the database**
 ```bash
 docker-compose up -d
 ```
 
-3. **Setup backend**
+4. **Setup backend**
 ```bash
 cd backend
 npm install
-npm run db:init     
-npm run db:migrate   
-npm run dev          
+npm run db:init      # Initialize database schema
+npm run db:migrate   # Run migrations
+npm run dev          # Start development server
 ```
 
-4. **Setup frontend** 
+5. **Setup frontend** (new terminal)
 ```bash
 cd frontend
 npm install
-npm run dev          
+npm run dev          # Start development server
 ```
 
-5. **Create the first (administrator) user**
+6. **Create admin user**
 ```bash
 cd backend
 node scripts/createAdmin.js \
-  --email ada@domain.tld \
-  --first Ada \
-  --last Lovelace \
+  --email admin@example.com \
+  --first John \
+  --last Doe \
   --role admin
 ```
 
-6. **Access the application**
+7. **Access the application**
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:3001/api
 
-## Environment Variables
+## 🔒 Security Configuration
 
-Create `.env` files based on `.env.example`:
+### Production Requirements
 
-## Contributing
+Before deploying to production, ensure:
 
-Contributions are always welcome! Feel free to submit a PR.
+1. **Strong Secrets**
+   - JWT_SECRET: Minimum 32 characters (use `openssl rand -base64 32`)
+   - DB_PASSWORD: Strong password with 16+ characters
 
-## License
-This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
+2. **Database Security**
+   - Port binding restricted to localhost (configured in docker-compose.yml)
+   - Regular backups recommended
+
+3. **Password Policy**
+   - Minimum 8 characters
+   - Must contain uppercase, lowercase, and numbers
+   - Enforced on registration and password changes
+
+4. **Rate Limiting**
+   - Authentication: 5 attempts per 15 minutes
+   - General API: 100 requests per 15 minutes
+
+## 🌍 GDPR Compliance
+
+FinanceMate is fully GDPR compliant with:
+
+- **Article 7**: Granular consent mechanism
+- **Article 8**: Age verification (16+ requirement)
+- **Article 13**: Clear privacy policy and lawful basis
+- **Article 17**: Right to erasure (account deletion)
+- **Article 20**: Data portability (JSON/CSV export)
+- **Article 32**: Security of processing
+
+## 📱 Features Overview
+
+### Dashboard
+- Monthly spending overview
+- Recent transactions
+- Quick action buttons
+- 3-month spending history chart
+- Pending reimbursements tracker
+
+### Expense Management
+- Hierarchical categorization (Category > Subcategory)
+- Custom subcategories support
+- Deducted/Received status tracking
+- Real-time prévisionnel updates
+
+### Recurring Expenses
+- Template management for fixed costs
+- One-click monthly application
+- Edit and delete capabilities
+- Automatic duplicate prevention
+
+### Financial Forecasting
+- 3, 6, and 12-month projections
+- Based on average spending patterns
+- Interactive line charts
+- Detailed monthly breakdowns
+
+## 🌐 Language Support
+
+Currently supported languages:
+- 🇫🇷 French (default)
+- 🇬🇧 English
+
+Language preference is saved per user and persists across sessions.
+
+## 📊 Tech Stack
+
+### Frontend
+- React 18 with Vite
+- Tailwind CSS v3
+- React Router DOM
+- Chart.js for visualizations
+- Axios for API communication
+
+### Backend
+- Express.js
+- MariaDB 11
+- JWT authentication
+- bcrypt for password hashing
+- Express-validator for input validation
+- Helmet.js for security headers
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Guidelines
+- Follow existing code style
+- Add tests for new features
+- Update documentation as needed
+- Keep commits atomic and well-described
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- **Repository**: [GitHub](https://github.com/asyncmagician/FinanceMate)
+- **Issues**: [Bug Reports](https://github.com/asyncmagician/FinanceMate/issues)
+- **Author**: [Antony BARTOLOMUCCI](https://github.com/asyncmagician)
+
+## 🙏 Acknowledgments
+
+- Inspired by Obsidian's intuitive navigation system
+- Built with privacy and user control as core principles
+- Designed for the self-hosting community
 
 ---
 
-**Note**: This is a development setup guide. For production deployment, please refer to your preferred hosting solution's best practices for Node.js applications.
+**Version**: 1.0.0 Stable  
+**Release Date**: August 2025  
+**Status**: Production Ready
+
+⚠️ **Note**: Always backup your data before updates. For production deployment, follow security best practices and keep your dependencies updated.

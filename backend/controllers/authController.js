@@ -105,7 +105,33 @@ exports.refreshToken = async (req, res) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+    // First verify the token is valid (including expiration)
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Token is still valid, no need to refresh
+      return res.json({ token });
+    } catch (tokenError) {
+      // Token is expired, check if it's within refresh window
+      try {
+        decoded = jwt.decode(token);
+        if (!decoded || !decoded.exp) {
+          return res.status(401).json({ error: 'Invalid token format' });
+        }
+        
+        // Allow refresh only if token expired within last 24 hours
+        const expiredTime = decoded.exp * 1000;
+        const now = Date.now();
+        const refreshWindow = 24 * 60 * 60 * 1000; // 24 hours
+        
+        if (now - expiredTime > refreshWindow) {
+          return res.status(401).json({ error: 'Token refresh window expired. Please login again.' });
+        }
+      } catch (decodeError) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+    }
+    
     const user = await userModel.findById(decoded.id);
     
     if (!user) {
