@@ -53,6 +53,9 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Identifiants invalides' });
     }
 
+    // Update last login timestamp
+    await userModel.updateLastLogin(user.id);
+
     const token = generateToken(user);
     
     res.json({

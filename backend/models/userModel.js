@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { encryptSalary, decryptSalary } = require('../services/encryptionService');
 
 exports.findByEmail = async (email) => {
   try {
@@ -78,6 +79,76 @@ exports.deleteById = async (id) => {
   try {
     await pool.execute('DELETE FROM users WHERE id = ?', [id]);
     return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateLastLogin = async (id) => {
+  try {
+    await pool.execute(
+      'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
+      [id]
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getAllUsers = async () => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT id, email, first_name, last_name, role, created_at, last_login 
+       FROM users 
+       ORDER BY created_at DESC`
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateSalary = async (id, salary) => {
+  try {
+    const encryptedSalary = salary ? encryptSalary(salary) : null;
+    await pool.execute(
+      'UPDATE users SET encrypted_salary = ? WHERE id = ?',
+      [encryptedSalary, id]
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getSalary = async (id) => {
+  try {
+    const [rows] = await pool.execute(
+      'SELECT encrypted_salary FROM users WHERE id = ?',
+      [id]
+    );
+    
+    if (!rows[0] || !rows[0].encrypted_salary) {
+      return null;
+    }
+    
+    return decryptSalary(rows[0].encrypted_salary);
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.findByIdWithSalary = async (id) => {
+  try {
+    const user = await exports.findById(id);
+    if (!user) return null;
+    
+    // Add decrypted salary to user object (only for the user themselves)
+    const salary = await exports.getSalary(id);
+    user.salary = salary;
+    
+    return user;
   } catch (error) {
     throw error;
   }
