@@ -77,24 +77,51 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
     }
     
     try {
-      await api.createRecurringExpense({
-        ...formData,
-        amount: parseFloat(formData.amount)
-      });
+      if (editingId) {
+        await api.updateRecurringExpense(editingId, {
+          ...formData,
+          amount: parseFloat(formData.amount)
+        });
+      } else {
+        await api.createRecurringExpense({
+          ...formData,
+          amount: parseFloat(formData.amount)
+        });
+      }
       await loadRecurringExpenses();
       setShowAddForm(false);
+      setEditingId(null);
       setFormData({
         description: '',
         amount: '',
         category_id: 1,
         subcategory: '',
         day_of_month: 1,
-        start_date: new Date().toISOString().split('T')[0]
+        start_date: new Date().toISOString().split('T')[0],
+        share_type: 'none',
+        share_value: '',
+        share_with: ''
       });
       setErrors({});
     } catch (err) {
-      console.error('Failed to create recurring expense:', err);
+      console.error('Failed to save recurring expense:', err);
     }
+  };
+
+  const handleEdit = (expense) => {
+    setFormData({
+      description: expense.description,
+      amount: expense.amount,
+      category_id: expense.category_id,
+      subcategory: expense.subcategory || '',
+      day_of_month: expense.day_of_month,
+      start_date: expense.start_date ? expense.start_date.split('T')[0] : new Date().toISOString().split('T')[0],
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || '',
+      share_with: expense.share_with || ''
+    });
+    setEditingId(expense.id);
+    setShowAddForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -141,10 +168,26 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
               Ces dépenses seront automatiquement ajoutées chaque mois
             </p>
             <button
-              onClick={() => setShowAddForm(!showAddForm)}
+              onClick={() => {
+                setShowAddForm(!showAddForm);
+                if (showAddForm) {
+                  setEditingId(null);
+                  setFormData({
+                    description: '',
+                    amount: '',
+                    category_id: 1,
+                    subcategory: '',
+                    day_of_month: 1,
+                    start_date: new Date().toISOString().split('T')[0],
+                    share_type: 'none',
+                    share_value: '',
+                    share_with: ''
+                  });
+                }
+              }}
               className="btn-secondary text-sm"
             >
-              {showAddForm ? 'Annuler' : 'Ajouter'}
+              {editingId ? 'Annuler l\'édition' : (showAddForm ? 'Annuler' : 'Ajouter')}
             </button>
           </div>
 
@@ -196,7 +239,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                   />
                 </div>
                 <button type="submit" className="btn-primary">
-                  Créer
+                  {editingId ? 'Modifier' : 'Créer'}
                 </button>
               </div>
             </form>
@@ -227,8 +270,19 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                     {formatCurrency(expense.amount)}
                   </span>
                   <button
+                    onClick={() => handleEdit(expense)}
+                    className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
+                    title="Modifier"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                  <button
                     onClick={() => handleDelete(expense.id)}
                     className="text-obsidian-text-muted hover:text-obsidian-error transition-colors"
+                    title="Supprimer"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
