@@ -31,6 +31,11 @@ class ApiService {
     const response = await fetch(url, config);
     
     if (response.status === 401) {
+      // Don't logout for password change endpoint
+      if (endpoint.includes('/change-password')) {
+        const error = await response.json().catch(() => ({ error: 'Mot de passe actuel incorrect' }));
+        throw new Error(error.error || 'Mot de passe actuel incorrect');
+      }
       // Only redirect if we're not already on the login page
       if (!window.location.pathname.includes('/login')) {
         this.setToken(null);

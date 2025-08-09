@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import Sidebar from './Sidebar';
 
 export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -52,7 +54,7 @@ export default function MainLayout() {
               onClick={handleLogout}
               className="text-obsidian-text-muted hover:text-obsidian-text text-sm"
             >
-              Déconnexion
+              {t('logout')}
             </button>
           </div>
         </header>

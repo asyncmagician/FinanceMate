@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import ConfirmModal from '../common/ConfirmModal';
 
 export default function ProfileView() {
   const { user, logout } = useAuth();
+  const { t, language, changeLanguage } = useLanguage();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showDeleteData, setShowDeleteData] = useState(false);
@@ -35,7 +37,7 @@ export default function ProfileView() {
       return;
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setErrors({ confirmPassword: 'Les mots de passe ne correspondent pas' });
+      setErrors({ confirmPassword: 'Les nouveaux mots de passe ne correspondent pas' });
       return;
     }
 
@@ -46,7 +48,11 @@ export default function ProfileView() {
       setShowPasswordForm(false);
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
-      setErrors({ general: err.message || 'Erreur lors du changement de mot de passe' });
+      if (err.message.includes('actuel')) {
+        setErrors({ currentPassword: err.message });
+      } else {
+        setErrors({ general: err.message || 'Erreur lors du changement de mot de passe' });
+      }
     }
   };
 
@@ -77,7 +83,7 @@ export default function ProfileView() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-obsidian-text mb-6">Profil</h1>
+      <h1 className="text-3xl font-bold text-obsidian-text mb-6">{t('profile.title')}</h1>
 
       {successMessage && (
         <div className="mb-4 p-3 bg-green-900/20 border border-green-500 rounded-lg text-green-400">
@@ -94,7 +100,7 @@ export default function ProfileView() {
       <div className="grid gap-6">
         {/* User Information */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-obsidian-text mb-4">Informations du compte</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.accountInfo')}</h2>
           <div className="space-y-2 text-obsidian-text-muted">
             <p>
               <span className="font-medium">Email:</span> {user?.email}
@@ -111,16 +117,34 @@ export default function ProfileView() {
           </div>
         </div>
 
+        {/* Language Settings */}
+        <div className="card">
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.language')}</h2>
+          <div className="flex items-center gap-3">
+            <label className="text-obsidian-text-muted">
+              {t('profile.selectLanguage')}:
+            </label>
+            <select
+              value={language}
+              onChange={(e) => changeLanguage(e.target.value)}
+              className="input-field"
+            >
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+
         {/* Password Change */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-obsidian-text mb-4">Sécurité</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.security')}</h2>
           
           {!showPasswordForm ? (
             <button
               onClick={() => setShowPasswordForm(true)}
               className="btn-secondary"
             >
-              Changer le mot de passe
+              {t('profile.changePassword')}
             </button>
           ) : (
             <form onSubmit={handlePasswordChange} className="space-y-4">
@@ -174,7 +198,7 @@ export default function ProfileView() {
 
               <div className="flex gap-3">
                 <button type="submit" className="btn-primary">
-                  Changer le mot de passe
+                  {t('profile.changePassword')}
                 </button>
                 <button
                   type="button"
@@ -194,7 +218,7 @@ export default function ProfileView() {
 
         {/* Data Management */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-obsidian-text mb-4">Gestion des données</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.dataManagement')}</h2>
           <div className="space-y-3">
             <button
               onClick={handleImport}
@@ -231,7 +255,7 @@ export default function ProfileView() {
 
         {/* Creator Information */}
         <div className="card bg-obsidian-bg/50">
-          <h2 className="text-xl font-semibold text-obsidian-text mb-4">À propos</h2>
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.about')}</h2>
           <div className="space-y-3 text-obsidian-text-muted">
             <p>
               FinanceMate est une application de gestion budgétaire personnelle développée pour simplifier 

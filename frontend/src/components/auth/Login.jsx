@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t, language, changeLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,10 +27,10 @@ export default function Login() {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/profile');
     } catch (err) {
       // Generic error message for security - don't reveal if email exists or not
-      setError('Identifiants invalides. Veuillez vérifier votre email et mot de passe.');
+      setError(t('login.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -37,7 +39,17 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-obsidian-bg">
       <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-obsidian-text mb-6">FinanceMate</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-obsidian-text">{t('login.title')}</h1>
+          <select
+            value={language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="input-field text-sm px-2 py-1"
+          >
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {successMessage && (
@@ -54,7 +66,7 @@ export default function Login() {
           
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Adresse email
+              {t('login.email')}
             </label>
             <input
               id="email"
@@ -69,7 +81,7 @@ export default function Login() {
           
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-obsidian-text-muted mb-1">
-              Mot de passe
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -87,7 +99,7 @@ export default function Login() {
             className="btn-primary w-full"
             disabled={loading}
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? t('loading') : t('login.submit')}
           </button>
         </form>
         
@@ -96,7 +108,7 @@ export default function Login() {
             to="/register" 
             className="text-obsidian-link hover:text-obsidian-link-hover text-sm"
           >
-            Pas encore de compte ? S'inscrire
+            {t('login.noAccount')} {t('login.register')}
           </Link>
         </div>
       </div>
