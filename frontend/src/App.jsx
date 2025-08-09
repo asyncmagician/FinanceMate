@@ -9,6 +9,9 @@ import MonthView from './components/months/MonthView';
 import Forecast from './components/Forecast';
 import RecurringView from './components/recurring/RecurringView';
 import ProfileView from './components/profile/ProfileView';
+import PrivacyPolicy from './components/legal/PrivacyPolicy';
+import TermsOfService from './components/legal/TermsOfService';
+import CookieBanner from './components/legal/CookieBanner';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -32,6 +35,8 @@ function App() {
           <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route
             path="/"
             element={
@@ -47,6 +52,7 @@ function App() {
             <Route path="profile" element={<ProfileView />} />
           </Route>
           </Routes>
+          <CookieBanner />
         </AuthProvider>
       </LanguageProvider>
     </BrowserRouter>

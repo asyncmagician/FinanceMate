@@ -11,7 +11,8 @@ function Register() {
     password: '',
     confirmPassword: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    acceptTerms: false
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -154,9 +155,31 @@ function Register() {
             />
           </div>
 
+          <div className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              name="acceptTerms"
+              checked={formData.acceptTerms}
+              onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+              className="mt-1 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent"
+              required
+            />
+            <label htmlFor="acceptTerms" className="text-sm text-obsidian-text-muted">
+              {t('register.acceptTerms', 'J\'accepte les ')}
+              <a href="/terms" target="_blank" className="text-obsidian-accent hover:underline">
+                {t('register.termsOfService', 'Conditions d\'Utilisation')}
+              </a>
+              {t('register.and', ' et la ')}
+              <a href="/privacy" target="_blank" className="text-obsidian-accent hover:underline">
+                {t('register.privacyPolicy', 'Politique de Confidentialité')}
+              </a>
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !formData.acceptTerms}
             className="btn-primary w-full"
           >
             {loading ? t('loading') : t('register.submit')}
