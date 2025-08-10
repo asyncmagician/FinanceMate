@@ -36,10 +36,26 @@ exports.getByMonth = async (monthId) => {
 
 exports.create = async (expenseData) => {
   try {
-    const { month_id, category_id, subcategory, description, amount, is_deducted, is_received, date } = expenseData;
+    const { 
+      month_id, category_id, subcategory, description, amount, 
+      is_deducted, is_received, date,
+      share_type, share_value, share_with, full_amount 
+    } = expenseData;
+    
+    // Store the original full amount if sharing is enabled
+    const storedAmount = full_amount || amount;
+    
     const [result] = await pool.execute(
-      'INSERT INTO expenses (month_id, category_id, subcategory, description, amount, is_deducted, is_received, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [month_id, category_id, subcategory || null, description, amount, is_deducted || false, is_received || false, date]
+      `INSERT INTO expenses (
+        month_id, category_id, subcategory, description, amount, 
+        is_deducted, is_received, date,
+        share_type, share_value, share_with
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        month_id, category_id, subcategory || null, description, storedAmount,
+        is_deducted || false, is_received || false, date,
+        share_type || 'none', share_value || null, share_with || null
+      ]
     );
     return { id: result.insertId, ...expenseData };
   } catch (error) {
