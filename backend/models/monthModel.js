@@ -116,3 +116,15 @@ exports.deleteByUser = async (userId) => {
     throw error;
   }
 };
+
+exports.updateBudgetLimit = async (monthId, budgetLimit, alertThreshold) => {
+  try {
+    await pool.execute(
+      'UPDATE months SET budget_limit = ?, alert_threshold_percent = ? WHERE id = ?',
+      [budgetLimit, alertThreshold, monthId]
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};

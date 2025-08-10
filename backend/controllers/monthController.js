@@ -1,6 +1,7 @@
 const monthModel = require('../models/monthModel');
 const expenseModel = require('../models/expenseModel');
 const calculationService = require('../services/calculationService');
+const budgetAlertService = require('../services/budgetAlertService');
 
 exports.getUserMonths = async (req, res) => {
   try {
@@ -133,6 +134,76 @@ exports.getForecast = async (req, res) => {
     res.json({ forecast });
   } catch (error) {
     console.error('Get forecast error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.setBudgetLimit = async (req, res) => {
+  try {
+    const { year, month } = req.params;
+    const { budgetLimit, alertThreshold } = req.body;
+    const userId = req.user.id;
+    
+    // Find or create month
+    const monthData = await monthModel.findOrCreate(userId, year, month);
+    
+    // Update budget limit
+    await monthModel.updateBudgetLimit(monthData.id, budgetLimit, alertThreshold || 80);
+    
+    // Check if we should send an immediate alert
+    if (budgetLimit) {
+      budgetAlertService.checkUserBudget(userId, year, month)
+        .catch(err => console.error('Budget alert check failed:', err));
+    }
+    
+    res.json({ 
+      message: 'Budget limit updated',
+      budgetLimit,
+      alertThreshold: alertThreshold || 80
+    });
+  } catch (error) {
+    console.error('Set budget limit error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getBudgetStatus = async (req, res) => {
+  try {
+    const { year, month } = req.params;
+    const userId = req.user.id;
+    
+    const monthData = await monthModel.findByYearMonth(userId, year, month);
+    if (!monthData) {
+      return res.json({ 
+        hasBudget: false,
+        budgetLimit: null,
+        spent: 0,
+        remaining: null,
+        percentageUsed: 0
+      });
+    }
+    
+    // Get current spending
+    const expenses = await expenseModel.getByMonth(monthData.id);
+    const totalSpent = expenses.reduce((sum, expense) => {
+      if (expense.category_name === 'Remboursement' && !expense.is_received) {
+        return sum;
+      }
+      return sum + parseFloat(expense.amount);
+    }, 0);
+    
+    const budgetLimit = monthData.budget_limit ? parseFloat(monthData.budget_limit) : null;
+    
+    res.json({
+      hasBudget: !!budgetLimit,
+      budgetLimit,
+      spent: totalSpent,
+      remaining: budgetLimit ? budgetLimit - totalSpent : null,
+      percentageUsed: budgetLimit ? (totalSpent / budgetLimit) * 100 : 0,
+      alertThreshold: monthData.alert_threshold_percent || 80
+    });
+  } catch (error) {
+    console.error('Get budget status error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

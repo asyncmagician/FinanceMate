@@ -52,4 +52,21 @@ router.put('/:year/:month',
   monthController.updateMonth
 );
 
+// Budget management routes
+router.get('/:year/:month/budget',
+  param('year').isInt({ min: 2020, max: 2100 }),
+  param('month').isInt({ min: 1, max: 12 }),
+  handleValidationErrors,
+  monthController.getBudgetStatus
+);
+
+router.put('/:year/:month/budget',
+  param('year').isInt({ min: 2020, max: 2100 }),
+  param('month').isInt({ min: 1, max: 12 }),
+  body('budgetLimit').optional().isFloat({ min: 0 }),
+  body('alertThreshold').optional().isInt({ min: 1, max: 100 }),
+  handleValidationErrors,
+  monthController.setBudgetLimit
+);
+
 module.exports = router;

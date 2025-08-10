@@ -1,5 +1,6 @@
 const expenseModel = require('../models/expenseModel');
 const monthModel = require('../models/monthModel');
+const budgetAlertService = require('../services/budgetAlertService');
 
 exports.getMonthExpenses = async (req, res) => {
   try {
@@ -47,6 +48,10 @@ exports.createExpense = async (req, res) => {
       share_value: share_value || null,
       share_with: share_with || null
     });
+
+    // Check budget alerts after adding expense
+    budgetAlertService.checkUserBudget(userId, year, month)
+      .catch(err => console.error('Budget alert check failed:', err));
 
     res.status(201).json(expense);
   } catch (error) {
