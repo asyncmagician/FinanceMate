@@ -40,4 +40,12 @@ router.get('/me', authMiddleware, authController.getCurrentUser);
 router.post('/refresh', authController.refreshToken);
 router.post('/change-password', authMiddleware, changePasswordValidation, handleValidationErrors, authController.changePassword);
 
+// Email verification routes
+router.get('/verify-email/:token', authController.verifyEmail);
+router.post('/resend-verification', 
+  body('email').isEmail().normalizeEmail(),
+  handleValidationErrors,
+  authController.resendVerification
+);
+
 module.exports = router;

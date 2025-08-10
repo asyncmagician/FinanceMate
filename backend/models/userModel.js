@@ -27,12 +27,29 @@ exports.findById = async (id) => {
 
 exports.create = async (userData) => {
   try {
-    const { email, password, firstName, lastName, role } = userData;
+    const { 
+      email, password, firstName, lastName, role, 
+      email_verified, email_verification_token, email_verification_expires 
+    } = userData;
+    
     const [result] = await pool.execute(
-      'INSERT INTO users (email, password, first_name, last_name, role) VALUES (?, ?, ?, ?, ?)',
-      [email, password, firstName, lastName, role || 'user']
+      `INSERT INTO users (
+        email, password, first_name, last_name, role,
+        email_verified, email_verification_token, email_verification_expires
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        email, password, firstName, lastName, role || 'user',
+        email_verified || false, email_verification_token, email_verification_expires
+      ]
     );
-    return { id: result.insertId, email, first_name: firstName, last_name: lastName, role: role || 'user' };
+    return { 
+      id: result.insertId, 
+      email, 
+      first_name: firstName, 
+      last_name: lastName, 
+      role: role || 'user',
+      email_verified: email_verified || false
+    };
   } catch (error) {
     throw error;
   }
@@ -58,6 +75,47 @@ exports.update = async (id, userData) => {
     );
     
     return exports.findById(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.findByVerificationToken = async (token) => {
+  try {
+    const [rows] = await pool.execute(
+      'SELECT * FROM users WHERE email_verification_token = ?',
+      [token]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.verifyEmail = async (userId) => {
+  try {
+    await pool.execute(
+      `UPDATE users SET 
+        email_verified = TRUE, 
+        email_verification_token = NULL,
+        email_verification_expires = NULL
+      WHERE id = ?`,
+      [userId]
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateVerificationToken = async (userId, token, expires) => {
+  try {
+    await pool.execute(
+      `UPDATE users SET 
+        email_verification_token = ?,
+        email_verification_expires = ?
+      WHERE id = ?`,
+      [token, expires, userId]
+    );
   } catch (error) {
     throw error;
   }

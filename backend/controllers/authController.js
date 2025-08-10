@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const userModel = require('../models/userModel');
+const emailService = require('../services/emailService');
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -21,17 +23,37 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    
     const newUser = await userModel.create({
       email,
       password: hashedPassword,
       firstName,
       lastName,
-      role: 'user'
+      role: 'user',
+      email_verified: false,
+      email_verification_token: verificationToken,
+      email_verification_expires: verificationExpires
     });
 
+    // Send verification email
+    try {
+      await emailService.sendVerificationEmail(
+        email,
+        firstName,
+        verificationToken
+      );
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue anyway - user can request resend
+    }
+
     res.status(201).json({ 
-      message: 'Compte créé avec succès. Vous pouvez maintenant vous connecter.',
-      success: true 
+      message: 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
+      success: true,
+      requiresVerification: true
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -46,6 +68,15 @@ exports.login = async (req, res) => {
     const user = await userModel.findByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Identifiants invalides' });
+    }
+    
+    // Check if email is verified (optional - you can make this required)
+    if (!user.email_verified) {
+      return res.status(403).json({ 
+        error: 'Veuillez vérifier votre adresse email avant de vous connecter',
+        requiresVerification: true,
+        email: user.email
+      });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -108,11 +139,83 @@ exports.getCurrentUser = async (req, res) => {
       firstName: user.first_name,
       lastName: user.last_name,
       role: user.role,
-      created_at: user.created_at
+      created_at: user.created_at,
+      email_verified: user.email_verified
     });
   } catch (error) {
     console.error('Get current user error:', error);
     res.status(500).json({ error: 'Erreur serveur' });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    const user = await userModel.findByVerificationToken(token);
+    if (!user) {
+      return res.status(400).json({ error: 'Token de vérification invalide ou expiré' });
+    }
+    
+    // Check if token is expired
+    if (new Date() > new Date(user.email_verification_expires)) {
+      return res.status(400).json({ error: 'Token de vérification expiré' });
+    }
+    
+    // Mark email as verified
+    await userModel.verifyEmail(user.id);
+    
+    res.json({ 
+      message: 'Email vérifié avec succès',
+      success: true 
+    });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ error: 'Erreur lors de la vérification de l\'email' });
+  }
+};
+
+exports.resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const user = await userModel.findByEmail(email);
+    if (!user) {
+      // Don't reveal if email exists
+      return res.json({ 
+        message: 'Si un compte existe avec cette adresse, un email de vérification sera envoyé'
+      });
+    }
+    
+    if (user.email_verified) {
+      return res.status(400).json({ error: 'Email déjà vérifié' });
+    }
+    
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    
+    await userModel.updateVerificationToken(user.id, verificationToken, verificationExpires);
+    
+    // Send verification email
+    try {
+      await emailService.sendVerificationEmail(
+        user.email,
+        user.first_name,
+        verificationToken
+      );
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      return res.status(500).json({ error: 'Erreur lors de l\'envoi de l\'email' });
+    }
+    
+    res.json({ 
+      message: 'Email de vérification envoyé',
+      success: true 
+    });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({ error: 'Erreur lors de l\'envoi de l\'email de vérification' });
   }
 };
 
