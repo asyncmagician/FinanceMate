@@ -135,15 +135,17 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
                           >
                             <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1">
-                              <div className="flex items-center mt-1 sm:mt-0">
-                                <input
-                                  type="checkbox"
-                                  id={`deducted-${expense.id}`}
-                                  checked={Boolean(expense.is_deducted)}
-                                  onChange={() => handleDeductedToggle(expense)}
-                                  title={t('expenses.alreadyDeducted')}
-                                />
-                              </div>
+                              {category !== 'reimbursement' && (
+                                <div className="flex items-center mt-1 sm:mt-0">
+                                  <input
+                                    type="checkbox"
+                                    id={`deducted-${expense.id}`}
+                                    checked={Boolean(expense.is_deducted)}
+                                    onChange={() => handleDeductedToggle(expense)}
+                                    title={t('expenses.alreadyDeducted')}
+                                  />
+                                </div>
+                              )}
                               
                               <div className="flex-1">
                                 <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>

@@ -87,8 +87,8 @@ export default function MonthView() {
       // Then update the backend
       await api.updateExpense(id, updates);
       
-      // Only reload if it's a significant update (amount changes affect totals)
-      if (updates.amount !== undefined || updates.description !== undefined || updates.category_id !== undefined) {
+      // Reload if it's a significant update (amount changes affect totals, is_received affects prévisionnel)
+      if (updates.amount !== undefined || updates.description !== undefined || updates.category_id !== undefined || updates.is_received !== undefined) {
         await loadMonthData();
       }
     } catch (err) {
