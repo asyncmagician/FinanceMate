@@ -7,6 +7,7 @@ import ExpenseForm from '../expenses/ExpenseForm';
 import ReimbursementForm from '../expenses/ReimbursementForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
+import BudgetSettings from '../budget/BudgetSettings';
 
 export default function MonthView() {
   const { year, month } = useParams();
@@ -223,11 +224,20 @@ export default function MonthView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <PrevisionnelCard 
-          previsionnel={previsionnel}
-          startingBalance={monthData?.starting_balance || 0}
-          onUpdateBalance={handleUpdateBalance}
-        />
+        <div className="lg:col-span-2">
+          <PrevisionnelCard 
+            previsionnel={previsionnel}
+            startingBalance={monthData?.starting_balance || 0}
+            onUpdateBalance={handleUpdateBalance}
+          />
+        </div>
+        <div>
+          <BudgetSettings 
+            year={year} 
+            month={month} 
+            onUpdate={loadMonthData}
+          />
+        </div>
       </div>
       
 
