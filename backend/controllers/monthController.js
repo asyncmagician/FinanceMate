@@ -105,7 +105,7 @@ exports.getForecast = async (req, res) => {
     const currentDate = new Date();
     const forecast = [];
     
-    for (let i = 0; i < monthsCount; i++) {
+    for (let i = 1; i <= monthsCount; i++) {
       const forecastDate = new Date(currentDate);
       forecastDate.setMonth(currentDate.getMonth() + i);
       
@@ -130,7 +130,7 @@ exports.getForecast = async (req, res) => {
       });
     }
     
-    res.json(forecast);
+    res.json({ forecast });
   } catch (error) {
     console.error('Get forecast error:', error);
     res.status(500).json({ error: 'Internal server error' });

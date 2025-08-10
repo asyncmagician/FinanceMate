@@ -48,7 +48,7 @@ export default function ForecastView() {
       ]);
 
       setForecast(forecastRes.forecast || []);
-      setRecurringExpenses(recurringRes.recurringExpenses || []);
+      setRecurringExpenses(Array.isArray(recurringRes) ? recurringRes : recurringRes.recurringExpenses || []);
 
       const pastMonths = [];
       const currentDate = new Date();
@@ -234,14 +234,44 @@ export default function ForecastView() {
             {t('forecast.plannedRecurring', 'Dépenses récurrentes prévues')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {recurringExpenses.map(expense => (
-              <div key={expense.id} className="flex justify-between p-3 bg-obsidian-bg rounded-lg">
-                <span className="text-obsidian-text">{expense.description}</span>
-                <span className="text-red-400 font-semibold">
-                  {formatCurrency(expense.amount)}
-                </span>
-              </div>
-            ))}
+            {recurringExpenses.map(expense => {
+              let displayAmount = parseFloat(expense.amount || 0);
+              const isShared = expense.share_type && expense.share_type !== 'none';
+              
+              // Calculate user's portion if shared
+              if (isShared) {
+                if (expense.share_type === 'equal') {
+                  displayAmount = displayAmount / 2;
+                } else if (expense.share_type === 'percentage' && expense.share_value) {
+                  displayAmount = displayAmount * (parseFloat(expense.share_value) / 100);
+                } else if (expense.share_type === 'amount' && expense.share_value) {
+                  displayAmount = parseFloat(expense.share_value);
+                }
+              }
+              
+              return (
+                <div key={expense.id} className="flex justify-between p-3 bg-obsidian-bg rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-obsidian-text">{expense.description}</span>
+                    {isShared && (
+                      <span className="text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                        {t('expenses.shared', 'Partagé')}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <span className="text-red-400 font-semibold">
+                      {formatCurrency(displayAmount)}
+                    </span>
+                    {isShared && (
+                      <div className="text-xs text-obsidian-text-muted">
+                        {t('expenses.yourPart', 'Votre part')}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <div className="mt-4 pt-4 border-t border-obsidian-border">
             <div className="flex justify-between">
@@ -250,7 +280,20 @@ export default function ForecastView() {
               </span>
               <span className="text-red-400 font-bold text-lg">
                 {formatCurrency(
-                  recurringExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0)
+                  recurringExpenses.reduce((sum, expense) => {
+                    let amount = parseFloat(expense.amount || 0);
+                    // Calculate user's portion if shared
+                    if (expense.share_type && expense.share_type !== 'none') {
+                      if (expense.share_type === 'equal') {
+                        amount = amount / 2;
+                      } else if (expense.share_type === 'percentage' && expense.share_value) {
+                        amount = amount * (parseFloat(expense.share_value) / 100);
+                      } else if (expense.share_type === 'amount' && expense.share_value) {
+                        amount = parseFloat(expense.share_value);
+                      }
+                    }
+                    return sum + amount;
+                  }, 0)
                 )}
               </span>
             </div>

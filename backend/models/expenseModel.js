@@ -119,7 +119,10 @@ exports.getRecurringForMonth = async (userId, year, month) => {
   try {
     const monthDate = new Date(year, month - 1, 1);
     const [rows] = await pool.execute(
-      `SELECT r.*, c.name as category_name, c.type as category_type 
+      `SELECT r.id, r.user_id, r.category_id, r.subcategory, r.description, r.amount,
+              r.day_of_month, r.start_date, r.end_date, r.is_active,
+              r.share_type, r.share_value, r.share_with,
+              c.name as category_name, c.type as category_type 
        FROM recurring_expenses r 
        JOIN categories c ON r.category_id = c.id 
        WHERE r.user_id = ? 
