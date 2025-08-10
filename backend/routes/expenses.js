@@ -112,7 +112,20 @@ router.put('/recurring/:id',
   body('subcategory').optional().trim().isLength({ max: 100 }),
   body('day_of_month').optional().isInt({ min: 1, max: 31 }),
   body('share_type').optional().isIn(['none', 'percentage', 'amount', 'equal']),
-  body('share_value').optional().isFloat({ min: 0 }),
+  body('share_value').optional().custom((value, { req }) => {
+    // For 'equal' type, share_value should be null
+    // For 'percentage' or 'amount', it should be a number
+    if (req.body.share_type === 'equal' || req.body.share_type === 'none') {
+      return value === null || value === undefined;
+    }
+    if (req.body.share_type === 'percentage') {
+      return value >= 0 && value <= 100;
+    }
+    if (req.body.share_type === 'amount') {
+      return value >= 0;
+    }
+    return true;
+  }).withMessage('Valeur de partage invalide pour le type sélectionné'),
   body('share_with').optional().trim().isLength({ max: 255 }),
   handleValidationErrors,
   expenseController.updateRecurringExpense

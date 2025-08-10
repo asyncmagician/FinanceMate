@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
 
     // Send verification email
     try {
-      await emailService.sendVerificationEmail(
+      await emailService.sendEmailVerification(
         email,
         firstName,
         verificationToken
@@ -199,7 +199,7 @@ exports.resendVerification = async (req, res) => {
     
     // Send verification email
     try {
-      await emailService.sendVerificationEmail(
+      await emailService.sendEmailVerification(
         user.email,
         user.first_name,
         verificationToken

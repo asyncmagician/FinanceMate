@@ -17,6 +17,9 @@ const unsubscribeRoutes = require('./routes/unsubscribe');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Nginx (required for rate limiting behind proxy)
+app.set('trust proxy', 1);
+
 // General rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

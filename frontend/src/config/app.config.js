@@ -10,18 +10,18 @@ export const APP_CONFIG = {
   // Application Branding
   app: {
     name: 'FinanceMate',
-    version: '1.0.0',
+    version: '1.1.0',
     description: 'Privacy-focused budget manager with recurring expenses and forecasting'
   },
 
   // Creator/Organization Information
   // Update these with your own information if you fork this project
   creator: {
-    name: '',  // Leave empty to hide creator info
-    linkedin: '',
-    github: '',
-    website: '',
-    email: '' // For legal/contact purposes only
+    name: 'Antony BARTOLOMUCCI',  // Leave empty to hide creator info
+    linkedin: 'https://linkedin.com/in/bartolomucci',
+    github: 'https://github.com/asyncmagician',
+    website: 'https://mucci.dev',
+    email: 'giammarino.antony@gmail.com' // For legal/contact purposes only
   },
 
   // Repository Information
@@ -33,9 +33,9 @@ export const APP_CONFIG = {
   // Legal Entity (for GDPR compliance)
   // This MUST be updated if you deploy your own instance
   legal: {
-    dataController: 'FinanceMate Admin', // Update with your name/organization
-    dataControllerContact: 'admin@localhost', // Update with your contact
-    privacyOfficer: 'privacy@localhost' // Update with privacy contact
+    dataController: 'Antony BARTOLOMUCCI', // Update with your name/organization
+    dataControllerContact: 'giammarino.antony@gmail.com', // Update with your contact
+    privacyOfficer: 'giammarino.antony@gmail.com' // Update with privacy contact
   },
 
   // Feature Flags
@@ -56,7 +56,7 @@ export const APP_CONFIG = {
 
   // UI Customization
   ui: {
-    showCreatorInfo: false, // Set to true if you want to show your info
+    showCreatorInfo: true, // Set to true if you want to show your info
     showGitHubLink: true,   // Show GitHub link in footer
     defaultLanguage: 'fr',  // 'fr' or 'en'
     theme: 'dark'          // Currently only 'dark' is supported
