@@ -22,47 +22,47 @@ const UserList = ({ users, onEditUser, onDeleteUser }) => {
 
   const getRoleBadgeClass = (role) => {
     return role === 'admin' 
-      ? 'bg-purple-100 text-purple-800 border-purple-200' 
-      : 'bg-gray-100 text-gray-800 border-gray-200';
+      ? 'bg-purple-900/20 text-purple-400 border-purple-600' 
+      : 'bg-obsidian-bg-secondary text-obsidian-text-muted border-obsidian-border';
   };
 
   if (users.length === 0) {
     return (
       <div className="text-center p-8">
         <div className="text-4xl mb-4">👥</div>
-        <h3 className="text-lg font-medium text-text-primary mb-2">{t('admin.noUsers')}</h3>
-        <p className="text-text-secondary">Aucun utilisateur trouvé dans le système.</p>
+        <h3 className="text-lg font-medium text-obsidian-text mb-2">{t('admin.noUsers')}</h3>
+        <p className="text-obsidian-text-muted">Aucun utilisateur trouvé dans le système.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-surface border border-border rounded-lg overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-border">
+          <thead className="bg-obsidian-bg-secondary border-b border-obsidian-border">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.userDetails')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.role')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.lastLogin')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.createdAt')}
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.actions')}
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.id} className="hover:bg-obsidian-bg-secondary">
                 <td className="px-6 py-4">
                   <div>
                     <div className="text-sm font-medium text-text-primary">
@@ -86,7 +86,7 @@ const UserList = ({ users, onEditUser, onDeleteUser }) => {
                   <div className="flex justify-end space-x-2">
                     <button
                       onClick={() => onEditUser(user)}
-                      className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                      className="text-obsidian-accent hover:text-obsidian-text p-2 rounded-lg hover:bg-obsidian-bg-secondary transition-colors"
                       title={t('admin.edit')}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ const UserList = ({ users, onEditUser, onDeleteUser }) => {
                     <button
                       onClick={() => onDeleteUser(user)}
                       disabled={user.id === currentUser?.id}
-                      className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-obsidian-error hover:text-red-400 p-2 rounded-lg hover:bg-obsidian-bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title={user.id === currentUser?.id ? t('admin.cannotDeleteSelf') : t('admin.delete')}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
