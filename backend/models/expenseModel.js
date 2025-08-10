@@ -5,6 +5,7 @@ exports.findById = async (id) => {
     const [rows] = await pool.execute(
       `SELECT id, month_id, category_id, subcategory, description, 
               amount, is_deducted, is_received,
+              share_type, share_value, share_with,
               DATE_FORMAT(date, '%Y-%m-%d') as date
        FROM expenses WHERE id = ?`,
       [id]
@@ -20,6 +21,7 @@ exports.getByMonth = async (monthId) => {
     const [rows] = await pool.execute(
       `SELECT e.id, e.month_id, e.category_id, e.subcategory, e.description, 
               e.amount, e.is_deducted, e.is_received,
+              e.share_type, e.share_value, e.share_with,
               DATE_FORMAT(e.date, '%Y-%m-%d') as date,
               c.name as category_name, c.type as category_type 
        FROM expenses e 
@@ -36,10 +38,26 @@ exports.getByMonth = async (monthId) => {
 
 exports.create = async (expenseData) => {
   try {
-    const { month_id, category_id, subcategory, description, amount, is_deducted, is_received, date } = expenseData;
+    const { 
+      month_id, category_id, subcategory, description, amount, 
+      is_deducted, is_received, date,
+      share_type, share_value, share_with 
+    } = expenseData;
+    
+    // Always store the full amount
+    const storedAmount = amount;
+    
     const [result] = await pool.execute(
-      'INSERT INTO expenses (month_id, category_id, subcategory, description, amount, is_deducted, is_received, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [month_id, category_id, subcategory || null, description, amount, is_deducted || false, is_received || false, date]
+      `INSERT INTO expenses (
+        month_id, category_id, subcategory, description, amount, 
+        is_deducted, is_received, date,
+        share_type, share_value, share_with
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        month_id, category_id, subcategory || null, description, storedAmount,
+        is_deducted || false, is_received || false, date,
+        share_type || 'none', share_value || null, share_with || null
+      ]
     );
     return { id: result.insertId, ...expenseData };
   } catch (error) {
@@ -135,10 +153,18 @@ exports.findRecurringById = async (id) => {
 
 exports.createRecurring = async (recurringData) => {
   try {
-    const { user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date, share_type, share_value, share_with } = recurringData;
+    const { 
+      user_id, category_id, subcategory, description, amount, 
+      day_of_month, start_date, end_date, 
+      share_type, share_value, share_with 
+    } = recurringData;
+    
+    // Always store the full amount
+    const storedAmount = amount;
+    
     const [result] = await pool.execute(
       'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, share_type, share_value, share_with, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [user_id, category_id, subcategory || null, description, amount, share_type || 'none', share_value || null, share_with || null, day_of_month || 1, start_date, end_date || null]
+      [user_id, category_id, subcategory || null, description, storedAmount, share_type || 'none', share_value || null, share_with || null, day_of_month || 1, start_date, end_date || null]
     );
     return { id: result.insertId, ...recurringData };
   } catch (error) {
@@ -151,8 +177,15 @@ exports.updateRecurring = async (id, recurringData) => {
     const fields = [];
     const values = [];
     
+    // Filter out fields that don't exist in database
+    const allowedFields = [
+      'category_id', 'subcategory', 'description', 'amount',
+      'day_of_month', 'start_date', 'end_date', 'is_active',
+      'share_type', 'share_value', 'share_with'
+    ];
+    
     Object.keys(recurringData).forEach(key => {
-      if (key !== 'id' && recurringData[key] !== undefined) {
+      if (allowedFields.includes(key) && recurringData[key] !== undefined) {
         fields.push(`${key} = ?`);
         values.push(recurringData[key]);
       }

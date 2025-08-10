@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
-import ShareExpenseModal from './ShareExpenseModal';
+import ExpenseSharing from '../expenses/ExpenseSharing';
 
 export default function RecurringExpenseManager({ onClose, onApply }) {
   const { t } = useLanguage();
   const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [shareData, setShareData] = useState({});
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
@@ -67,6 +66,11 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       newErrors.day_of_month = t('recurring.invalidDay', 'Jour invalide (1-31)');
     }
     
+    // Validate partner name if expense is shared
+    if (shareData.share_type && shareData.share_type !== 'none' && !shareData.share_with) {
+      newErrors.share_with = t('expenses.partnerRequired', 'Le nom du partenaire est requis pour les dépenses partagées');
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,16 +82,25 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       return;
     }
     
+    // Always store the full amount in the database
+    const fullAmount = parseFloat(formData.amount);
+    
     try {
       if (editingId) {
         await api.updateRecurringExpense(editingId, {
           ...formData,
-          amount: parseFloat(formData.amount)
+          amount: fullAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with
         });
       } else {
         await api.createRecurringExpense({
           ...formData,
-          amount: parseFloat(formData.amount)
+          amount: fullAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with
         });
       }
       await loadRecurringExpenses();
@@ -104,6 +117,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
         share_value: '',
         share_with: ''
       });
+      setShareData({});
       setErrors({});
     } catch (err) {
       console.error('Failed to save recurring expense:', err);
@@ -121,6 +135,12 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       share_type: expense.share_type || 'none',
       share_value: expense.share_value || '',
       share_with: expense.share_with || ''
+    });
+    // Also set shareData so ExpenseSharing component displays correctly
+    setShareData({
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null
     });
     setEditingId(expense.id);
     setShowAddForm(true);
@@ -153,7 +173,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto p-4">
       <div className="card w-full max-w-3xl my-8">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-obsidian-text">{t('recurring.title')}</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-obsidian-text">{t('recurring.title')}</h3>
           <button
             onClick={onClose}
             className="text-obsidian-text-muted hover:text-obsidian-text"
@@ -166,7 +186,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
 
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <p className="text-sm text-obsidian-text-muted">
+            <p className="text-xs sm:text-sm text-obsidian-text-muted">
               {t('recurring.description')}
             </p>
             <button
@@ -185,17 +205,25 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                     share_value: '',
                     share_with: ''
                   });
+                  setShareData({});
                 }
               }}
-              className="btn-secondary text-sm"
+              className="btn-secondary p-2 sm:px-4 text-sm"
+              title={editingId ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.add'))}
             >
-              {editingId ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.add'))}
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d={showAddForm || editingId ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+              </svg>
+              <span className="hidden sm:inline">
+                {editingId ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.add'))}
+              </span>
             </button>
           </div>
 
           {showAddForm && (
             <form onSubmit={handleSubmit} className="bg-obsidian-bg p-4 rounded-lg mb-4 space-y-3">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <input
                     type="text"
@@ -218,7 +246,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <select
                     value={formData.category_id}
@@ -244,6 +272,19 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                   {editingId ? t('edit') : t('create')}
                 </button>
               </div>
+              
+              {formData.category_id === 1 && formData.amount && (
+                <div className="mt-4">
+                  <ExpenseSharing
+                    shareData={shareData}
+                    onShareChange={setShareData}
+                    totalAmount={parseFloat(formData.amount) || 0}
+                  />
+                  {errors.share_with && (
+                    <p className="text-red-400 text-xs mt-2">{errors.share_with}</p>
+                  )}
+                </div>
+              )}
             </form>
           )}
         </div>
@@ -254,46 +295,80 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
               {t('recurring.noRecurring')}
             </div>
           ) : (
-            recurringExpenses.map(expense => (
+            recurringExpenses.map(expense => {
+              // Calculate user's portion if shared
+              let displayAmount = expense.amount;
+              let isShared = expense.share_type && expense.share_type !== 'none';
+              
+              if (isShared) {
+                if (expense.share_type === 'equal') {
+                  displayAmount = expense.amount / 2;
+                } else if (expense.share_type === 'percentage' && expense.share_value) {
+                  displayAmount = expense.amount * (parseFloat(expense.share_value) / 100);
+                } else if (expense.share_type === 'amount' && expense.share_value) {
+                  displayAmount = parseFloat(expense.share_value);
+                }
+              }
+              
+              return (
               <div
                 key={expense.id}
                 className="flex items-center justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border"
               >
-                <div className="flex items-center gap-4">
-                  <div>
-                    <div className="text-obsidian-text">{expense.description}</div>
-                    <div className="text-sm text-obsidian-text-muted">
-                      {t('recurring.dayLabel', 'Jour')} {expense.day_of_month} • {expense.category_type === 'fixed' ? t('expenses.fixed').replace(' Expenses', '').replace(' Dépenses', '') : t('expenses.variable').replace(' Expenses', '').replace(' Dépenses', '')}
-                    </div>
+                <div className="flex-1">
+                  <div className="text-sm sm:text-base text-obsidian-text">
+                    {expense.description}
+                    {isShared && (
+                      <span className="ml-2 text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                        {t('expenses.shared', 'Partagé')}
+                      </span>
+                    )}
                   </div>
+                  <div className="text-xs sm:text-sm text-obsidian-text-muted">
+                    {t('recurring.dayLabel', 'Jour')} {expense.day_of_month} • {expense.category_type === 'fixed' ? t('expenses.fixed').replace(' Expenses', '').replace(' Dépenses', '') : t('expenses.variable').replace(' Expenses', '').replace(' Dépenses', '')}
+                    {isShared && expense.share_with && ` • ${t('expenses.sharedWith', 'Partagé avec')} ${expense.share_with}`}
+                  </div>
+                  {isShared && (
+                    <div className="text-xs text-obsidian-text-faint mt-1">
+                      {t('expenses.fullAmount', 'Montant total')}: {formatCurrency(expense.amount)}
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-obsidian-accent">
-                    {formatCurrency(expense.amount)}
-                  </span>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="text-right">
+                    <span className="font-semibold text-obsidian-accent text-sm sm:text-base">
+                      {formatCurrency(displayAmount)}
+                    </span>
+                    {isShared && (
+                      <div className="text-xs text-obsidian-text-muted">
+                        {t('expenses.yourPart', 'Votre part')}
+                      </div>
+                    )}
+                  </div>
                   <button
                     onClick={() => handleEdit(expense)}
-                    className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
+                    className="p-1 text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
                     title={t('edit')}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                   </button>
                   <button
                     onClick={() => handleDelete(expense.id)}
-                    className="text-obsidian-text-muted hover:text-obsidian-error transition-colors"
+                    className="p-1 text-obsidian-text-muted hover:text-obsidian-error transition-colors"
                     title={t('delete')}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 </div>
               </div>
-            ))
+            );
+            })
           )}
         </div>
 

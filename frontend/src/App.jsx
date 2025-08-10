@@ -9,6 +9,7 @@ import MonthView from './components/months/MonthView';
 import Forecast from './components/Forecast';
 import RecurringView from './components/recurring/RecurringView';
 import ProfileView from './components/profile/ProfileView';
+import { AdministrationView } from './components/admin';
 import PrivacyPolicy from './components/legal/PrivacyPolicy';
 import TermsOfService from './components/legal/TermsOfService';
 import CookieBanner from './components/legal/CookieBanner';
@@ -26,6 +27,28 @@ function PrivateRoute({ children }) {
   }
   
   return user ? children : <Navigate to="/login" />;
+}
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-obsidian-bg">
+        <div className="text-obsidian-text-muted">Loading...</div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  
+  if (user.role !== 'admin') {
+    return <Navigate to="/dashboard" />;
+  }
+  
+  return children;
 }
 
 function App() {
@@ -52,6 +75,14 @@ function App() {
             <Route path="forecast" element={<Forecast />} />
             <Route path="recurring" element={<RecurringView />} />
             <Route path="profile" element={<ProfileView />} />
+            <Route 
+              path="admin" 
+              element={
+                <AdminRoute>
+                  <AdministrationView />
+                </AdminRoute>
+              } 
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
           </Routes>

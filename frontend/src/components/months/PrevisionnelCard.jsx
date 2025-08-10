@@ -1,11 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 export default function PrevisionnelCard({ previsionnel, startingBalance, onUpdateBalance }) {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [editing, setEditing] = useState(false);
   const [balance, setBalance] = useState(startingBalance);
   const [error, setError] = useState('');
+  const [userSalary, setUserSalary] = useState(null);
+  
+  useEffect(() => {
+    loadUserSalary();
+  }, []);
+  
+  const loadUserSalary = async () => {
+    try {
+      const response = await api.getSalary();
+      setUserSalary(response.salary);
+    } catch (err) {
+      console.log('No salary configured');
+    }
+  };
 
   const handleSave = () => {
     const balanceNum = parseFloat(balance);
@@ -30,6 +47,47 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
+  };
+  
+  const BudgetHealthIndicator = ({ used, total, reimbursements }) => {
+    const adjustedUsed = used - reimbursements;
+    const percentage = total > 0 ? (adjustedUsed / total) * 100 : 0;
+    
+    const getHealthColor = () => {
+      if (percentage <= 50) return 'bg-green-500';
+      if (percentage <= 80) return 'bg-yellow-500';
+      return 'bg-red-500';
+    };
+    
+    const getHealthText = () => {
+      if (percentage <= 50) return t('previsionnel.healthGood', 'Budget sain');
+      if (percentage <= 80) return t('previsionnel.healthCaution', 'Attention au budget');
+      return t('previsionnel.healthDanger', 'Budget dépassé');
+    };
+    
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-obsidian-text-muted">{t('previsionnel.budgetUsage', 'Utilisation du budget')}:</span>
+          <span className={`font-medium ${
+            percentage <= 50 ? 'text-green-400' : 
+            percentage <= 80 ? 'text-yellow-400' : 
+            'text-red-400'
+          }`}>
+            {getHealthText()}
+          </span>
+        </div>
+        <div className="w-full bg-obsidian-bg rounded-full h-2 overflow-hidden">
+          <div 
+            className={`h-full transition-all duration-300 ${getHealthColor()}`}
+            style={{ width: `${Math.min(percentage, 100)}%` }}
+          />
+        </div>
+        <div className="text-xs text-obsidian-text-muted text-center">
+          {Math.round(percentage)}% {t('previsionnel.ofSalary', 'du salaire utilisé')}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -124,6 +182,48 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
         }`}>
           {formatCurrency(previsionnel?.previsionnel || 0)}
         </div>
+        
+        {userSalary && (
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-obsidian-text-muted">{t('previsionnel.afterFixed', 'Après charges fixes')}:</span>
+              <span className={`font-semibold ${
+                (previsionnel?.fixed_total || 0) <= userSalary * 0.33 ? 'text-green-400' : 
+                (previsionnel?.fixed_total || 0) <= userSalary * 0.5 ? 'text-yellow-400' : 
+                'text-red-400'
+              }`}>
+                {formatCurrency(userSalary - (previsionnel?.fixed_total || 0))}
+                <span className="text-obsidian-text-muted ml-1">
+                  ({t('previsionnel.fixedUses', 'fixes:')} {Math.round(((previsionnel?.fixed_total || 0) / userSalary) * 100)}%)
+                </span>
+              </span>
+            </div>
+            
+            {previsionnel?.variable_total > 0 && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-obsidian-text-muted">{t('previsionnel.afterVariables', 'Après dépenses variables')}:</span>
+                <span className={`font-semibold ${
+                  ((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) <= userSalary * 0.7 ? 'text-green-400' : 
+                  ((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) <= userSalary * 0.9 ? 'text-yellow-400' : 
+                  'text-red-400'
+                }`}>
+                  {formatCurrency(userSalary - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0))}
+                  <span className="text-obsidian-text-muted ml-1">
+                    ({t('previsionnel.totalUses', 'total:')} {Math.round((((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) / userSalary) * 100)}%)
+                  </span>
+                </span>
+              </div>
+            )}
+            
+            <div className="mt-3 pt-3 border-t border-obsidian-border/50">
+              <BudgetHealthIndicator 
+                used={(previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)}
+                total={userSalary}
+                reimbursements={previsionnel?.reimbursements_received || 0}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

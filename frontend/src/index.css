@@ -28,4 +28,37 @@
   .card {
     @apply bg-obsidian-bg-secondary border border-obsidian-border rounded-lg p-4;
   }
+
+  /* Custom checkbox styles */
+  input[type="checkbox"] {
+    @apply appearance-none w-5 h-5 border-2 border-obsidian-border bg-obsidian-bg-secondary rounded 
+           transition-all duration-200 cursor-pointer relative
+           hover:border-obsidian-accent-hover;
+  }
+
+  input[type="checkbox"]:checked {
+    @apply bg-obsidian-accent border-obsidian-accent;
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: '✓';
+    @apply absolute inset-0 flex items-center justify-center text-white text-sm font-bold;
+  }
+
+  input[type="checkbox"]:focus {
+    @apply outline-none ring-2 ring-obsidian-accent ring-offset-2 ring-offset-obsidian-bg;
+  }
+
+  /* Green checkbox for reimbursements */
+  input[type="checkbox"].checkbox-green:checked {
+    @apply bg-green-500 border-green-500;
+  }
+
+  input[type="checkbox"].checkbox-green:hover {
+    @apply border-green-400;
+  }
+
+  input[type="checkbox"].checkbox-green:focus {
+    @apply ring-green-500;
+  }
 }

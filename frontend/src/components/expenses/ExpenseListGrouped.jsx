@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ConfirmModal from '../common/ConfirmModal';
+import EditExpenseForm from './EditExpenseForm';
 
-export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
+export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdit }) {
   const { t } = useLanguage();
-  const [editingId, setEditingId] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const formatCurrency = (amount) => {
@@ -93,7 +94,20 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
 
         const categoryTotal = Object.values(categoryData)
           .flat()
-          .reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+          .reduce((sum, expense) => {
+            // Calculate user's portion if shared
+            let amount = parseFloat(expense.amount);
+            if (expense.share_type && expense.share_type !== 'none') {
+              if (expense.share_type === 'equal') {
+                amount = amount / 2;
+              } else if (expense.share_type === 'percentage' && expense.share_value) {
+                amount = amount * (parseFloat(expense.share_value) / 100);
+              } else if (expense.share_type === 'amount' && expense.share_value) {
+                amount = parseFloat(expense.share_value);
+              }
+            }
+            return sum + amount;
+          }, 0);
 
         return (
           <div key={category}>
@@ -112,7 +126,20 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                 .map(subcategory => {
                   const subcategoryExpenses = categoryData[subcategory];
                   const subcategoryTotal = subcategoryExpenses.reduce(
-                    (sum, expense) => sum + parseFloat(expense.amount), 
+                    (sum, expense) => {
+                      // Calculate user's portion if shared
+                      let amount = parseFloat(expense.amount);
+                      if (expense.share_type && expense.share_type !== 'none') {
+                        if (expense.share_type === 'equal') {
+                          amount = amount / 2;
+                        } else if (expense.share_type === 'percentage' && expense.share_value) {
+                          amount = amount * (parseFloat(expense.share_value) / 100);
+                        } else if (expense.share_type === 'amount' && expense.share_value) {
+                          amount = parseFloat(expense.share_value);
+                        }
+                      }
+                      return sum + amount;
+                    },
                     0
                   );
 
@@ -128,24 +155,55 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                       </div>
                       
                       <div className="ml-2 sm:ml-4 space-y-1">
-                        {subcategoryExpenses.map(expense => (
+                        {subcategoryExpenses.map(expense => {
+                          // Calculate user's portion if shared
+                          let displayAmount = expense.amount;
+                          let isShared = expense.share_type && expense.share_type !== 'none';
+                          
+                          if (isShared) {
+                            if (expense.share_type === 'equal') {
+                              displayAmount = expense.amount / 2;
+                            } else if (expense.share_type === 'percentage' && expense.share_value) {
+                              displayAmount = expense.amount * (parseFloat(expense.share_value) / 100);
+                            } else if (expense.share_type === 'amount' && expense.share_value) {
+                              displayAmount = parseFloat(expense.share_value);
+                            }
+                          }
+                          
+                          return (
                           <div
                             key={expense.id}
                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
                           >
                             <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1">
-                              <div className="flex items-center mt-1 sm:mt-0">
-                                <input
-                                  type="checkbox"
-                                  id={`deducted-${expense.id}`}
-                                  checked={Boolean(expense.is_deducted)}
-                                  onChange={() => handleDeductedToggle(expense)}
-                                  className="w-5 h-5 rounded border-obsidian-border bg-obsidian-bg-secondary text-obsidian-accent focus:ring-obsidian-accent cursor-pointer"
-                                />
-                              </div>
+                              {category !== 'reimbursement' && (
+                                <div className="flex items-center mt-1 sm:mt-0">
+                                  <input
+                                    type="checkbox"
+                                    id={`deducted-${expense.id}`}
+                                    checked={Boolean(expense.is_deducted)}
+                                    onChange={() => handleDeductedToggle(expense)}
+                                    title={t('expenses.alreadyDeducted')}
+                                  />
+                                </div>
+                              )}
                               
                               <div className="flex-1">
-                                <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
+                                <div>
+                                  <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
+                                  {isShared && (
+                                    <span className="ml-2 text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                                      {t('expenses.shared')}
+                                    </span>
+                                  )}
+                                </div>
+                                {isShared && expense.share_with && (
+                                  <div className="text-xs text-obsidian-text-muted mt-1">
+                                    {t('expenses.sharedWith')} {expense.share_with}
+                                    {expense.share_type === 'equal' && ' (50/50)'}
+                                    {expense.share_type === 'percentage' && ` (${expense.share_value}%)`}
+                                  </div>
+                                )}
                               </div>
 
                               {category === 'reimbursement' && (
@@ -155,7 +213,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                                     id={`received-${expense.id}`}
                                     checked={Boolean(expense.is_received)}
                                     onChange={() => handleReimbursementToggle(expense)}
-                                    className="rounded border-obsidian-border bg-obsidian-bg-secondary text-green-400 focus:ring-green-400 cursor-pointer"
+                                    className="checkbox-green"
                                   />
                                   <span className={Boolean(expense.is_received) ? 'text-green-400' : 'text-obsidian-text-muted'}>
                                     {Boolean(expense.is_received) ? t('expenses.received') : t('expenses.pending')}
@@ -165,22 +223,44 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
                             </div>
 
                             <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0">
-                              <span className={`font-semibold text-yellow-400`}>
-                                {formatCurrency(expense.amount)}
-                              </span>
+                              <div className="text-right">
+                                <span className={`font-semibold text-yellow-400 ${category === 'reimbursement' ? 'ml-3 sm:ml-4' : ''}`}>
+                                  {formatCurrency(displayAmount)}
+                                </span>
+                                {isShared && (
+                                  <div className="text-xs text-obsidian-text-muted">
+                                    {t('expenses.yourPart')}
+                                  </div>
+                                )}
+                              </div>
                               
-                              <button
-                                onClick={() => setDeleteConfirm(expense)}
-                                className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-1"
-                              >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                              </button>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => setEditingExpense(expense)}
+                                  className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors p-1"
+                                  title={t('edit')}
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                  </svg>
+                                </button>
+                                
+                                <button
+                                  onClick={() => setDeleteConfirm(expense)}
+                                  className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-1"
+                                  title={t('delete')}
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        ))}
+                        );
+                        })}
                       </div>
                     </div>
                   );
@@ -194,6 +274,21 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete }) {
         <div className="text-center py-8 text-obsidian-text-muted">
           {t('expenses.noExpenses')}
         </div>
+      )}
+      
+      {editingExpense && (
+        <EditExpenseForm
+          expense={editingExpense}
+          onSubmit={(updatedData) => {
+            if (onEdit) {
+              onEdit(editingExpense.id, updatedData);
+            } else {
+              onUpdate(editingExpense.id, updatedData);
+            }
+            setEditingExpense(null);
+          }}
+          onClose={() => setEditingExpense(null)}
+        />
       )}
       
       <ConfirmModal

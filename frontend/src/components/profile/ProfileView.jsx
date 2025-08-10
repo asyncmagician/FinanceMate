@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
@@ -10,6 +10,9 @@ export default function ProfileView() {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showDeleteData, setShowDeleteData] = useState(false);
+  const [showSalaryForm, setShowSalaryForm] = useState(false);
+  const [salary, setSalary] = useState(null);
+  const [salaryInput, setSalaryInput] = useState('');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -17,6 +20,43 @@ export default function ProfileView() {
   });
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    loadSalary();
+  }, []);
+
+  const loadSalary = async () => {
+    try {
+      const response = await api.getSalary();
+      setSalary(response.salary);
+      setSalaryInput(response.salary ? String(response.salary) : '');
+    } catch (err) {
+      console.error('Error loading salary:', err);
+    }
+  };
+
+  const handleSalarySubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    setSuccessMessage('');
+
+    try {
+      const salaryValue = salaryInput.trim() === '' ? null : parseFloat(salaryInput);
+      
+      if (salaryInput.trim() !== '' && (isNaN(salaryValue) || salaryValue < 0)) {
+        setErrors({ salary: t('profile.salaryInvalid') });
+        return;
+      }
+
+      await api.updateSalary(salaryValue);
+      setSalary(salaryValue);
+      setShowSalaryForm(false);
+      setSuccessMessage(salaryValue ? t('profile.salaryUpdated') : t('profile.salaryRemoved'));
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      setErrors({ salary: err.message || t('profile.salaryError') });
+    }
+  };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -115,6 +155,106 @@ export default function ProfileView() {
               <span className="font-medium">{t('profile.memberSince')}:</span> {new Date(user?.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}
             </p>
           </div>
+        </div>
+
+        {/* Salary Information */}
+        <div className="card">
+          <h2 className="text-xl font-semibold text-obsidian-text mb-4">{t('profile.salaryInfo')}</h2>
+          
+          {!showSalaryForm ? (
+            <div className="space-y-4">
+              <div className="text-obsidian-text-muted">
+                <p>
+                  <span className="font-medium">{t('profile.currentSalary')}:</span>{' '}
+                  {salary ? (
+                    <span className="text-obsidian-text">
+                      {salary.toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US')} {t('profile.euroSymbol')} {t('profile.perMonth')}
+                    </span>
+                  ) : (
+                    <span className="text-obsidian-text-muted">{t('profile.noSalarySet')}</span>
+                  )}
+                </p>
+                <p className="text-sm mt-2 text-obsidian-text-muted">
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    {t('profile.salaryPrivacy')}
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowSalaryForm(true);
+                  setSalaryInput(salary ? String(salary) : '');
+                  setErrors({});
+                }}
+                className="btn-secondary"
+              >
+                {salary ? t('profile.updateSalary') : t('profile.setSalary')}
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSalarySubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-obsidian-text-muted mb-1">
+                  {t('profile.salaryAmount')}
+                </label>
+                <input
+                  type="number"
+                  value={salaryInput}
+                  onChange={(e) => setSalaryInput(e.target.value)}
+                  placeholder={t('profile.salaryPlaceholder')}
+                  className="input-field w-full max-w-md"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="text-sm text-obsidian-text-muted mt-1">
+                  {t('profile.salaryOptional')}
+                </p>
+                {errors.salary && (
+                  <p className="text-red-400 text-sm mt-1">{errors.salary}</p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button type="submit" className="btn-primary">
+                  {t('save')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSalaryForm(false);
+                    setSalaryInput(salary ? String(salary) : '');
+                    setErrors({});
+                  }}
+                  className="btn-secondary"
+                >
+                  {t('cancel')}
+                </button>
+                {salary && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await api.updateSalary(null);
+                        setSalary(null);
+                        setSalaryInput('');
+                        setShowSalaryForm(false);
+                        setSuccessMessage(t('profile.salaryRemoved'));
+                        setTimeout(() => setSuccessMessage(''), 3000);
+                      } catch (err) {
+                        setErrors({ salary: err.message || t('profile.salaryError') });
+                      }
+                    }}
+                    className="text-orange-400 hover:text-orange-300 transition-colors px-3"
+                  >
+                    {t('profile.removeSalary')}
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
         </div>
 
         {/* Language Settings */}

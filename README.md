@@ -24,6 +24,7 @@ A self-hosted personal finance management application with Obsidian-style naviga
 - **Mobile-First Design**: Responsive UI optimized for mobile devices
 - **Context-Aware Navigation**: Smart 404 pages and legal document navigation
 - **Data Export**: Export your data in JSON or CSV format (GDPR Article 20)
+- **Administration Panel**: User management for admin users (CRUD operations)
 
 ### Security & Privacy
 - **Self-Hosted**: Your data stays on your infrastructure
@@ -31,6 +32,7 @@ A self-hosted personal finance management application with Obsidian-style naviga
 - **Enhanced Security**: Strong password policies, rate limiting, secure tokens
 - **Age Verification**: 16+ requirement with consent management
 - **Data Protection**: bcrypt password hashing, JWT authentication, encrypted connections
+- **Encrypted Salary**: Optional AES-256-GCM encrypted salary storage (user-only access)
 
 ## 📋 Requirements
 
@@ -56,6 +58,7 @@ cp .env.example .env
 # Edit .env with your secure values:
 # - Generate JWT_SECRET: openssl rand -base64 32
 # - Set strong DB_PASSWORD (16+ characters)
+# - Generate ENCRYPTION_KEY: node scripts/generateEncryptionKey.js
 ```
 
 3. **Start the database**
@@ -102,6 +105,7 @@ Before deploying to production, ensure:
 1. **Strong Secrets**
    - JWT_SECRET: Minimum 32 characters (use `openssl rand -base64 32`)
    - DB_PASSWORD: Strong password with 16+ characters
+   - ENCRYPTION_KEY: 64-character hex string (use `node scripts/generateEncryptionKey.js`)
 
 2. **Database Security**
    - Port binding restricted to localhost (configured in docker-compose.yml)
@@ -153,6 +157,20 @@ FinanceMate is fully GDPR compliant with:
 - Based on average spending patterns
 - Interactive line charts
 - Detailed monthly breakdowns
+
+### User Profile
+- Personal information management
+- Encrypted salary storage (optional)
+- Password change functionality
+- Data export (JSON/CSV)
+- Account deletion with full data erasure
+
+### Administration (Admin Only)
+- User management dashboard
+- Create, read, update, delete users
+- View last login timestamps
+- Role management (admin/user)
+- Security: Admins cannot access user financial data
 
 ## 🌐 Language Support
 

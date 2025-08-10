@@ -4,6 +4,7 @@ import api from '../../services/api';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ExpenseListGrouped from '../expenses/ExpenseListGrouped';
 import ExpenseForm from '../expenses/ExpenseForm';
+import ReimbursementForm from '../expenses/ReimbursementForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
 
@@ -15,6 +16,7 @@ export default function MonthView() {
   const [previsionnel, setPrevisionnel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showAddReimbursement, setShowAddReimbursement] = useState(false);
   const [showRecurringManager, setShowRecurringManager] = useState(false);
 
   const monthNames = [
@@ -60,6 +62,19 @@ export default function MonthView() {
     }
   };
 
+  const handleAddReimbursement = async (reimbursement) => {
+    try {
+      await api.createExpense({
+        ...reimbursement,
+        date: `${year}-${String(month).padStart(2, '0')}-${String(reimbursement.day).padStart(2, '0')}`
+      });
+      await loadMonthData();
+      setShowAddReimbursement(false);
+    } catch (err) {
+      console.error('Failed to add reimbursement:', err);
+    }
+  };
+
   const handleUpdateExpense = async (id, updates) => {
     try {
       // Optimistically update the UI
@@ -72,8 +87,8 @@ export default function MonthView() {
       // Then update the backend
       await api.updateExpense(id, updates);
       
-      // Only reload if it's a significant update (amount changes affect totals)
-      if (updates.amount !== undefined) {
+      // Reload if it's a significant update (amount changes affect totals, is_received affects prévisionnel)
+      if (updates.amount !== undefined || updates.description !== undefined || updates.category_id !== undefined || updates.is_received !== undefined) {
         await loadMonthData();
       }
     } catch (err) {
@@ -129,13 +144,17 @@ export default function MonthView() {
         });
         
         if (!existingExpense) {
+          // For shared expenses, create the expense with full amount
           const expenseData = {
             description: recurring.description,
             amount: parseFloat(recurring.amount),
             category_id: recurring.category_id || 1,
             subcategory: recurring.subcategory || null,
             date: dateString,
-            is_deducted: false
+            is_deducted: false,
+            share_type: recurring.share_type || 'none',
+            share_value: recurring.share_value || null,
+            share_with: recurring.share_with || null
           };
           
           const newExpense = await api.createExpense(expenseData);
@@ -145,6 +164,37 @@ export default function MonthView() {
             description: recurring.description,
             date: dateString
           });
+          
+          // If it's a shared expense, automatically create a reimbursement
+          if (recurring.share_type && recurring.share_type !== 'none' && recurring.share_with) {
+            let reimbursementAmount = 0;
+            
+            if (recurring.share_type === 'equal') {
+              // For 50/50 split, partner owes half
+              reimbursementAmount = parseFloat(recurring.amount) / 2;
+            } else if (recurring.share_type === 'percentage' && recurring.share_value) {
+              // If user pays X%, partner owes (100-X)%
+              const userPercentage = parseFloat(recurring.share_value);
+              const partnerPercentage = 100 - userPercentage;
+              reimbursementAmount = parseFloat(recurring.amount) * (partnerPercentage / 100);
+            } else if (recurring.share_type === 'amount' && recurring.share_value) {
+              // User pays fixed amount, partner owes the rest
+              const userAmount = parseFloat(recurring.share_value);
+              reimbursementAmount = parseFloat(recurring.amount) - userAmount;
+            }
+            
+            if (reimbursementAmount > 0) {
+              const reimbursementData = {
+                description: `${t('reimbursement.for', 'Remboursement pour')} ${recurring.description} - ${recurring.share_with}`,
+                amount: reimbursementAmount,
+                category_id: 3, // Reimbursement category
+                date: dateString,
+                is_received: false
+              };
+              
+              await api.createExpense(reimbursementData);
+            }
+          }
         }
       }
       
@@ -179,6 +229,7 @@ export default function MonthView() {
           onUpdateBalance={handleUpdateBalance}
         />
       </div>
+      
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">
@@ -194,6 +245,17 @@ export default function MonthView() {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="hidden sm:inline">{t('expenses.recurring')}</span>
+            </button>
+            <button
+              onClick={() => setShowAddReimbursement(true)}
+              className="btn-secondary p-2 sm:px-4"
+              title={t('reimbursement.add', 'Ajouter un remboursement')}
+            >
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                  d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+              </svg>
+              <span className="hidden sm:inline">{t('reimbursement.add', 'Remboursement')}</span>
             </button>
             <button
               onClick={() => setShowAddExpense(true)}
@@ -212,6 +274,7 @@ export default function MonthView() {
         <ExpenseListGrouped
           expenses={expenses}
           onUpdate={handleUpdateExpense}
+          onEdit={handleUpdateExpense}
           onDelete={handleDeleteExpense}
         />
       </div>
@@ -220,6 +283,13 @@ export default function MonthView() {
         <ExpenseForm
           onSubmit={handleAddExpense}
           onClose={() => setShowAddExpense(false)}
+        />
+      )}
+
+      {showAddReimbursement && (
+        <ReimbursementForm
+          onSubmit={handleAddReimbursement}
+          onClose={() => setShowAddReimbursement(false)}
         />
       )}
 

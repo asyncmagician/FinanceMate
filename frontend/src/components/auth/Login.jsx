@@ -104,12 +104,16 @@ export default function Login() {
         </form>
         
         <div className="mt-6 text-center">
-          <Link 
-            to="/register" 
-            className="text-obsidian-link hover:text-obsidian-link-hover text-sm"
+          <p className="text-sm text-obsidian-text-muted mb-2">
+            {t('login.noAccount')}
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/register')}
+            className="btn-secondary w-full"
           >
-            {t('login.noAccount')} {t('login.register')}
-          </Link>
+            {t('login.register')}
+          </button>
         </div>
       </div>
     </div>

@@ -2,18 +2,26 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import ConfirmModal from '../common/ConfirmModal';
+import ExpenseSharing from '../expenses/ExpenseSharing';
+import HousingAffordability from '../expenses/HousingAffordability';
 
 export default function RecurringView() {
   const { t } = useLanguage();
   const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [shareData, setShareData] = useState({});
+  const [userSalary, setUserSalary] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
     category_id: 1,
     subcategory: '',
-    day_of_month: 1
+    day_of_month: 1,
+    share_type: 'none',
+    share_value: null,
+    share_with: null
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -30,7 +38,17 @@ export default function RecurringView() {
 
   useEffect(() => {
     loadRecurringExpenses();
+    loadUserSalary();
   }, []);
+  
+  const loadUserSalary = async () => {
+    try {
+      const response = await api.getSalary();
+      setUserSalary(response.salary);
+    } catch (err) {
+      console.log('No salary configured');
+    }
+  };
 
   const loadRecurringExpenses = async () => {
     try {
@@ -71,25 +89,71 @@ export default function RecurringView() {
     }
     
     try {
-      await api.createRecurringExpense({
-        ...formData,
-        amount: parseFloat(formData.amount),
-        start_date: new Date().toISOString().split('T')[0]
-      });
+      // Always store the full amount in the database
+      const fullAmount = parseFloat(formData.amount);
+      
+      if (editingExpense) {
+        await api.updateRecurringExpense(editingExpense.id, {
+          ...formData,
+          amount: fullAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with
+        });
+      } else {
+        await api.createRecurringExpense({
+          ...formData,
+          amount: fullAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with,
+          start_date: new Date().toISOString().split('T')[0]
+        });
+      }
       
       setFormData({
         description: '',
         amount: '',
         category_id: 1,
         subcategory: '',
-        day_of_month: 1
+        day_of_month: 1,
+        share_type: 'none',
+        share_value: null,
+        share_with: null
       });
+      setShareData({});
       setShowAddForm(false);
+      setEditingExpense(null);
       setErrors({});
       await loadRecurringExpenses();
     } catch (err) {
-      console.error('Failed to create recurring expense:', err);
+      console.error('Failed to save recurring expense:', err);
     }
+  };
+
+  const handleEdit = (expense) => {
+    // The amount stored is already the full amount
+    const fullAmount = expense.amount;
+    
+    setFormData({
+      description: expense.description,
+      amount: fullAmount.toString(),
+      category_id: expense.category_id || 1,
+      subcategory: expense.subcategory || '',
+      day_of_month: expense.day_of_month || 1,
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null
+    });
+    setShareData({
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null,
+      user_amount: null // Will be recalculated by ExpenseSharing
+    });
+    setEditingExpense(expense);
+    setShowAddForm(true);
+    setErrors({});
   };
 
   const handleDelete = async (id) => {
@@ -108,6 +172,54 @@ export default function RecurringView() {
       currency: 'EUR'
     }).format(amount);
   };
+  
+  // Calculate total housing expenses from recurring
+  const housingExpenses = recurringExpenses
+    .filter(expense => {
+      // Check both translated and hardcoded values for compatibility
+      const isHousing = expense.subcategory === t('expenses.housing') || 
+                       expense.subcategory === 'Logement' ||
+                       expense.subcategory === 'Housing';
+      return isHousing;
+    })
+    .reduce((sum, expense) => {
+      // Calculate user's portion if shared
+      let amount = parseFloat(expense.amount || 0);
+      if (expense.share_type && expense.share_type !== 'none') {
+        if (expense.share_type === 'equal') {
+          amount = amount / 2;
+        } else if (expense.share_type === 'percentage' && expense.share_value) {
+          amount = amount * (parseFloat(expense.share_value) / 100);
+        } else if (expense.share_type === 'amount' && expense.share_value) {
+          amount = parseFloat(expense.share_value);
+        }
+      }
+      return sum + amount;
+    }, 0);
+    
+  // Calculate both full total and user's portion
+  const expenseTotals = recurringExpenses.reduce((totals, expense) => {
+    const fullAmount = parseFloat(expense.amount || 0);
+    let userAmount = fullAmount;
+    
+    if (expense.share_type && expense.share_type !== 'none') {
+      if (expense.share_type === 'equal') {
+        userAmount = fullAmount / 2;
+      } else if (expense.share_type === 'percentage' && expense.share_value) {
+        userAmount = fullAmount * (parseFloat(expense.share_value) / 100);
+      } else if (expense.share_type === 'amount' && expense.share_value) {
+        userAmount = parseFloat(expense.share_value);
+      }
+    }
+    
+    return {
+      full: totals.full + fullAmount,
+      user: totals.user + userAmount,
+      shared: totals.shared + (fullAmount - userAmount)
+    };
+  }, { full: 0, user: 0, shared: 0 });
+  
+  const totalFixedExpenses = expenseTotals.user; // For backward compatibility
 
   if (loading) {
     return (
@@ -125,15 +237,103 @@ export default function RecurringView() {
           {t('recurring.pageDescription', 'Gérez vos dépenses fixes mensuelles. Ces dépenses peuvent être appliquées automatiquement à chaque mois.')}
         </p>
       </div>
+      
+      {/* Salary configuration prompt */}
+      {!userSalary && totalFixedExpenses > 0 && (
+        <div className="mb-6 card bg-obsidian-accent/10 border-obsidian-accent/30">
+          <div className="flex items-start gap-3">
+            <svg className="w-6 h-6 text-obsidian-accent mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="font-semibold text-obsidian-text mb-2">
+                {t('profile.configureSalary', 'Configurez votre salaire pour une analyse complète')}
+              </h3>
+              <p className="text-sm text-obsidian-text-muted mb-3">
+                {t('profile.configureMessage', 'Ajoutez votre salaire mensuel pour calculer votre taux d\'endettement et obtenir des recommandations personnalisées.')}
+              </p>
+              <button
+                onClick={() => window.location.href = '/profile'}
+                className="btn-primary text-sm"
+              >
+                {t('profile.configure', 'Configurer mon salaire')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {userSalary && totalFixedExpenses > 0 && (
+        <div className="mb-6">
+          <HousingAffordability 
+            housingExpenses={housingExpenses}
+            totalFixedExpenses={totalFixedExpenses}
+            userSalary={userSalary}
+            isVisible={true}
+          />
+        </div>
+      )}
 
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-obsidian-text">{t('recurring.templates', 'Templates de dépenses')}</h2>
+          <div>
+            <h2 className="text-xl font-semibold text-obsidian-text">{t('recurring.templates', 'Templates de dépenses')}</h2>
+            {expenseTotals.full > 0 && (
+              <div className="mt-2 space-y-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                  <span className="text-sm text-obsidian-text-muted">
+                    {t('expenses.total')} {t('expenses.fixed')}: 
+                    <span className="font-bold text-yellow-400 ml-2">{formatCurrency(expenseTotals.full)}</span>
+                  </span>
+                  {expenseTotals.shared > 0 && (
+                    <span className="text-xs text-obsidian-text-faint">
+                      {t('expenses.yourPart', 'Votre part')}: {formatCurrency(expenseTotals.user)}
+                      {userSalary && (
+                        <span className="ml-1">
+                          ({((expenseTotals.user / userSalary) * 100).toFixed(1)}% {t('profile.ofSalary', 'du salaire')})
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </div>
+                {expenseTotals.shared > 0 && (
+                  <div className="text-xs text-obsidian-accent/70 pl-0 sm:pl-4">
+                    💡 {t('expenses.toBeReimbursed', 'À se faire rembourser')}: {formatCurrency(expenseTotals.shared)}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="btn-primary"
+            onClick={() => {
+              setShowAddForm(!showAddForm);
+              if (showAddForm) {
+                setEditingExpense(null);
+                setFormData({
+                  description: '',
+                  amount: '',
+                  category_id: 1,
+                  subcategory: '',
+                  day_of_month: 1,
+                  share_type: 'none',
+                  share_value: null,
+                  share_with: null
+                });
+                setShareData({});
+                setErrors({});
+              }
+            }}
+            className="btn-primary p-2 sm:px-4"
+            title={editingExpense ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente'))}
           >
-            {showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente')}
+            <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                d={showAddForm ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+            </svg>
+            <span className="hidden sm:inline">
+              {editingExpense ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente'))}
+            </span>
           </button>
         </div>
 
@@ -217,15 +417,35 @@ export default function RecurringView() {
                 )}
               </div>
             </div>
+            
+            <div className="col-span-1 md:col-span-2">
+              <ExpenseSharing
+                shareData={shareData}
+                onShareChange={setShareData}
+                totalAmount={parseFloat(formData.amount) || 0}
+              />
+            </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 col-span-1 md:col-span-2">
               <button type="submit" className="btn-primary">
-                {t('create')}
+                {editingExpense ? t('edit') : t('create')}
               </button>
               <button 
                 type="button" 
                 onClick={() => {
                   setShowAddForm(false);
+                  setEditingExpense(null);
+                  setFormData({
+                    description: '',
+                    amount: '',
+                    category_id: 1,
+                    subcategory: '',
+                    day_of_month: 1,
+                    share_type: 'none',
+                    share_value: null,
+                    share_with: null
+                  });
+                  setShareData({});
                   setErrors({});
                 }}
                 className="btn-secondary"
@@ -242,29 +462,76 @@ export default function RecurringView() {
               {t('recurring.noRecurring')}
             </p>
           ) : (
-            recurringExpenses.map(expense => (
-              <div 
-                key={expense.id}
-                className="flex items-center justify-between p-4 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
-              >
-                <div className="flex-1">
-                  <div className="font-semibold text-obsidian-text">
-                    {expense.description}
+            recurringExpenses.map(expense => {
+              // Calculate user's portion if shared
+              let displayAmount = expense.amount;
+              let isShared = expense.share_type && expense.share_type !== 'none';
+              
+              if (isShared) {
+                if (expense.share_type === 'equal') {
+                  displayAmount = expense.amount / 2;
+                } else if (expense.share_type === 'percentage' && expense.share_value) {
+                  displayAmount = expense.amount * (parseFloat(expense.share_value) / 100);
+                } else if (expense.share_type === 'amount' && expense.share_value) {
+                  displayAmount = parseFloat(expense.share_value);
+                }
+              }
+              
+              return (
+                <div 
+                  key={expense.id}
+                  className="flex items-center justify-between p-4 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="font-semibold text-obsidian-text">
+                      {expense.description}
+                      {isShared && (
+                        <span className="ml-2 text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                          {t('expenses.shared', 'Partagé')}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-sm text-obsidian-text-muted">
+                      {expense.subcategory && `${expense.subcategory} • `}
+                      {t('recurring.dayLabel')} {expense.day_of_month} {t('recurring.ofMonth', 'du mois')}
+                      {isShared && expense.share_with && ` • ${t('expenses.sharedWith', 'Partagé avec')} ${expense.share_with}`}
+                    </div>
+                    {isShared && (
+                      <div className="text-xs text-obsidian-text-faint mt-1">
+                        {t('expenses.fullAmount', 'Montant total')}: {formatCurrency(expense.amount)} 
+                        {expense.share_type === 'equal' && ' (50/50)'}
+                        {expense.share_type === 'percentage' && ` (${expense.share_value}%)`}
+                      </div>
+                    )}
                   </div>
-                  <div className="text-sm text-obsidian-text-muted">
-                    {expense.subcategory && `${expense.subcategory} • `}
-                    {t('recurring.dayLabel')} {expense.day_of_month} {t('recurring.ofMonth', 'du mois')}
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  <span className="text-lg font-bold text-yellow-400">
-                    {formatCurrency(expense.amount)}
-                  </span>
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <span className="text-lg font-bold text-yellow-400">
+                        {formatCurrency(displayAmount)}
+                      </span>
+                      {isShared && (
+                        <div className="text-xs text-obsidian-text-muted">
+                          {t('expenses.yourPart', 'Votre part')}
+                        </div>
+                      )}
+                    </div>
+                  
+                  <button
+                    onClick={() => handleEdit(expense)}
+                    className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors p-2"
+                    title={t('edit')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
                   
                   <button
                     onClick={() => setDeleteConfirm(expense)}
                     className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-2"
+                    title={t('delete')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -273,7 +540,8 @@ export default function RecurringView() {
                   </button>
                 </div>
               </div>
-            ))
+            );
+            })
           )}
         </div>
       </div>
@@ -283,10 +551,11 @@ export default function RecurringView() {
           {t('recurring.howToTitle', 'Comment utiliser les dépenses récurrentes ?')}
         </h3>
         <ol className="space-y-2 text-obsidian-text-muted">
-          <li>1. {t('recurring.howTo1', 'Ajoutez vos dépenses fixes mensuelles (loyer, abonnements, etc.)')}</li>
-          <li>2. {t('recurring.howTo2', 'Naviguez vers un mois spécifique')}</li>
-          <li>3. {t('recurring.howTo3', 'Cliquez sur "Dépenses récurrentes" puis "Appliquer au mois actuel"')}</li>
-          <li>4. {t('recurring.howTo4', 'Les dépenses seront ajoutées automatiquement (sans doublon)')}</li>
+          <li>1. {t('recurring.howTo1', 'Créez vos templates de dépenses fixes (loyer, abonnements, etc.)')}</li>
+          <li>2. {t('recurring.howTo2', 'Partagez vos dépenses si nécessaire (50/50, pourcentage, montant fixe)')}</li>
+          <li>3. {t('recurring.howTo3', 'Naviguez vers un mois spécifique et cliquez sur "Dépenses récurrentes"')}</li>
+          <li>4. {t('recurring.howTo4', 'Sélectionnez les templates à appliquer (évite les doublons automatiquement)')}</li>
+          <li>5. {t('recurring.howTo5', 'Les dépenses partagées créeront automatiquement des remboursements')}</li>
         </ol>
       </div>
 

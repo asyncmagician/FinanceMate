@@ -1,15 +1,17 @@
 const monthModel = require('../models/monthModel');
 const expenseModel = require('../models/expenseModel');
+const userModel = require('../models/userModel');
 
 exports.exportUserData = async (req, res) => {
   try {
     const userId = req.user.id;
     
-    // Get all user data
-    const [months, expenses, recurringExpenses] = await Promise.all([
+    // Get all user data including salary
+    const [months, expenses, recurringExpenses, salary] = await Promise.all([
       monthModel.getAllByUser(userId),
       expenseModel.getAllByUser(userId),
-      expenseModel.getRecurringByUser(userId)
+      expenseModel.getRecurringByUser(userId),
+      userModel.getSalary(userId)
     ]);
 
     // Prepare export data
@@ -20,6 +22,7 @@ exports.exportUserData = async (req, res) => {
         email: req.user.email,
         firstName: req.user.first_name,
         lastName: req.user.last_name,
+        salary: salary, // Decrypted salary value (null if not set)
         memberSince: req.user.created_at
       },
       months: months.map(month => ({

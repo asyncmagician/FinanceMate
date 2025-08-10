@@ -3,10 +3,12 @@ exports.calculatePrevisionnel = (startingBalance, expenses, recurringExpenses = 
   let variableTotal = 0;
   let reimbursementsReceived = 0;
   let reimbursementsPending = 0;
-  let sharedReimbursements = 0;
   
   expenses.forEach(expense => {
     const amount = parseFloat(expense.amount);
+    
+    // Always use FULL amount for expenses (what actually hits your bank account)
+    // Reimbursements are tracked separately
     
     if (expense.category_type === 'fixed') {
       fixedTotal += amount;
@@ -21,26 +23,8 @@ exports.calculatePrevisionnel = (startingBalance, expenses, recurringExpenses = 
     }
   });
   
-  // Calculate shared expenses from recurring
-  recurringExpenses.forEach(recurring => {
-    if (recurring.share_type && recurring.share_type !== 'none') {
-      const amount = parseFloat(recurring.amount);
-      let reimbursement = 0;
-      
-      if (recurring.share_type === 'equal') {
-        reimbursement = amount / 2;
-      } else if (recurring.share_type === 'percentage' && recurring.share_value) {
-        reimbursement = amount * (parseFloat(recurring.share_value) / 100);
-      } else if (recurring.share_type === 'amount' && recurring.share_value) {
-        reimbursement = parseFloat(recurring.share_value);
-      }
-      
-      sharedReimbursements += reimbursement;
-    }
-  });
-  
   const totalExpenses = fixedTotal + variableTotal;
-  const previsionnel = parseFloat(startingBalance) - totalExpenses + reimbursementsReceived + sharedReimbursements;
+  const previsionnel = parseFloat(startingBalance) - totalExpenses + reimbursementsReceived;
   
   return {
     fixed_total: fixedTotal,
@@ -48,7 +32,6 @@ exports.calculatePrevisionnel = (startingBalance, expenses, recurringExpenses = 
     total_expenses: totalExpenses,
     reimbursements_received: reimbursementsReceived,
     reimbursements_pending: reimbursementsPending,
-    shared_reimbursements: sharedReimbursements,
     previsionnel: previsionnel,
     previsionnel_with_pending: previsionnel + reimbursementsPending
   };
