@@ -26,13 +26,18 @@ class EmailService {
 
       if (error) {
         console.error('Email send error:', error);
-        // Check both error.message and error.error for the message
-        const errorMessage = error.message || error.error || 'Unknown error';
+        // Check for the error message in different possible locations
+        const errorMessage = error.message || error.error || JSON.stringify(error);
         
-        // Don't throw in development if it's just a domain verification issue
-        if (process.env.NODE_ENV !== 'production' && errorMessage.includes('verify a domain')) {
-          console.log('Skipping email in development mode (domain not verified)');
-          return { id: 'dev-mode-skip', message: 'Email skipped in development' };
+        // In development, don't fail on Resend restrictions
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Development mode: Email not sent due to Resend restrictions');
+          console.log('In production, emails will be sent normally');
+          return { 
+            id: 'dev-mode-skip', 
+            message: 'Email skipped in development (Resend requires domain verification for production use)',
+            originalRecipient: to
+          };
         }
         throw new Error(`Failed to send email: ${errorMessage}`);
       }

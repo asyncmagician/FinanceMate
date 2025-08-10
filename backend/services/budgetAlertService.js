@@ -120,15 +120,23 @@ class BudgetAlertService {
 
   async setLastAlert(key, value) {
     this.alertCache.set(key, value);
-    // Store expiration time instead of using setTimeout (avoids overflow)
+    // Store expiration time as a timestamp (30 days from now)
     const expirationTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
     this.alertCache.set(`${key}_expires`, expirationTime);
+    
+    // Set up periodic cleanup every hour instead of using long timeout
+    if (!this.cleanupInterval) {
+      this.cleanupInterval = setInterval(() => {
+        this.cleanExpiredAlerts();
+      }, 60 * 60 * 1000); // Check every hour
+    }
   }
   
   async cleanExpiredAlerts() {
     // Clean expired alerts periodically
+    const now = Date.now();
     for (const [key, value] of this.alertCache.entries()) {
-      if (key.endsWith('_expires') && value < Date.now()) {
+      if (key.endsWith('_expires') && value < now) {
         const alertKey = key.replace('_expires', '');
         this.alertCache.delete(alertKey);
         this.alertCache.delete(key);
