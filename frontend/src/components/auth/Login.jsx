@@ -101,6 +101,15 @@ export default function Login() {
           >
             {loading ? t('loading') : t('login.submit')}
           </button>
+
+          <div className="text-center mt-3">
+            <Link 
+              to="/forgot-password" 
+              className="text-sm text-obsidian-accent hover:underline"
+            >
+              {t('login.forgotPassword')}
+            </Link>
+          </div>
         </form>
         
         <div className="mt-6 text-center">
