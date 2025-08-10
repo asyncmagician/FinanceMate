@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import ConfirmModal from '../common/ConfirmModal';
+import ExpenseSharing from '../expenses/ExpenseSharing';
+import HousingAffordability from '../expenses/HousingAffordability';
 
 export default function RecurringView() {
   const { t } = useLanguage();
@@ -9,12 +11,17 @@ export default function RecurringView() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [shareData, setShareData] = useState({});
+  const [userSalary, setUserSalary] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
     category_id: 1,
     subcategory: '',
-    day_of_month: 1
+    day_of_month: 1,
+    share_type: 'none',
+    share_value: null,
+    share_with: null
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -31,7 +38,17 @@ export default function RecurringView() {
 
   useEffect(() => {
     loadRecurringExpenses();
+    loadUserSalary();
   }, []);
+  
+  const loadUserSalary = async () => {
+    try {
+      const response = await api.getSalary();
+      setUserSalary(response.salary);
+    } catch (err) {
+      console.log('No salary configured');
+    }
+  };
 
   const loadRecurringExpenses = async () => {
     try {
@@ -72,15 +89,25 @@ export default function RecurringView() {
     }
     
     try {
+      const finalAmount = shareData.user_amount || parseFloat(formData.amount);
+      
       if (editingExpense) {
         await api.updateRecurringExpense(editingExpense.id, {
           ...formData,
-          amount: parseFloat(formData.amount)
+          amount: finalAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with,
+          full_amount: parseFloat(formData.amount)
         });
       } else {
         await api.createRecurringExpense({
           ...formData,
-          amount: parseFloat(formData.amount),
+          amount: finalAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with,
+          full_amount: parseFloat(formData.amount),
           start_date: new Date().toISOString().split('T')[0]
         });
       }
@@ -107,7 +134,15 @@ export default function RecurringView() {
       amount: expense.amount.toString(),
       category_id: expense.category_id,
       subcategory: expense.subcategory || '',
-      day_of_month: expense.day_of_month
+      day_of_month: expense.day_of_month,
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null
+    });
+    setShareData({
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null
     });
     setEditingExpense(expense);
     setShowAddForm(true);
@@ -130,6 +165,27 @@ export default function RecurringView() {
       currency: 'EUR'
     }).format(amount);
   };
+  
+  // Calculate total housing expenses from recurring
+  const housingExpenses = recurringExpenses
+    .filter(expense => 
+      expense.subcategory === t('expenses.housing') || 
+      expense.subcategory === 'Logement'
+    )
+    .reduce((sum, expense) => {
+      // Calculate user's portion if shared
+      let amount = expense.amount;
+      if (expense.share_type && expense.share_type !== 'none') {
+        if (expense.share_type === 'equal') {
+          amount = amount / 2;
+        } else if (expense.share_type === 'percentage' && expense.share_value) {
+          amount = amount * (parseFloat(expense.share_value) / 100);
+        } else if (expense.share_type === 'amount' && expense.share_value) {
+          amount = parseFloat(expense.share_value);
+        }
+      }
+      return sum + amount;
+    }, 0);
 
   if (loading) {
     return (
@@ -147,6 +203,15 @@ export default function RecurringView() {
           {t('recurring.pageDescription', 'Gérez vos dépenses fixes mensuelles. Ces dépenses peuvent être appliquées automatiquement à chaque mois.')}
         </p>
       </div>
+      
+      {housingExpenses > 0 && userSalary && (
+        <div className="mb-6">
+          <HousingAffordability 
+            housingExpenses={housingExpenses}
+            isVisible={true}
+          />
+        </div>
+      )}
 
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -274,8 +339,12 @@ export default function RecurringView() {
                     amount: '',
                     category_id: 1,
                     subcategory: '',
-                    day_of_month: 1
+                    day_of_month: 1,
+                    share_type: 'none',
+                    share_value: null,
+                    share_with: null
                   });
+                  setShareData({});
                   setErrors({});
                 }}
                 className="btn-secondary"
@@ -283,6 +352,16 @@ export default function RecurringView() {
                 {t('cancel')}
               </button>
             </div>
+            
+            {formData.amount && (
+              <div className="mt-4">
+                <ExpenseSharing
+                  shareData={shareData}
+                  onShareChange={setShareData}
+                  totalAmount={parseFloat(formData.amount) || 0}
+                />
+              </div>
+            )}
           </form>
         )}
 
