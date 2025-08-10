@@ -120,16 +120,16 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-obsidian-bg-secondary rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-obsidian-border">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-text-primary">
+            <h2 className="text-xl font-semibold text-obsidian-text">
               {user ? t('admin.editUser') : t('admin.createUser')}
             </h2>
             <button
               onClick={onCancel}
-              className="text-text-secondary hover:text-text-primary p-1"
+              className="text-obsidian-text-muted hover:text-obsidian-text p-1"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -140,7 +140,7 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* First Name */}
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">
+              <label className="block text-sm font-medium text-obsidian-text mb-1">
                 {t('admin.firstName')}
               </label>
               <input
@@ -148,19 +148,19 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.firstName ? 'border-red-500' : 'border-border'
+                className={`input-field w-full ${
+                  errors.firstName ? 'border-red-500' : ''
                 }`}
                 placeholder={t('admin.firstName')}
               />
               {errors.firstName && (
-                <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>
               )}
             </div>
 
             {/* Last Name */}
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">
+              <label className="block text-sm font-medium text-obsidian-text mb-1">
                 {t('admin.lastName')}
               </label>
               <input
@@ -168,19 +168,19 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.lastName ? 'border-red-500' : 'border-border'
+                className={`input-field w-full ${
+                  errors.lastName ? 'border-red-500' : ''
                 }`}
                 placeholder={t('admin.lastName')}
               />
               {errors.lastName && (
-                <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">
+              <label className="block text-sm font-medium text-obsidian-text mb-1">
                 {t('admin.email')}
               </label>
               <input
@@ -188,62 +188,64 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.email ? 'border-red-500' : 'border-border'
+                className={`input-field w-full ${
+                  errors.email ? 'border-red-500' : ''
                 }`}
                 placeholder={t('admin.email')}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.email}</p>
               )}
             </div>
 
             {/* Role */}
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">
+              <label className="block text-sm font-medium text-obsidian-text mb-1">
                 {t('admin.role')}
               </label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.role ? 'border-red-500' : 'border-border'
+                className={`input-field w-full ${
+                  errors.role ? 'border-red-500' : ''
                 }`}
               >
                 <option value="user">{t('admin.userRole')}</option>
                 <option value="admin">{t('admin.adminRole')}</option>
               </select>
               {errors.role && (
-                <p className="text-red-500 text-sm mt-1">{errors.role}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.role}</p>
               )}
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">
+            {/* Password - Only for new users */}
+            {!user ? (
+              <div>
+              <label className="block text-sm font-medium text-obsidian-text mb-1">
                 {t('admin.password')}
-                {user && <span className="text-xs text-text-secondary ml-1">({t('admin.leaveEmptyToKeepCurrent')})</span>}
               </label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.password ? 'border-red-500' : 'border-border'
+                className={`input-field w-full ${
+                  errors.password ? 'border-red-500' : ''
                 }`}
-                placeholder={user ? t('admin.leaveEmptyToKeepCurrent') : t('admin.password')}
+                placeholder={t('admin.password')}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.password}</p>
               )}
             </div>
 
-            {/* Confirm Password */}
-            {formData.password && (
+            ) : null}
+
+            {/* Confirm Password - Only for new users with password */}
+            {!user && formData.password && (
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1">
+                <label className="block text-sm font-medium text-obsidian-text mb-1">
                   {t('admin.confirmPassword')}
                 </label>
                 <input
@@ -251,30 +253,30 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-border'
+                  className={`input-field w-full ${
+                    errors.confirmPassword ? 'border-red-500' : ''
                   }`}
                   placeholder={t('admin.confirmPassword')}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                  <p className="text-red-400 text-sm mt-1">{errors.confirmPassword}</p>
                 )}
               </div>
             )}
 
             {/* Actions */}
-            <div className="flex justify-end space-x-3 pt-4 mt-6 border-t border-border">
+            <div className="flex justify-end space-x-3 pt-4 mt-6 border-t border-obsidian-border">
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 text-sm font-medium text-text-secondary border border-border rounded-lg hover:bg-gray-50 transition-colors"
+                className="btn-secondary"
               >
                 {t('admin.cancel')}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
                 {loading && (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
