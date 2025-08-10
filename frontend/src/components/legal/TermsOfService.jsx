@@ -1,6 +1,7 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { APP_CONFIG } from '../../config/app.config';
 
 export default function TermsOfService() {
   const { language } = useLanguage();
@@ -94,15 +95,29 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Intellectual Property</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Email Communications</h2>
+          <p className="text-obsidian-text-muted mb-4">
+            By using the Service, you understand that:
+          </p>
+          <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+            <li>Essential service emails (password reset, security alerts) cannot be disabled</li>
+            <li>Optional emails (budget alerts, weekly summaries) require your explicit consent</li>
+            <li>You can manage your email preferences in your profile settings at any time</li>
+            <li>All emails include an unsubscribe option for optional communications</li>
+            <li>We will never share your email address with third parties for marketing purposes</li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Intellectual Property</h2>
           <p className="text-obsidian-text-muted mb-4">
             The Service and its original content (excluding user data), features, and functionality are owned by 
-            Antony BARTOLOMUCCI and are protected by international copyright, trademark, and other intellectual property laws.
+            {APP_CONFIG.legal.dataController} and are protected by international copyright, trademark, and other intellectual property laws.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Disclaimer of Warranties</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Disclaimer of Warranties</h2>
           <p className="text-obsidian-text-muted mb-4">
             THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE DISCLAIM ALL WARRANTIES, 
             EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
@@ -113,7 +128,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Limitation of Liability</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Limitation of Liability</h2>
           <p className="text-obsidian-text-muted mb-4">
             TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, 
             SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR USE, 
@@ -126,15 +141,15 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Indemnification</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Indemnification</h2>
           <p className="text-obsidian-text-muted mb-4">
-            You agree to indemnify and hold harmless Antony BARTOLOMUCCI from any claims, damages, 
+            You agree to indemnify and hold harmless {APP_CONFIG.legal.dataController} from any claims, damages, 
             losses, or expenses arising from your use of the Service or violation of these Terms.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Termination</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Termination</h2>
           <p className="text-obsidian-text-muted mb-4">
             We may terminate or suspend your account at any time, without prior notice, for any reason, 
             including breach of these Terms. You may delete your account at any time through the profile settings.
@@ -142,7 +157,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Changes to Terms</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Changes to Terms</h2>
           <p className="text-obsidian-text-muted mb-4">
             We reserve the right to modify these Terms at any time. We will notify users of any material changes. 
             Your continued use of the Service after changes constitutes acceptance of the new Terms.
@@ -150,7 +165,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Governing Law</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">13. Governing Law</h2>
           <p className="text-obsidian-text-muted mb-4">
             These Terms shall be governed by the laws of France and the European Union. 
             Any disputes shall be resolved in the courts of France.
@@ -158,16 +173,11 @@ export default function TermsOfService() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">13. Contact Information</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">14. Contact Information</h2>
           <p className="text-obsidian-text-muted">
             For questions about these Terms, please contact:<br />
-            Antony BARTOLOMUCCI<br />
-            <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-              LinkedIn Profile
-            </a><br />
-            <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-              GitHub: @asyncmagician
-            </a>
+            {APP_CONFIG.legal.dataController}<br />
+            Email: {APP_CONFIG.legal.dataControllerContact}
           </p>
         </section>
         </div>
@@ -242,15 +252,29 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Propriété Intellectuelle</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Communications par Email</h2>
+        <p className="text-obsidian-text-muted mb-4">
+          En utilisant le Service, vous comprenez que :
+        </p>
+        <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+          <li>Les emails de service essentiels (réinitialisation de mot de passe, alertes de sécurité) ne peuvent pas être désactivés</li>
+          <li>Les emails optionnels (alertes budget, résumés hebdomadaires) nécessitent votre consentement explicite</li>
+          <li>Vous pouvez gérer vos préférences email dans les paramètres de votre profil à tout moment</li>
+          <li>Tous les emails incluent une option de désabonnement pour les communications optionnelles</li>
+          <li>Nous ne partagerons jamais votre adresse email avec des tiers à des fins marketing</li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Propriété Intellectuelle</h2>
         <p className="text-obsidian-text-muted mb-4">
           Le Service et son contenu original (excluant les données utilisateur), ses fonctionnalités sont la propriété 
-          d'Antony BARTOLOMUCCI et sont protégés par les lois internationales sur le droit d'auteur, les marques et autres droits de propriété intellectuelle.
+          de {APP_CONFIG.legal.dataController} et sont protégés par les lois internationales sur le droit d'auteur, les marques et autres droits de propriété intellectuelle.
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Exclusion de Garanties</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Exclusion de Garanties</h2>
         <p className="text-obsidian-text-muted mb-4">
           LE SERVICE EST FOURNI "TEL QUEL" SANS GARANTIES D'AUCUNE SORTE. NOUS DÉCLINONS TOUTES GARANTIES, 
           EXPRESSES OU IMPLICITES, Y COMPRIS LA QUALITÉ MARCHANDE, L'ADÉQUATION À UN USAGE PARTICULIER ET LA NON-VIOLATION.
@@ -261,7 +285,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Limitation de Responsabilité</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Limitation de Responsabilité</h2>
         <p className="text-obsidian-text-muted mb-4">
           DANS TOUTE LA MESURE PERMISE PAR LA LOI, NOUS NE SERONS PAS RESPONSABLES DES DOMMAGES INDIRECTS, 
           ACCESSOIRES, SPÉCIAUX, CONSÉCUTIFS OU PUNITIFS, Y COMPRIS LA PERTE DE PROFITS, DE DONNÉES OU D'UTILISATION, 
@@ -274,15 +298,15 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Indemnisation</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Indemnisation</h2>
         <p className="text-obsidian-text-muted mb-4">
-          Vous acceptez d'indemniser et de dégager de toute responsabilité Antony BARTOLOMUCCI de toute réclamation, 
+          Vous acceptez d'indemniser et de dégager de toute responsabilité {APP_CONFIG.legal.dataController} de toute réclamation, 
           dommages, pertes ou dépenses découlant de votre utilisation du Service ou de la violation de ces Conditions.
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Résiliation</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Résiliation</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous pouvons résilier ou suspendre votre compte à tout moment, sans préavis, pour quelque raison que ce soit, 
           y compris la violation de ces Conditions. Vous pouvez supprimer votre compte à tout moment via les paramètres du profil.
@@ -290,7 +314,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Modifications des Conditions</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Modifications des Conditions</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous nous réservons le droit de modifier ces Conditions à tout moment. Nous informerons les utilisateurs de tout changement important. 
           Votre utilisation continue du Service après les changements constitue l'acceptation des nouvelles Conditions.
@@ -298,7 +322,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Droit Applicable</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">13. Droit Applicable</h2>
         <p className="text-obsidian-text-muted mb-4">
           Ces Conditions sont régies par les lois de France et de l'Union Européenne. 
           Tout litige sera résolu devant les tribunaux de France.
@@ -306,16 +330,11 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">13. Coordonnées</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">14. Coordonnées</h2>
         <p className="text-obsidian-text-muted">
           Pour des questions sur ces Conditions, veuillez contacter :<br />
-          Antony BARTOLOMUCCI<br />
-          <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-            Profil LinkedIn
-          </a><br />
-          <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-            GitHub : @asyncmagician
-          </a>
+          {APP_CONFIG.legal.dataController}<br />
+          Email : {APP_CONFIG.legal.dataControllerContact}
         </p>
       </section>
       </div>
