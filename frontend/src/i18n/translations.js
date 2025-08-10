@@ -178,7 +178,14 @@ export const translations = {
       formula: 'Calcul: Solde de départ - Dépenses fixes - Dépenses variables + Remboursements',
       amountInvalid: 'Le montant doit être un nombre valide',
       amountOutOfBounds: 'Le montant est hors limites',
-      finalBalance: 'Prévisionnel final'
+      finalBalance: 'Prévisionnel final',
+      afterFixed: 'Après charges fixes',
+      afterVariables: 'Après dépenses variables',
+      budgetUsage: 'Utilisation du budget',
+      healthGood: 'Budget sain',
+      healthCaution: 'Attention au budget',
+      healthDanger: 'Budget dépassé',
+      ofSalary: 'du salaire utilisé'
     },
     
     // Expenses
@@ -557,7 +564,14 @@ export const translations = {
       formula: 'Calculation: Starting balance - Fixed expenses - Variable expenses + Reimbursements',
       amountInvalid: 'Amount must be a valid number',
       amountOutOfBounds: 'Amount is out of bounds',
-      finalBalance: 'Final forecast'
+      finalBalance: 'Final forecast',
+      afterFixed: 'After fixed expenses',
+      afterVariables: 'After variable expenses',
+      budgetUsage: 'Budget usage',
+      healthGood: 'Healthy budget',
+      healthCaution: 'Caution - watch spending',
+      healthDanger: 'Budget exceeded',
+      ofSalary: 'of salary used'
     },
     
     // Expenses
