@@ -197,20 +197,29 @@ export default function RecurringView() {
       return sum + amount;
     }, 0);
     
-  // Calculate total fixed expenses (user's portion only)
-  const totalFixedExpenses = recurringExpenses.reduce((sum, expense) => {
-    let amount = parseFloat(expense.amount || 0);
+  // Calculate both full total and user's portion
+  const expenseTotals = recurringExpenses.reduce((totals, expense) => {
+    const fullAmount = parseFloat(expense.amount || 0);
+    let userAmount = fullAmount;
+    
     if (expense.share_type && expense.share_type !== 'none') {
       if (expense.share_type === 'equal') {
-        amount = amount / 2;
+        userAmount = fullAmount / 2;
       } else if (expense.share_type === 'percentage' && expense.share_value) {
-        amount = amount * (parseFloat(expense.share_value) / 100);
+        userAmount = fullAmount * (parseFloat(expense.share_value) / 100);
       } else if (expense.share_type === 'amount' && expense.share_value) {
-        amount = parseFloat(expense.share_value);
+        userAmount = parseFloat(expense.share_value);
       }
     }
-    return sum + amount;
-  }, 0);
+    
+    return {
+      full: totals.full + fullAmount,
+      user: totals.user + userAmount,
+      shared: totals.shared + (fullAmount - userAmount)
+    };
+  }, { full: 0, user: 0, shared: 0 });
+  
+  const totalFixedExpenses = expenseTotals.user; // For backward compatibility
 
   if (loading) {
     return (
@@ -270,17 +279,29 @@ export default function RecurringView() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-xl font-semibold text-obsidian-text">{t('recurring.templates', 'Templates de dépenses')}</h2>
-            {totalFixedExpenses > 0 && (
-              <div className="mt-2 flex items-center gap-4">
-                <span className="text-sm text-obsidian-text-muted">
-                  {t('expenses.total')} {t('expenses.fixed')}: 
-                  <span className="font-bold text-yellow-400 ml-2">{formatCurrency(totalFixedExpenses)}</span>
-                  {userSalary && (
-                    <span className="text-obsidian-text-faint ml-2">
-                      ({((totalFixedExpenses / userSalary) * 100).toFixed(1)}% {t('profile.ofSalary', 'du salaire')})
+            {expenseTotals.full > 0 && (
+              <div className="mt-2 space-y-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                  <span className="text-sm text-obsidian-text-muted">
+                    {t('expenses.total')} {t('expenses.fixed')}: 
+                    <span className="font-bold text-yellow-400 ml-2">{formatCurrency(expenseTotals.full)}</span>
+                  </span>
+                  {expenseTotals.shared > 0 && (
+                    <span className="text-xs text-obsidian-text-faint">
+                      {t('expenses.yourPart', 'Votre part')}: {formatCurrency(expenseTotals.user)}
+                      {userSalary && (
+                        <span className="ml-1">
+                          ({((expenseTotals.user / userSalary) * 100).toFixed(1)}% {t('profile.ofSalary', 'du salaire')})
+                        </span>
+                      )}
                     </span>
                   )}
-                </span>
+                </div>
+                {expenseTotals.shared > 0 && (
+                  <div className="text-xs text-obsidian-accent/70 pl-0 sm:pl-4">
+                    💡 {t('expenses.toBeReimbursed', 'À se faire rembourser')}: {formatCurrency(expenseTotals.shared)}
+                  </div>
+                )}
               </div>
             )}
           </div>
