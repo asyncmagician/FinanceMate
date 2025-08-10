@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ExpenseSharing from './ExpenseSharing';
 
 export default function ExpenseForm({ onSubmit, onClose }) {
   const { t } = useLanguage();
@@ -10,8 +11,12 @@ export default function ExpenseForm({ onSubmit, onClose }) {
     subcategory: '',
     customSubcategory: '',
     day: new Date().getDate(),
-    is_deducted: false
+    is_deducted: false,
+    share_type: 'none',
+    share_value: null,
+    share_with: null
   });
+  const [shareData, setShareData] = useState({});
   const [showCustomSubcategory, setShowCustomSubcategory] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -72,10 +77,16 @@ export default function ExpenseForm({ onSubmit, onClose }) {
       return;
     }
     
+    const finalAmount = shareData.user_amount || parseFloat(formData.amount);
+    
     onSubmit({
       ...formData,
       subcategory: showCustomSubcategory ? formData.customSubcategory : formData.subcategory,
-      amount: parseFloat(formData.amount)
+      amount: finalAmount,
+      share_type: shareData.share_type || 'none',
+      share_value: shareData.share_value,
+      share_with: shareData.share_with,
+      full_amount: parseFloat(formData.amount) // Store original amount for reference
     });
   };
 
@@ -207,6 +218,14 @@ export default function ExpenseForm({ onSubmit, onClose }) {
               </div>
             )}
           </div>
+
+          {formData.category_id === 1 && formData.amount && (
+            <ExpenseSharing
+              shareData={shareData}
+              onShareChange={setShareData}
+              totalAmount={parseFloat(formData.amount) || 0}
+            />
+          )}
 
           <label className="flex items-center gap-2 cursor-pointer">
             <input
