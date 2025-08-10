@@ -120,10 +120,20 @@ class BudgetAlertService {
 
   async setLastAlert(key, value) {
     this.alertCache.set(key, value);
-    // Clear after 30 days
-    setTimeout(() => {
-      this.alertCache.delete(key);
-    }, 30 * 24 * 60 * 60 * 1000);
+    // Store expiration time instead of using setTimeout (avoids overflow)
+    const expirationTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
+    this.alertCache.set(`${key}_expires`, expirationTime);
+  }
+  
+  async cleanExpiredAlerts() {
+    // Clean expired alerts periodically
+    for (const [key, value] of this.alertCache.entries()) {
+      if (key.endsWith('_expires') && value < Date.now()) {
+        const alertKey = key.replace('_expires', '');
+        this.alertCache.delete(alertKey);
+        this.alertCache.delete(key);
+      }
+    }
   }
 
   // Check all users' budgets (for scheduled job)

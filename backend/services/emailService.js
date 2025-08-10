@@ -9,9 +9,16 @@ class EmailService {
 
   async sendEmail({ to, subject, html, text }) {
     try {
+      // In development/test mode, only send to TEST_EMAIL if configured
+      let recipient = to;
+      if (process.env.NODE_ENV !== 'production' && process.env.TEST_EMAIL) {
+        console.log(`Development mode: Redirecting email from ${to} to ${process.env.TEST_EMAIL}`);
+        recipient = process.env.TEST_EMAIL;
+      }
+
       const { data, error } = await this.resend.emails.send({
         from: this.fromEmail,
-        to,
+        to: recipient,
         subject,
         html,
         text: text || this.htmlToText(html)
@@ -19,12 +26,25 @@ class EmailService {
 
       if (error) {
         console.error('Email send error:', error);
-        throw new Error(`Failed to send email: ${error.message}`);
+        // Check both error.message and error.error for the message
+        const errorMessage = error.message || error.error || 'Unknown error';
+        
+        // Don't throw in development if it's just a domain verification issue
+        if (process.env.NODE_ENV !== 'production' && errorMessage.includes('verify a domain')) {
+          console.log('Skipping email in development mode (domain not verified)');
+          return { id: 'dev-mode-skip', message: 'Email skipped in development' };
+        }
+        throw new Error(`Failed to send email: ${errorMessage}`);
       }
 
       return data;
     } catch (error) {
       console.error('Email service error:', error);
+      // In development, log but don't fail the entire operation
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Email failed in development mode, continuing...');
+        return { id: 'dev-mode-error', message: 'Email failed but continuing in development' };
+      }
       throw error;
     }
   }
