@@ -42,7 +42,8 @@ class BudgetAlertService {
           ), 0) as total_spent
          FROM expenses e
          JOIN categories c ON e.category_id = c.id
-         WHERE e.user_id = ? AND e.year = ? AND e.month = ?`,
+         JOIN months m ON e.month_id = m.id
+         WHERE m.user_id = ? AND m.year = ? AND m.month = ?`,
         [userId, year, month]
       );
 
