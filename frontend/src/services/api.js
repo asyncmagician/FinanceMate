@@ -66,6 +66,17 @@ class ApiService {
     });
   }
 
+  async verifyEmail(token) {
+    return this.request(`/auth/verify-email/${token}`);
+  }
+
+  async resendVerification(email) {
+    return this.request('/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
   async login(email, password) {
     const data = await this.request('/auth/login', {
       method: 'POST',
@@ -136,6 +147,17 @@ class ApiService {
 
   async getForecast(months) {
     return this.request(`/months/forecast/${months}`);
+  }
+
+  async getBudgetStatus(year, month) {
+    return this.request(`/months/${year}/${month}/budget`);
+  }
+
+  async setBudgetLimit(year, month, budgetLimit, alertThreshold) {
+    return this.request(`/months/${year}/${month}/budget`, {
+      method: 'PUT',
+      body: JSON.stringify({ budgetLimit, alertThreshold }),
+    });
   }
 
   async getRecurringExpenses() {

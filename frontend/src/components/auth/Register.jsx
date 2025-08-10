@@ -67,9 +67,15 @@ function Register() {
       );
 
       if (response.success) {
-        navigate('/login', { 
-          state: { message: t('login.successRegistration') }
-        });
+        if (response.requiresVerification) {
+          navigate('/verification-required', { 
+            state: { email: formData.email }
+          });
+        } else {
+          navigate('/login', { 
+            state: { message: t('login.successRegistration') }
+          });
+        }
       }
     } catch (err) {
       setError(err.message || t('register.registrationError'));

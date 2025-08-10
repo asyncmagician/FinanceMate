@@ -53,7 +53,21 @@ export const translations = {
       resetPasswordButton: 'Réinitialiser le mot de passe',
       resetPasswordError: 'Erreur lors de la réinitialisation du mot de passe',
       passwordResetSuccess: 'Mot de passe réinitialisé avec succès !',
-      redirectingToLogin: 'Redirection vers la page de connexion...'
+      redirectingToLogin: 'Redirection vers la page de connexion...',
+      
+      // Email verification
+      verificationRequired: 'Vérification email requise',
+      verificationRequiredDesc: 'Un email de vérification a été envoyé à votre adresse. Veuillez cliquer sur le lien dans l\'email pour activer votre compte.',
+      verificationSentTo: 'Email envoyé à',
+      resendVerification: 'Renvoyer l\'email de vérification',
+      verificationResent: 'Email de vérification renvoyé avec succès',
+      resendError: 'Erreur lors de l\'envoi de l\'email',
+      checkSpam: 'Vérifiez également votre dossier de spam si vous ne trouvez pas l\'email.',
+      verifyingEmail: 'Vérification de votre email...',
+      emailVerified: 'Email vérifié avec succès !',
+      verificationError: 'Erreur lors de la vérification',
+      verificationFailed: 'Échec de la vérification',
+      emailRequired: 'Adresse email requise'
     },
     
     register: {
@@ -400,6 +414,24 @@ export const translations = {
       dataProcessing: ' et le traitement de mes données personnelles'
     },
     
+    // Budget
+    budget: {
+      title: 'Budget mensuel',
+      limit: 'Limite budgétaire',
+      spent: 'Dépensé',
+      remaining: 'Restant',
+      usage: 'Utilisation',
+      noBudgetSet: 'Aucun budget défini pour ce mois',
+      setBudget: 'Définir un budget',
+      monthlyLimit: 'Limite mensuelle',
+      limitPlaceholder: 'Ex: 2000',
+      limitHint: 'Laissez vide pour supprimer le budget',
+      alertThreshold: 'Seuil d\'alerte',
+      thresholdHint: 'Vous recevrez une alerte quand vous atteindrez {{threshold}}% du budget',
+      alertTriggered: 'Attention : Vous avez atteint {{threshold}}% de votre budget',
+      removeBudget: 'Supprimer le budget'
+    },
+    
     // Footer
     footer: {
       allRightsReserved: 'Tous droits réservés',
@@ -509,7 +541,21 @@ export const translations = {
       resetPasswordButton: 'Reset password',
       resetPasswordError: 'Error resetting password',
       passwordResetSuccess: 'Password reset successfully!',
-      redirectingToLogin: 'Redirecting to login page...'
+      redirectingToLogin: 'Redirecting to login page...',
+      
+      // Email verification
+      verificationRequired: 'Email Verification Required',
+      verificationRequiredDesc: 'A verification email has been sent to your address. Please click the link in the email to activate your account.',
+      verificationSentTo: 'Email sent to',
+      resendVerification: 'Resend verification email',
+      verificationResent: 'Verification email resent successfully',
+      resendError: 'Error sending email',
+      checkSpam: 'Also check your spam folder if you can\'t find the email.',
+      verifyingEmail: 'Verifying your email...',
+      emailVerified: 'Email verified successfully!',
+      verificationError: 'Verification error',
+      verificationFailed: 'Verification failed',
+      emailRequired: 'Email address required'
     },
     
     register: {
@@ -851,6 +897,24 @@ export const translations = {
       privacyPolicy: 'Privacy Policy',
       acceptPrivacy: 'I accept the ',
       dataProcessing: ' and the processing of my personal data'
+    },
+    
+    // Budget
+    budget: {
+      title: 'Monthly Budget',
+      limit: 'Budget limit',
+      spent: 'Spent',
+      remaining: 'Remaining',
+      usage: 'Usage',
+      noBudgetSet: 'No budget set for this month',
+      setBudget: 'Set budget',
+      monthlyLimit: 'Monthly limit',
+      limitPlaceholder: 'e.g., 2000',
+      limitHint: 'Leave empty to remove budget',
+      alertThreshold: 'Alert threshold',
+      thresholdHint: 'You will receive an alert when you reach {{threshold}}% of budget',
+      alertTriggered: 'Warning: You have reached {{threshold}}% of your budget',
+      removeBudget: 'Remove budget'
     },
     
     // Footer

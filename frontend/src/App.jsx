@@ -5,6 +5,8 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
+import EmailVerification from './components/auth/EmailVerification';
+import VerificationRequired from './components/auth/VerificationRequired';
 import MainLayout from './components/layout/MainLayout';
 import Dashboard from './components/Dashboard';
 import MonthView from './components/months/MonthView';
@@ -63,6 +65,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<EmailVerification />} />
+          <Route path="/verification-required" element={<VerificationRequired />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route

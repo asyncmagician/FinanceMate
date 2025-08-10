@@ -29,8 +29,13 @@ export default function Login() {
       await login(email, password);
       navigate('/profile');
     } catch (err) {
-      // Generic error message for security - don't reveal if email exists or not
-      setError(t('login.invalidCredentials'));
+      // Check if verification is required
+      if (err.message?.includes('vérifier votre adresse email')) {
+        navigate('/verification-required', { state: { email } });
+      } else {
+        // Generic error message for security - don't reveal if email exists or not
+        setError(t('login.invalidCredentials'));
+      }
     } finally {
       setLoading(false);
     }
