@@ -26,7 +26,34 @@ export const translations = {
       register: 'Créer un compte',
       noAccount: "Pas encore de compte ?",
       invalidCredentials: 'Identifiants invalides. Veuillez vérifier votre email et mot de passe.',
-      successRegistration: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.'
+      successRegistration: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.',
+      forgotPassword: 'Mot de passe oublié ?'
+    },
+    
+    // Password reset
+    auth: {
+      forgotPassword: 'Récupération du mot de passe',
+      passwordResetInstructions: 'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+      email: 'Email',
+      emailPlaceholder: 'votre@email.com',
+      sendResetLink: 'Envoyer le lien',
+      sending: 'Envoi...',
+      passwordResetSent: 'Si un compte existe avec cette adresse email, vous recevrez un lien de réinitialisation dans quelques minutes.',
+      passwordResetError: 'Erreur lors de l\'envoi du lien de réinitialisation',
+      backToLogin: 'Retour à la connexion',
+      resetPassword: 'Réinitialiser le mot de passe',
+      newPassword: 'Nouveau mot de passe',
+      newPasswordPlaceholder: 'Minimum 8 caractères',
+      confirmNewPassword: 'Confirmer le nouveau mot de passe',
+      confirmPasswordPlaceholder: 'Répétez le mot de passe',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 8 caractères',
+      passwordRequirements: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      resetting: 'Réinitialisation...',
+      resetPasswordButton: 'Réinitialiser le mot de passe',
+      resetPasswordError: 'Erreur lors de la réinitialisation du mot de passe',
+      passwordResetSuccess: 'Mot de passe réinitialisé avec succès !',
+      redirectingToLogin: 'Redirection vers la page de connexion...'
     },
     
     register: {
@@ -132,7 +159,22 @@ export const translations = {
       salaryTooHigh: 'Le salaire est trop élevé',
       noSalarySet: 'Aucun salaire défini',
       euroSymbol: '€',
-      perMonth: 'par mois'
+      perMonth: 'par mois',
+      
+      // Email preferences
+      emailPreferences: 'Préférences Email',
+      emailPreferencesDescription: 'Gérez comment FinanceMate communique avec vous par email',
+      emailNotifications: 'Communications marketing',
+      emailNotificationsDesc: 'Recevoir des nouvelles sur les fonctionnalités et mises à jour',
+      budgetAlerts: 'Alertes de seuil budgétaire',
+      budgetAlertsDesc: 'Être notifié quand les dépenses dépassent les limites',
+      weeklySummaries: 'Résumés budgétaires hebdomadaires',
+      weeklySummariesDesc: 'Recevoir des rapports de dépenses hebdomadaires',
+      emailPreferencesUpdated: 'Préférences email mises à jour avec succès',
+      emailPreferencesSaved: 'Préférences email enregistrées avec succès',
+      emailPreferencesError: 'Erreur lors de l\'enregistrement des préférences',
+      emailPreferencesNote: 'Les emails de service essentiels (réinitialisation de mot de passe, alertes de sécurité) ne peuvent pas être désactivés pour des raisons de sécurité.',
+      saving: 'Enregistrement...'
     },
     
     // Dashboard
@@ -440,7 +482,34 @@ export const translations = {
       register: 'Create account',
       noAccount: "Don't have an account?",
       invalidCredentials: 'Invalid credentials. Please check your email and password.',
-      successRegistration: 'Account created successfully! You can now sign in.'
+      successRegistration: 'Account created successfully! You can now sign in.',
+      forgotPassword: 'Forgot password?'
+    },
+    
+    // Password reset
+    auth: {
+      forgotPassword: 'Password Recovery',
+      passwordResetInstructions: 'Enter your email address and we\'ll send you a link to reset your password.',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      sendResetLink: 'Send reset link',
+      sending: 'Sending...',
+      passwordResetSent: 'If an account exists with this email, you will receive a reset link in a few minutes.',
+      passwordResetError: 'Error sending reset link',
+      backToLogin: 'Back to login',
+      resetPassword: 'Reset Password',
+      newPassword: 'New password',
+      newPasswordPlaceholder: 'Minimum 8 characters',
+      confirmNewPassword: 'Confirm new password',
+      confirmPasswordPlaceholder: 'Repeat password',
+      passwordTooShort: 'Password must be at least 8 characters',
+      passwordRequirements: 'Password must contain at least one uppercase, one lowercase, and one number',
+      passwordMismatch: 'Passwords do not match',
+      resetting: 'Resetting...',
+      resetPasswordButton: 'Reset password',
+      resetPasswordError: 'Error resetting password',
+      passwordResetSuccess: 'Password reset successfully!',
+      redirectingToLogin: 'Redirecting to login page...'
     },
     
     register: {
@@ -546,7 +615,22 @@ export const translations = {
       salaryTooHigh: 'Salary is too high',
       noSalarySet: 'No salary set',
       euroSymbol: '€',
-      perMonth: 'per month'
+      perMonth: 'per month',
+      
+      // Email preferences
+      emailPreferences: 'Email Preferences',
+      emailPreferencesDescription: 'Manage how FinanceMate communicates with you via email',
+      emailNotifications: 'Marketing communications',
+      emailNotificationsDesc: 'Receive news about features and updates',
+      budgetAlerts: 'Budget threshold alerts',
+      budgetAlertsDesc: 'Get notified when spending exceeds limits',
+      weeklySummaries: 'Weekly budget summaries',
+      weeklySummariesDesc: 'Receive weekly spending reports',
+      emailPreferencesUpdated: 'Email preferences updated successfully',
+      emailPreferencesSaved: 'Email preferences saved successfully',
+      emailPreferencesError: 'Error saving email preferences',
+      emailPreferencesNote: 'Essential service emails (password reset, security alerts) cannot be disabled for security reasons.',
+      saving: 'Saving...'
     },
     
     // Dashboard

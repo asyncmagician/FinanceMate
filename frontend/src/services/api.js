@@ -52,6 +52,20 @@ class ApiService {
     return data;
   }
 
+  async requestPasswordReset(email) {
+    return this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(token, password) {
+    return this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    });
+  }
+
   async login(email, password) {
     const data = await this.request('/auth/login', {
       method: 'POST',
@@ -175,6 +189,17 @@ class ApiService {
     return this.request('/user/salary', {
       method: 'PUT',
       body: JSON.stringify({ salary }),
+    });
+  }
+
+  async getEmailPreferences() {
+    return this.request('/user/email-preferences');
+  }
+
+  async updateEmailPreferences(preferences) {
+    return this.request('/user/email-preferences', {
+      method: 'PUT',
+      body: JSON.stringify(preferences),
     });
   }
 
