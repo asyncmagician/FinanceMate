@@ -12,6 +12,7 @@ const userRoutes = require('./routes/user');
 const exportRoutes = require('./routes/export');
 const adminRoutes = require('./routes/admin');
 const passwordResetRoutes = require('./routes/passwordReset');
+const unsubscribeRoutes = require('./routes/unsubscribe');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -68,6 +69,7 @@ app.use('/api/auth/register', authLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
+app.use('/api/unsubscribe', unsubscribeRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/months', monthRoutes);
 app.use('/api/user', userRoutes);

@@ -37,9 +37,14 @@ coverage/
 # Temporary files
 *.tmp
 temp/
+backend/docs
 
 # Production deployment files
 UPDATE_PRODUCTION.md
 
 # Security audit files
 audit_*.md
+
+# Local configuration overrides
+app.config.local.js
+frontend/src/config/app.config.local.js

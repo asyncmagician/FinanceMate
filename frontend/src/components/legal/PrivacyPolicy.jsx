@@ -1,12 +1,13 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { APP_CONFIG } from '../../config/app.config';
 
 export default function PrivacyPolicy() {
   const { language } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const lastUpdated = language === 'en' ? 'August 9th, 2025' : '9 août 2025';
+  const lastUpdated = language === 'en' ? 'August 10th, 2025' : '10 août 2025';
 
   const Header = () => (
     <header className="bg-obsidian-bg-secondary border-b border-obsidian-border px-6 py-4 mb-6">
@@ -57,6 +58,7 @@ export default function PrivacyPolicy() {
           <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
             <li>Name and email address (provided during registration)</li>
             <li>Account credentials (password is encrypted)</li>
+            <li>Email communication preferences</li>
           </ul>
           
           <h3 className="text-xl font-semibold text-obsidian-text mb-2">Financial Information:</h3>
@@ -84,11 +86,36 @@ export default function PrivacyPolicy() {
             <li>Manage your account and authentication</li>
             <li>Save your expense data for future access</li>
             <li>Remember your language preference</li>
+            <li>Send essential service emails (password reset, security alerts)</li>
+            <li>Send optional notifications (budget alerts, weekly summaries) - only with your consent</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">4. Data Storage and Security</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">4. Email Communications</h2>
+          <h3 className="text-xl font-semibold text-obsidian-text mb-2">Essential Service Emails (Cannot be disabled):</h3>
+          <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+            <li>Password reset requests</li>
+            <li>Security alerts (suspicious login attempts)</li>
+            <li>Account deletion confirmations</li>
+            <li>Terms of Service or Privacy Policy updates</li>
+          </ul>
+          
+          <h3 className="text-xl font-semibold text-obsidian-text mb-2">Optional Emails (You can opt-out):</h3>
+          <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+            <li>Budget threshold alerts</li>
+            <li>Weekly budget summaries</li>
+            <li>Feature announcements</li>
+          </ul>
+          
+          <p className="text-obsidian-text-muted mb-4">
+            You can manage your email preferences in your profile settings. Each email includes an unsubscribe link.
+            We will never share your email with third parties for marketing purposes.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">5. Data Storage and Security</h2>
           <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
             <li>Your data is stored on secure servers in France</li>
             <li>Passwords are encrypted using bcrypt</li>
@@ -99,7 +126,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">5. Your Rights (GDPR)</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Your Rights (GDPR)</h2>
           <p className="text-obsidian-text-muted mb-2">Under GDPR, you have the right to:</p>
           <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
             <li><strong>Access</strong> - Request a copy of your personal data</li>
@@ -112,7 +139,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Data Retention</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Data Retention</h2>
           <p className="text-obsidian-text-muted mb-4">
             We retain your personal data only for as long as necessary to provide you with our service. 
             When you delete your account, all your personal data is permanently removed from our servers within 30 days.
@@ -120,7 +147,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Data Sharing</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Data Sharing</h2>
           <p className="text-obsidian-text-muted mb-4">
             We do NOT:
           </p>
@@ -140,7 +167,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Cookies</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Cookies</h2>
           <p className="text-obsidian-text-muted mb-4">
             We use essential cookies for:
           </p>
@@ -155,32 +182,28 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Children's Privacy</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Children's Privacy</h2>
           <p className="text-obsidian-text-muted mb-4">
             Our service is not intended for children under 16. We do not knowingly collect personal information from children under 16.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Changes to This Policy</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Changes to This Policy</h2>
           <p className="text-obsidian-text-muted mb-4">
             We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Contact Information</h2>
+          <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Contact Information</h2>
           <p className="text-obsidian-text-muted mb-4">
             For questions about this Privacy Policy or to exercise your rights, please contact:
           </p>
           <p className="text-obsidian-text-muted">
-            Data Controller: Antony BARTOLOMUCCI<br />
-            <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-              LinkedIn Profile
-            </a><br />
-            <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-              GitHub: @asyncmagician
-            </a>
+            Data Controller: {APP_CONFIG.legal.dataController}<br />
+            Contact: {APP_CONFIG.legal.dataControllerContact}<br />
+            Privacy Officer: {APP_CONFIG.legal.privacyOfficer}
           </p>
         </section>
         </div>
@@ -218,6 +241,7 @@ export default function PrivacyPolicy() {
         <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
           <li>Nom et adresse email (fournis lors de l'inscription)</li>
           <li>Identifiants de compte (mot de passe chiffré)</li>
+          <li>Préférences de communication par email</li>
         </ul>
         
         <h3 className="text-xl font-semibold text-obsidian-text mb-2">Informations financières :</h3>
@@ -245,11 +269,36 @@ export default function PrivacyPolicy() {
           <li>Gérer votre compte et l'authentification</li>
           <li>Sauvegarder vos données de dépenses pour un accès futur</li>
           <li>Mémoriser votre préférence de langue</li>
+          <li>Envoyer des emails de service essentiels (réinitialisation de mot de passe, alertes de sécurité)</li>
+          <li>Envoyer des notifications optionnelles (alertes budget, résumés hebdomadaires) - uniquement avec votre consentement</li>
         </ul>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">4. Stockage et sécurité des données</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">4. Communications par Email</h2>
+        <h3 className="text-xl font-semibold text-obsidian-text mb-2">Emails de Service Essentiels (Ne peuvent pas être désactivés) :</h3>
+        <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+          <li>Demandes de réinitialisation de mot de passe</li>
+          <li>Alertes de sécurité (tentatives de connexion suspectes)</li>
+          <li>Confirmations de suppression de compte</li>
+          <li>Mises à jour des Conditions d'Utilisation ou de la Politique de Confidentialité</li>
+        </ul>
+        
+        <h3 className="text-xl font-semibold text-obsidian-text mb-2">Emails Optionnels (Vous pouvez vous désabonner) :</h3>
+        <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
+          <li>Alertes de seuil budgétaire</li>
+          <li>Résumés budgétaires hebdomadaires</li>
+          <li>Annonces de nouvelles fonctionnalités</li>
+        </ul>
+        
+        <p className="text-obsidian-text-muted mb-4">
+          Vous pouvez gérer vos préférences email dans les paramètres de votre profil. Chaque email contient un lien de désabonnement.
+          Nous ne partagerons jamais votre email avec des tiers à des fins marketing.
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">5. Stockage et sécurité des données</h2>
         <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
           <li>Vos données sont stockées sur des serveurs sécurisés en France</li>
           <li>Les mots de passe sont chiffrés avec bcrypt</li>
@@ -260,7 +309,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">5. Vos droits (RGPD)</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Vos droits (RGPD)</h2>
         <p className="text-obsidian-text-muted mb-2">En vertu du RGPD, vous avez le droit de :</p>
         <ul className="list-disc ml-6 text-obsidian-text-muted mb-4">
           <li><strong>Accès</strong> - Demander une copie de vos données personnelles</li>
@@ -273,7 +322,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">6. Conservation des données</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Conservation des données</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous conservons vos données personnelles uniquement le temps nécessaire pour vous fournir notre service. 
           Lorsque vous supprimez votre compte, toutes vos données personnelles sont définitivement supprimées de nos serveurs dans les 30 jours.
@@ -281,7 +330,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">7. Partage des données</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Partage des données</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous ne faisons PAS :
         </p>
@@ -301,7 +350,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">8. Cookies</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Cookies</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous utilisons des cookies essentiels pour :
         </p>
@@ -316,32 +365,28 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">9. Protection des mineurs</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Protection des mineurs</h2>
         <p className="text-obsidian-text-muted mb-4">
           Notre service n'est pas destiné aux enfants de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles d'enfants de moins de 16 ans.
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">10. Modifications de cette politique</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Modifications de cette politique</h2>
         <p className="text-obsidian-text-muted mb-4">
           Nous pouvons mettre à jour cette Politique de Confidentialité de temps en temps. Nous vous informerons de tout changement en mettant à jour la date de "Dernière mise à jour".
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">11. Coordonnées</h2>
+        <h2 className="text-2xl font-semibold text-obsidian-text mb-4">12. Coordonnées</h2>
         <p className="text-obsidian-text-muted mb-4">
           Pour des questions sur cette Politique de Confidentialité ou pour exercer vos droits, veuillez utiliser le formulaire de contact dans les paramètres de votre profil ou nous contacter via :
         </p>
         <p className="text-obsidian-text-muted">
-          Responsable du traitement : Antony BARTOLOMUCCI<br />
-          <a href="https://linkedin.com/in/bartolomucci" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-            Profil LinkedIn
-          </a><br />
-          <a href="https://github.com/asyncmagician" target="_blank" rel="noopener noreferrer" className="text-obsidian-accent hover:underline">
-            GitHub : @asyncmagician
-          </a>
+          Responsable du traitement : {APP_CONFIG.legal.dataController}<br />
+          Contact : {APP_CONFIG.legal.dataControllerContact}<br />
+          Délégué à la protection des données : {APP_CONFIG.legal.privacyOfficer}
         </p>
       </section>
       </div>

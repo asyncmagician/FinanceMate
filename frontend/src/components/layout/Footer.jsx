@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { APP_CONFIG } from '../../config/app.config';
 
 export default function Footer() {
   const { t, language } = useLanguage();
@@ -10,7 +11,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-obsidian-text-muted text-sm">
-            © {currentYear} FinanceMate - {t('footer.allRightsReserved', language === 'fr' ? 'Tous droits réservés' : 'All rights reserved')}
+            © {currentYear} {APP_CONFIG.app.name} - {t('footer.allRightsReserved', language === 'fr' ? 'Tous droits réservés' : 'All rights reserved')}
           </div>
           
           <div className="flex gap-6 text-sm">
@@ -26,14 +27,16 @@ export default function Footer() {
             >
               {t('footer.terms', language === 'fr' ? 'Conditions' : 'Terms')}
             </Link>
-            <a 
-              href="https://github.com/asyncmagician/FinanceMate" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
-            >
-              GitHub
-            </a>
+            {APP_CONFIG.ui.showGitHubLink && (
+              <a 
+                href={APP_CONFIG.repository.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
+              >
+                GitHub
+              </a>
+            )}
           </div>
         </div>
       </div>

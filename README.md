@@ -197,6 +197,10 @@ Language preference is saved per user and persists across sessions.
 - Express-validator for input validation
 - Helmet.js for security headers
 
+## ⚖️ GDPR Compliance Notice
+
+If you deploy FinanceMate for yourself or others, you must update the `/frontend/src/config/app.config.js` file with your organization's information for GDPR compliance. This includes setting the data controller name and contact information.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
@@ -206,6 +210,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 - Add tests for new features
 - Update documentation as needed
 - Keep commits atomic and well-described
+- Reset app.config.js to generic values before committing
 
 ## 📄 License
 
