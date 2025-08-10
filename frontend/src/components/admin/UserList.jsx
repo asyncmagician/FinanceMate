@@ -44,7 +44,7 @@ const UserList = ({ users, onEditUser, onDeleteUser }) => {
           <thead className="bg-obsidian-bg-secondary border-b border-obsidian-border">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
-                {t('admin.userDetails')}
+                {t('admin.userDetails')} ({users.length})
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-obsidian-text-muted uppercase tracking-wider">
                 {t('admin.role')}

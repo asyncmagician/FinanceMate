@@ -32,7 +32,7 @@ exports.encryptSalary = (salary) => {
     
     const key = getEncryptionKey();
     const iv = crypto.randomBytes(16); // 128-bit IV for GCM
-    const cipher = crypto.createCipherGCM(algorithm, key, iv);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
     cipher.setAAD(Buffer.from('salary', 'utf8')); // Additional authenticated data
     
     const salaryString = String(salary);
@@ -73,7 +73,7 @@ exports.decryptSalary = (encryptedSalary) => {
     const authTag = Buffer.from(authTagBase64, 'base64');
     const encrypted = Buffer.from(encryptedBase64, 'base64');
     
-    const decipher = crypto.createDecipherGCM(algorithm, key, iv);
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
     decipher.setAAD(Buffer.from('salary', 'utf8'));
     decipher.setAuthTag(authTag);
     

@@ -152,7 +152,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                               </div>
 
                               {category === 'reimbursement' && (
-                                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                                <label className="flex items-center gap-2 text-sm cursor-pointer ml-2 sm:ml-4">
                                   <input
                                     type="checkbox"
                                     id={`received-${expense.id}`}
