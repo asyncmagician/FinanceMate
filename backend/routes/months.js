@@ -16,6 +16,19 @@ router.use(authMiddleware);
 
 router.get('/', monthController.getUserMonths);
 
+router.get('/forecast/:months',
+  param('months').isInt({ min: 1, max: 12 }),
+  handleValidationErrors,
+  monthController.getForecast
+);
+
+router.get('/:year/:month/previsionnel',
+  param('year').isInt({ min: 2020, max: 2100 }),
+  param('month').isInt({ min: 1, max: 12 }),
+  handleValidationErrors,
+  monthController.calculatePrevisionnel
+);
+
 router.get('/:year/:month',
   param('year').isInt({ min: 2020, max: 2100 }),
   param('month').isInt({ min: 1, max: 12 }),
@@ -37,19 +50,6 @@ router.put('/:year/:month',
   body('starting_balance').isFloat(),
   handleValidationErrors,
   monthController.updateMonth
-);
-
-router.get('/:year/:month/previsionnel',
-  param('year').isInt({ min: 2020, max: 2100 }),
-  param('month').isInt({ min: 1, max: 12 }),
-  handleValidationErrors,
-  monthController.calculatePrevisionnel
-);
-
-router.get('/forecast/:months',
-  param('months').isInt({ min: 1, max: 12 }),
-  handleValidationErrors,
-  monthController.getForecast
 );
 
 module.exports = router;
