@@ -37,12 +37,16 @@ class EmailService {
       <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #1a1a1a; color: white; padding: 20px; text-align: center; }
-            .content { background: #f4f4f4; padding: 20px; margin-top: 20px; }
-            .button { display: inline-block; padding: 12px 24px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+            .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+            .header p { margin: 10px 0 0 0; opacity: 0.9; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #5e5ce6 0%, #4b49d8 100%); color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 500; box-shadow: 0 2px 4px rgba(94, 92, 230, 0.3); }
+            .button:hover { background: linear-gradient(135deg, #4b49d8 0%, #3937c0 100%); }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+            .link-text { color: #5e5ce6; word-break: break-all; }
           </style>
         </head>
         <body>
@@ -58,8 +62,8 @@ class EmailService {
               <div style="text-align: center;">
                 <a href="${resetUrl}" class="button">Réinitialiser mon mot de passe</a>
               </div>
-              <p><small>Ou copiez ce lien dans votre navigateur :</small></p>
-              <p><small>${resetUrl}</small></p>
+              <p><small style="color: #666;">Ou copiez ce lien dans votre navigateur :</small></p>
+              <p><small class="link-text">${resetUrl}</small></p>
               <p><strong>Ce lien expire dans 1 heure.</strong></p>
               <p>Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email.</p>
             </div>
@@ -87,12 +91,16 @@ class EmailService {
       <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #1a1a1a; color: white; padding: 20px; text-align: center; }
-            .content { background: #f4f4f4; padding: 20px; margin-top: 20px; }
-            .button { display: inline-block; padding: 12px 24px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+            .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+            .header p { margin: 10px 0 0 0; opacity: 0.9; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #5e5ce6 0%, #4b49d8 100%); color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 500; box-shadow: 0 2px 4px rgba(94, 92, 230, 0.3); }
+            .button:hover { background: linear-gradient(135deg, #4b49d8 0%, #3937c0 100%); }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+            .link-text { color: #5e5ce6; word-break: break-all; }
           </style>
         </head>
         <body>
@@ -108,8 +116,8 @@ class EmailService {
               <div style="text-align: center;">
                 <a href="${verifyUrl}" class="button">Vérifier mon email</a>
               </div>
-              <p><small>Ou copiez ce lien dans votre navigateur :</small></p>
-              <p><small>${verifyUrl}</small></p>
+              <p><small style="color: #666;">Ou copiez ce lien dans votre navigateur :</small></p>
+              <p><small class="link-text">${verifyUrl}</small></p>
               <p><strong>Ce lien expire dans 24 heures.</strong></p>
             </div>
             <div class="footer">
@@ -128,19 +136,21 @@ class EmailService {
     });
   }
 
-  async sendBudgetAlert(email, userName, currentBalance, threshold) {
+  async sendBudgetAlert(email, userName, currentBalance, threshold, unsubscribeToken) {
     const html = `
       <!DOCTYPE html>
       <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #ff9800; color: white; padding: 20px; text-align: center; }
-            .content { background: #f4f4f4; padding: 20px; margin-top: 20px; }
-            .alert-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; }
-            .button { display: inline-block; padding: 12px 24px; background: #1a1a1a; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+            .header { background: linear-gradient(135deg, #ff6b35 0%, #f7542e 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px; }
+            .alert-box { background: #fff5f5; border-left: 4px solid #ff6b35; padding: 20px; margin: 20px 0; border-radius: 4px; }
+            .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #5e5ce6 0%, #4b49d8 100%); color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 500; box-shadow: 0 2px 4px rgba(94, 92, 230, 0.3); }
+            .button:hover { background: linear-gradient(135deg, #4b49d8 0%, #3937c0 100%); }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
           </style>
         </head>
         <body>
@@ -164,6 +174,7 @@ class EmailService {
             <div class="footer">
               <p>© 2025 FinanceMate - Votre gestionnaire de budget privé</p>
               <p>Vous recevez cet email car vous avez activé les alertes budget.</p>
+              ${unsubscribeToken ? `<p><a href="${process.env.FRONTEND_URL}/api/unsubscribe/${unsubscribeToken}" style="color: #666; text-decoration: underline;">Se désabonner des alertes</a></p>` : ''}
             </div>
           </div>
         </body>
@@ -173,6 +184,69 @@ class EmailService {
     return this.sendEmail({
       to: email,
       subject: '⚠️ Alerte Budget FinanceMate',
+      html
+    });
+  }
+
+  async sendWeeklySummary(email, userName, summaryData, unsubscribeToken) {
+    const { totalExpenses, remainingBudget, expensesByCategory, weekStart, weekEnd } = summaryData;
+    
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+            .header p { margin: 10px 0 0 0; opacity: 0.9; }
+            .content { background: white; padding: 30px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px; }
+            .stat-box { background: #f8f8f8; padding: 15px; margin: 15px 0; border-radius: 6px; }
+            .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #5e5ce6 0%, #4b49d8 100%); color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 500; box-shadow: 0 2px 4px rgba(94, 92, 230, 0.3); }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>📊 Résumé Hebdomadaire</h1>
+              <p>${weekStart} - ${weekEnd}</p>
+            </div>
+            <div class="content">
+              <h2>Bonjour ${userName || 'Utilisateur'},</h2>
+              <p>Voici votre résumé budgétaire de la semaine :</p>
+              
+              <div class="stat-box">
+                <strong>Total des dépenses :</strong> ${totalExpenses} €<br>
+                <strong>Budget restant :</strong> ${remainingBudget} €
+              </div>
+              
+              ${expensesByCategory ? `
+              <h3>Dépenses par catégorie :</h3>
+              <ul>
+                ${Object.entries(expensesByCategory).map(([cat, amount]) => 
+                  `<li>${cat}: ${amount} €</li>`
+                ).join('')}
+              </ul>
+              ` : ''}
+              
+              <div style="text-align: center;">
+                <a href="${process.env.FRONTEND_URL}/dashboard" class="button">Voir le détail</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>© 2025 FinanceMate - Votre gestionnaire de budget privé</p>
+              ${unsubscribeToken ? `<p><a href="${process.env.FRONTEND_URL}/api/unsubscribe/${unsubscribeToken}" style="color: #666; text-decoration: underline;">Se désabonner des résumés hebdomadaires</a></p>` : ''}
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    return this.sendEmail({
+      to: email,
+      subject: '📊 Votre résumé budgétaire hebdomadaire',
       html
     });
   }
