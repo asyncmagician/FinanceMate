@@ -324,8 +324,16 @@ export default function RecurringView() {
                 )}
               </div>
             </div>
+            
+            <div className="col-span-1 md:col-span-2">
+              <ExpenseSharing
+                shareData={shareData}
+                onShareChange={setShareData}
+                totalAmount={parseFloat(formData.amount) || 0}
+              />
+            </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 col-span-1 md:col-span-2">
               <button type="submit" className="btn-primary">
                 {editingExpense ? t('edit') : t('create')}
               </button>
@@ -352,16 +360,6 @@ export default function RecurringView() {
                 {t('cancel')}
               </button>
             </div>
-            
-            {formData.amount && (
-              <div className="mt-4">
-                <ExpenseSharing
-                  shareData={shareData}
-                  onShareChange={setShareData}
-                  totalAmount={parseFloat(formData.amount) || 0}
-                />
-              </div>
-            )}
           </form>
         )}
 
