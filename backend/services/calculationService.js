@@ -6,7 +6,20 @@ exports.calculatePrevisionnel = (startingBalance, expenses, recurringExpenses = 
   let sharedReimbursements = 0;
   
   expenses.forEach(expense => {
-    const amount = parseFloat(expense.amount);
+    let amount = parseFloat(expense.amount);
+    
+    // Calculate user's portion if expense is shared
+    if (expense.share_type && expense.share_type !== 'none') {
+      const fullAmount = amount;
+      
+      if (expense.share_type === 'equal') {
+        amount = fullAmount / 2;
+      } else if (expense.share_type === 'percentage' && expense.share_value) {
+        amount = fullAmount * (parseFloat(expense.share_value) / 100);
+      } else if (expense.share_type === 'amount' && expense.share_value) {
+        amount = parseFloat(expense.share_value);
+      }
+    }
     
     if (expense.category_type === 'fixed') {
       fixedTotal += amount;
