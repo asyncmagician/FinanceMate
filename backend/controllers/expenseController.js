@@ -22,7 +22,11 @@ exports.getMonthExpenses = async (req, res) => {
 exports.createExpense = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { description, amount, category_id, subcategory, date, is_deducted, is_received } = req.body;
+    const { 
+      description, amount, category_id, subcategory, date, 
+      is_deducted, is_received,
+      share_type, share_value, share_with 
+    } = req.body;
     
     const expenseDate = new Date(date);
     const year = expenseDate.getFullYear();
@@ -38,7 +42,10 @@ exports.createExpense = async (req, res) => {
       subcategory,
       date,
       is_deducted: is_deducted || false,
-      is_received: is_received || false
+      is_received: is_received || false,
+      share_type: share_type || 'none',
+      share_value: share_value || null,
+      share_with: share_with || null
     });
 
     res.status(201).json(expense);
@@ -64,7 +71,7 @@ exports.updateExpense = async (req, res) => {
     }
 
     // Whitelist allowed fields for update
-    const allowedFields = ['description', 'amount', 'category_id', 'subcategory', 'date', 'is_deducted', 'is_received'];
+    const allowedFields = ['description', 'amount', 'category_id', 'subcategory', 'date', 'is_deducted', 'is_received', 'share_type', 'share_value', 'share_with'];
     const updateData = {};
     
     for (const field of allowedFields) {

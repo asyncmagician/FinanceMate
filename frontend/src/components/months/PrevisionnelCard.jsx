@@ -188,13 +188,13 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
             <div className="flex items-center justify-between text-sm">
               <span className="text-obsidian-text-muted">{t('previsionnel.afterFixed', 'Après charges fixes')}:</span>
               <span className={`font-semibold ${
-                (startingBalance - (previsionnel?.fixed_total || 0)) >= userSalary * 0.5 ? 'text-green-400' : 
-                (startingBalance - (previsionnel?.fixed_total || 0)) >= userSalary * 0.2 ? 'text-yellow-400' : 
+                (previsionnel?.fixed_total || 0) <= userSalary * 0.33 ? 'text-green-400' : 
+                (previsionnel?.fixed_total || 0) <= userSalary * 0.5 ? 'text-yellow-400' : 
                 'text-red-400'
               }`}>
-                {formatCurrency(startingBalance - (previsionnel?.fixed_total || 0))}
+                {formatCurrency(userSalary - (previsionnel?.fixed_total || 0))}
                 <span className="text-obsidian-text-muted ml-1">
-                  ({Math.round(((startingBalance - (previsionnel?.fixed_total || 0)) / userSalary) * 100)}%)
+                  ({t('previsionnel.fixedUses', 'fixes:')} {Math.round(((previsionnel?.fixed_total || 0) / userSalary) * 100)}%)
                 </span>
               </span>
             </div>
@@ -203,13 +203,13 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
               <div className="flex items-center justify-between text-sm">
                 <span className="text-obsidian-text-muted">{t('previsionnel.afterVariables', 'Après dépenses variables')}:</span>
                 <span className={`font-semibold ${
-                  (startingBalance - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0)) >= userSalary * 0.3 ? 'text-green-400' : 
-                  (startingBalance - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0)) >= userSalary * 0.1 ? 'text-yellow-400' : 
+                  ((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) <= userSalary * 0.7 ? 'text-green-400' : 
+                  ((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) <= userSalary * 0.9 ? 'text-yellow-400' : 
                   'text-red-400'
                 }`}>
-                  {formatCurrency(startingBalance - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0))}
+                  {formatCurrency(userSalary - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0))}
                   <span className="text-obsidian-text-muted ml-1">
-                    ({Math.round(((startingBalance - (previsionnel?.fixed_total || 0) - (previsionnel?.variable_total || 0)) / userSalary) * 100)}%)
+                    ({t('previsionnel.totalUses', 'total:')} {Math.round((((previsionnel?.fixed_total || 0) + (previsionnel?.variable_total || 0)) / userSalary) * 100)}%)
                   </span>
                 </span>
               </div>

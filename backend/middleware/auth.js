@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  // Read token from HttpOnly cookie instead of Authorization header
+  const token = req.cookies?.token;
 
   if (!token) {
     return res.status(401).json({ error: 'No token, authorization denied' });

@@ -7,7 +7,6 @@ import ExpenseForm from '../expenses/ExpenseForm';
 import ReimbursementForm from '../expenses/ReimbursementForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
-import HousingAffordability from '../expenses/HousingAffordability';
 
 export default function MonthView() {
   const { year, month } = useParams();
@@ -19,14 +18,6 @@ export default function MonthView() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showAddReimbursement, setShowAddReimbursement] = useState(false);
   const [showRecurringManager, setShowRecurringManager] = useState(false);
-  
-  // Calculate housing expenses
-  const housingExpenses = expenses
-    .filter(expense => 
-      expense.category_type === 'fixed' && 
-      (expense.subcategory === t('expenses.housing') || expense.subcategory === 'Logement')
-    )
-    .reduce((sum, expense) => sum + expense.amount, 0);
 
   const monthNames = [
     t('months.january'), t('months.february'), t('months.march'),
@@ -153,13 +144,17 @@ export default function MonthView() {
         });
         
         if (!existingExpense) {
+          // For shared expenses, create the expense with full amount
           const expenseData = {
             description: recurring.description,
             amount: parseFloat(recurring.amount),
             category_id: recurring.category_id || 1,
             subcategory: recurring.subcategory || null,
             date: dateString,
-            is_deducted: false
+            is_deducted: false,
+            share_type: recurring.share_type || 'none',
+            share_value: recurring.share_value || null,
+            share_with: recurring.share_with || null
           };
           
           const newExpense = await api.createExpense(expenseData);
@@ -169,6 +164,37 @@ export default function MonthView() {
             description: recurring.description,
             date: dateString
           });
+          
+          // If it's a shared expense, automatically create a reimbursement
+          if (recurring.share_type && recurring.share_type !== 'none' && recurring.share_with) {
+            let reimbursementAmount = 0;
+            
+            if (recurring.share_type === 'equal') {
+              // For 50/50 split, partner owes half
+              reimbursementAmount = parseFloat(recurring.amount) / 2;
+            } else if (recurring.share_type === 'percentage' && recurring.share_value) {
+              // If user pays X%, partner owes (100-X)%
+              const userPercentage = parseFloat(recurring.share_value);
+              const partnerPercentage = 100 - userPercentage;
+              reimbursementAmount = parseFloat(recurring.amount) * (partnerPercentage / 100);
+            } else if (recurring.share_type === 'amount' && recurring.share_value) {
+              // User pays fixed amount, partner owes the rest
+              const userAmount = parseFloat(recurring.share_value);
+              reimbursementAmount = parseFloat(recurring.amount) - userAmount;
+            }
+            
+            if (reimbursementAmount > 0) {
+              const reimbursementData = {
+                description: `${t('reimbursement.for', 'Remboursement pour')} ${recurring.description} - ${recurring.share_with}`,
+                amount: reimbursementAmount,
+                category_id: 3, // Reimbursement category
+                date: dateString,
+                is_received: false
+              };
+              
+              await api.createExpense(reimbursementData);
+            }
+          }
         }
       }
       
@@ -204,14 +230,6 @@ export default function MonthView() {
         />
       </div>
       
-      {housingExpenses > 0 && (
-        <div className="mb-6">
-          <HousingAffordability 
-            housingExpenses={housingExpenses}
-            isVisible={true}
-          />
-        </div>
-      )}
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">

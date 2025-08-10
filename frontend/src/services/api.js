@@ -2,31 +2,24 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 class ApiService {
   constructor() {
-    this.token = localStorage.getItem('token');
+    // No longer store token - it's in HttpOnly cookie
   }
 
   setToken(token) {
-    this.token = token;
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
-    }
+    // Deprecated - token is now managed by HttpOnly cookies
+    // Keep method for backward compatibility but do nothing
   }
 
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const config = {
       ...options,
+      credentials: 'include', // Include cookies in requests
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
       },
     };
-
-    if (this.token) {
-      config.headers.Authorization = `Bearer ${this.token}`;
-    }
 
     const response = await fetch(url, config);
     
@@ -38,7 +31,6 @@ class ApiService {
       }
       // Only redirect if we're not already on the login page
       if (!window.location.pathname.includes('/login')) {
-        this.setToken(null);
         window.location.href = '/login';
       }
       throw new Error('Identifiants invalides');
@@ -65,13 +57,13 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    this.setToken(data.token);
+    // Token is now set as HttpOnly cookie by the backend
     return data;
   }
 
   async logout() {
     await this.request('/auth/logout', { method: 'POST' });
-    this.setToken(null);
+    // Cookie will be cleared by the backend
   }
 
   async getCurrentUser() {

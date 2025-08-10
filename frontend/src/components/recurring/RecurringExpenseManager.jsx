@@ -66,6 +66,11 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       newErrors.day_of_month = t('recurring.invalidDay', 'Jour invalide (1-31)');
     }
     
+    // Validate partner name if expense is shared
+    if (shareData.share_type && shareData.share_type !== 'none' && !shareData.share_with) {
+      newErrors.share_with = t('expenses.partnerRequired', 'Le nom du partenaire est requis pour les dépenses partagées');
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -77,26 +82,25 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       return;
     }
     
-    const finalAmount = shareData.user_amount || parseFloat(formData.amount);
+    // Always store the full amount in the database
+    const fullAmount = parseFloat(formData.amount);
     
     try {
       if (editingId) {
         await api.updateRecurringExpense(editingId, {
           ...formData,
-          amount: finalAmount,
+          amount: fullAmount,
           share_type: shareData.share_type || 'none',
           share_value: shareData.share_value,
-          share_with: shareData.share_with,
-          full_amount: parseFloat(formData.amount)
+          share_with: shareData.share_with
         });
       } else {
         await api.createRecurringExpense({
           ...formData,
-          amount: finalAmount,
+          amount: fullAmount,
           share_type: shareData.share_type || 'none',
           share_value: shareData.share_value,
-          share_with: shareData.share_with,
-          full_amount: parseFloat(formData.amount)
+          share_with: shareData.share_with
         });
       }
       await loadRecurringExpenses();
@@ -113,6 +117,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
         share_value: '',
         share_with: ''
       });
+      setShareData({});
       setErrors({});
     } catch (err) {
       console.error('Failed to save recurring expense:', err);
@@ -130,6 +135,12 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       share_type: expense.share_type || 'none',
       share_value: expense.share_value || '',
       share_with: expense.share_with || ''
+    });
+    // Also set shareData so ExpenseSharing component displays correctly
+    setShareData({
+      share_type: expense.share_type || 'none',
+      share_value: expense.share_value || null,
+      share_with: expense.share_with || null
     });
     setEditingId(expense.id);
     setShowAddForm(true);
@@ -194,6 +205,7 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                     share_value: '',
                     share_with: ''
                   });
+                  setShareData({});
                 }
               }}
               className="btn-secondary p-2 sm:px-4 text-sm"
@@ -268,6 +280,9 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                     onShareChange={setShareData}
                     totalAmount={parseFloat(formData.amount) || 0}
                   />
+                  {errors.share_with && (
+                    <p className="text-red-400 text-xs mt-2">{errors.share_with}</p>
+                  )}
                 </div>
               )}
             </form>
@@ -280,21 +295,56 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
               {t('recurring.noRecurring')}
             </div>
           ) : (
-            recurringExpenses.map(expense => (
+            recurringExpenses.map(expense => {
+              // Calculate user's portion if shared
+              let displayAmount = expense.amount;
+              let isShared = expense.share_type && expense.share_type !== 'none';
+              
+              if (isShared) {
+                if (expense.share_type === 'equal') {
+                  displayAmount = expense.amount / 2;
+                } else if (expense.share_type === 'percentage' && expense.share_value) {
+                  displayAmount = expense.amount * (parseFloat(expense.share_value) / 100);
+                } else if (expense.share_type === 'amount' && expense.share_value) {
+                  displayAmount = parseFloat(expense.share_value);
+                }
+              }
+              
+              return (
               <div
                 key={expense.id}
                 className="flex items-center justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border"
               >
                 <div className="flex-1">
-                  <div className="text-sm sm:text-base text-obsidian-text">{expense.description}</div>
+                  <div className="text-sm sm:text-base text-obsidian-text">
+                    {expense.description}
+                    {isShared && (
+                      <span className="ml-2 text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                        {t('expenses.shared', 'Partagé')}
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs sm:text-sm text-obsidian-text-muted">
                     {t('recurring.dayLabel', 'Jour')} {expense.day_of_month} • {expense.category_type === 'fixed' ? t('expenses.fixed').replace(' Expenses', '').replace(' Dépenses', '') : t('expenses.variable').replace(' Expenses', '').replace(' Dépenses', '')}
+                    {isShared && expense.share_with && ` • ${t('expenses.sharedWith', 'Partagé avec')} ${expense.share_with}`}
                   </div>
+                  {isShared && (
+                    <div className="text-xs text-obsidian-text-faint mt-1">
+                      {t('expenses.fullAmount', 'Montant total')}: {formatCurrency(expense.amount)}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="font-semibold text-obsidian-accent text-sm sm:text-base">
-                    {formatCurrency(expense.amount)}
-                  </span>
+                  <div className="text-right">
+                    <span className="font-semibold text-obsidian-accent text-sm sm:text-base">
+                      {formatCurrency(displayAmount)}
+                    </span>
+                    {isShared && (
+                      <div className="text-xs text-obsidian-text-muted">
+                        {t('expenses.yourPart', 'Votre part')}
+                      </div>
+                    )}
+                  </div>
                   <button
                     onClick={() => handleEdit(expense)}
                     className="p-1 text-obsidian-text-muted hover:text-obsidian-accent transition-colors"
@@ -317,7 +367,8 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                   </button>
                 </div>
               </div>
-            ))
+            );
+            })
           )}
         </div>
 

@@ -58,8 +58,17 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user);
     
+    // Set token in HttpOnly cookie for security
+    res.cookie('token', token, {
+      httpOnly: true,        // Prevents JavaScript access
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      sameSite: 'strict',    // CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/'
+    });
+    
     res.json({
-      token,
+      // Don't send token in response body anymore
       user: {
         id: user.id,
         email: user.email,
@@ -76,6 +85,13 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
+  // Clear the HttpOnly cookie
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/'
+  });
   res.json({ message: 'Logged out successfully' });
 };
 
@@ -102,7 +118,7 @@ exports.getCurrentUser = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.cookies.token;
     
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
@@ -113,7 +129,7 @@ exports.refreshToken = async (req, res) => {
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Token is still valid, no need to refresh
-      return res.json({ token });
+      return res.json({ message: 'Token still valid' });
     } catch (tokenError) {
       // Token is expired, check if it's within refresh window
       try {
@@ -142,7 +158,17 @@ exports.refreshToken = async (req, res) => {
     }
 
     const newToken = generateToken(user);
-    res.json({ token: newToken });
+    
+    // Set new token in HttpOnly cookie
+    res.cookie('token', newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/'
+    });
+    
+    res.json({ message: 'Token refreshed' });
   } catch (error) {
     console.error('Refresh token error:', error);
     res.status(401).json({ error: 'Invalid token' });

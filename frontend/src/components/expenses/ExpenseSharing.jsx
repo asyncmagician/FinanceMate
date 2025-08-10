@@ -9,9 +9,18 @@ export default function ExpenseSharing({ shareData, onShareChange, totalAmount }
   const [shareWith, setShareWith] = useState(shareData?.share_with || '');
   const [userAmount, setUserAmount] = useState(totalAmount);
 
+  // Update state when shareData prop changes (e.g., when switching from add to edit)
+  useEffect(() => {
+    const hasShareData = shareData?.share_type && shareData.share_type !== 'none';
+    setIsShared(hasShareData);
+    setShareType(hasShareData ? shareData.share_type : 'equal');
+    setShareValue(shareData?.share_value || '');
+    setShareWith(shareData?.share_with || '');
+  }, [shareData]);
+
   useEffect(() => {
     calculateUserAmount();
-  }, [totalAmount, isShared, shareType, shareValue]);
+  }, [totalAmount, isShared, shareType, shareValue, shareWith]);
 
   const calculateUserAmount = () => {
     if (!isShared || !totalAmount) {
@@ -174,7 +183,7 @@ export default function ExpenseSharing({ shareData, onShareChange, totalAmount }
 
           <div>
             <label className="block text-xs text-obsidian-text-muted mb-1">
-              {t('expenses.sharedWith', 'Partagé avec')} ({t('common.optional', 'optionnel')})
+              {t('expenses.sharedWith', 'Partagé avec')} <span className="text-obsidian-error">*</span>
             </label>
             <input
               type="text"
@@ -183,7 +192,11 @@ export default function ExpenseSharing({ shareData, onShareChange, totalAmount }
               className="input-field w-full text-sm"
               placeholder={t('expenses.partnerName', 'Nom du partenaire')}
               maxLength="100"
+              required
             />
+            <p className="text-xs text-obsidian-text-faint mt-1">
+              {t('expenses.partnerRequired', 'Requis pour créer automatiquement les remboursements')}
+            </p>
           </div>
 
           {shareType !== 'equal' && totalAmount && (

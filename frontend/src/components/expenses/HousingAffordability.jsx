@@ -2,14 +2,18 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 
-export default function HousingAffordability({ housingExpenses, isVisible = true }) {
+export default function HousingAffordability({ housingExpenses = 0, totalFixedExpenses = 0, userSalary: propSalary, isVisible = true }) {
   const { t, language } = useLanguage();
-  const [userSalary, setUserSalary] = useState(null);
+  const [userSalary, setUserSalary] = useState(propSalary || null);
   const [showTips, setShowTips] = useState(false);
 
   useEffect(() => {
-    loadUserSalary();
-  }, []);
+    if (!propSalary) {
+      loadUserSalary();
+    } else {
+      setUserSalary(propSalary);
+    }
+  }, [propSalary]);
 
   const loadUserSalary = async () => {
     try {
@@ -20,41 +24,48 @@ export default function HousingAffordability({ housingExpenses, isVisible = true
     }
   };
 
-  if (!userSalary || !isVisible || !housingExpenses || housingExpenses === 0) {
+  if (!userSalary || !isVisible || (housingExpenses === 0 && totalFixedExpenses === 0)) {
     return null;
   }
 
-  const housingRatio = (housingExpenses / userSalary) * 100;
+  // Use housing expenses if available, otherwise use total fixed expenses
+  const expensesToAnalyze = housingExpenses > 0 ? housingExpenses : totalFixedExpenses;
+  const isHousingSpecific = housingExpenses > 0;
+  const debtRatio = (expensesToAnalyze / userSalary) * 100;
   
   const getStatusColor = () => {
-    if (housingRatio < 30) return 'text-green-400';
-    if (housingRatio <= 33) return 'text-yellow-400';
+    if (debtRatio < 30) return 'text-green-400';
+    if (debtRatio <= 33) return 'text-yellow-400';
     return 'text-red-400';
   };
 
   const getStatusIcon = () => {
-    if (housingRatio < 30) return '✅';
-    if (housingRatio <= 33) return '⚠️';
+    if (debtRatio < 30) return '✅';
+    if (debtRatio <= 33) return '⚠️';
     return '🔴';
   };
 
   const getStatusMessage = () => {
+    const chargeType = isHousingSpecific ? 
+      (language === 'fr' ? 'charges de logement' : 'housing costs') :
+      (language === 'fr' ? 'charges fixes' : 'fixed expenses');
+    
     if (language === 'fr') {
-      if (housingRatio < 30) {
-        return `Vos charges de logement représentent ${housingRatio.toFixed(1)}% de vos revenus. C'est un ratio sain qui vous laisse de la marge.`;
+      if (debtRatio < 30) {
+        return `Vos ${chargeType} représentent ${debtRatio.toFixed(1)}% de vos revenus. C'est un ratio sain qui vous laisse de la marge.`;
       }
-      if (housingRatio <= 33) {
-        return `Vos charges de logement représentent ${housingRatio.toFixed(1)}% de vos revenus. Vous approchez du maximum recommandé de 33%.`;
+      if (debtRatio <= 33) {
+        return `Vos ${chargeType} représentent ${debtRatio.toFixed(1)}% de vos revenus. Vous approchez du maximum recommandé de 33%.`;
       }
-      return `Vos charges de logement représentent ${housingRatio.toFixed(1)}% de vos revenus. En France, il est recommandé de ne pas dépasser 33% (taux d'endettement).`;
+      return `Vos ${chargeType} représentent ${debtRatio.toFixed(1)}% de vos revenus. En France, il est recommandé de ne pas dépasser 33% (taux d'endettement).`;
     } else {
-      if (housingRatio < 30) {
-        return `Your housing costs represent ${housingRatio.toFixed(1)}% of your income. This is a healthy ratio with room to spare.`;
+      if (debtRatio < 30) {
+        return `Your ${chargeType} represent ${debtRatio.toFixed(1)}% of your income. This is a healthy ratio with room to spare.`;
       }
-      if (housingRatio <= 33) {
-        return `Your housing costs represent ${housingRatio.toFixed(1)}% of your income. You're approaching the recommended maximum of 33%.`;
+      if (debtRatio <= 33) {
+        return `Your ${chargeType} represent ${debtRatio.toFixed(1)}% of your income. You're approaching the recommended maximum of 33%.`;
       }
-      return `Your housing costs represent ${housingRatio.toFixed(1)}% of your income. The recommended maximum is 33% for financial health.`;
+      return `Your ${chargeType} represent ${debtRatio.toFixed(1)}% of your income. The recommended maximum is 33% for financial health.`;
     }
   };
 
@@ -68,7 +79,7 @@ export default function HousingAffordability({ housingExpenses, isVisible = true
         },
         {
           title: "Réduire ses charges",
-          link: "https://www.economie.gouv.fr/particuliers/reduire-facture-energie",
+          link: "https://www.economie.gouv.fr/particuliers/faire-des-economies-denergie/nos-conseils-pour-reduire-sa-facture-delectricite",
           description: "Conseils pour diminuer vos factures d'énergie"
         },
         {
@@ -110,21 +121,24 @@ export default function HousingAffordability({ housingExpenses, isVisible = true
 
   return (
     <div className={`p-4 rounded-lg border ${
-      housingRatio < 30 ? 'bg-green-900/20 border-green-600' :
-      housingRatio <= 33 ? 'bg-yellow-900/20 border-yellow-600' :
+      debtRatio < 30 ? 'bg-green-900/20 border-green-600' :
+      debtRatio <= 33 ? 'bg-yellow-900/20 border-yellow-600' :
       'bg-red-900/20 border-red-600'
     }`}>
       <div className="flex items-start gap-3">
         <span className="text-2xl">{getStatusIcon()}</span>
         <div className="flex-1">
           <h4 className={`font-semibold mb-1 ${getStatusColor()}`}>
-            {t('expenses.housingAffordability', 'Analyse du taux d\'endettement')}
+            {isHousingSpecific ? 
+              t('expenses.housingAffordability', 'Analyse du taux d\'endettement') :
+              t('expenses.debtRatioAnalysis', 'Analyse du taux d\'endettement')
+            }
           </h4>
           <p className="text-sm text-obsidian-text-muted">
             {getStatusMessage()}
           </p>
           
-          {housingRatio > 33 && (
+          {debtRatio > 33 && (
             <button
               onClick={() => setShowTips(!showTips)}
               className="mt-3 text-sm text-obsidian-accent hover:underline"
@@ -138,7 +152,7 @@ export default function HousingAffordability({ housingExpenses, isVisible = true
         </div>
       </div>
 
-      {showTips && housingRatio > 33 && (
+      {showTips && debtRatio > 33 && (
         <div className="mt-4 pt-4 border-t border-obsidian-border/50">
           <h5 className="text-sm font-medium text-obsidian-text mb-3">
             {t('expenses.helpfulResources', 'Ressources utiles')}:
@@ -185,11 +199,11 @@ export default function HousingAffordability({ housingExpenses, isVisible = true
           <div className="w-full bg-obsidian-bg rounded-full h-2 overflow-hidden">
             <div 
               className={`h-full transition-all duration-300 ${
-                housingRatio < 30 ? 'bg-green-500' :
-                housingRatio <= 33 ? 'bg-yellow-500' :
+                debtRatio < 30 ? 'bg-green-500' :
+                debtRatio <= 33 ? 'bg-yellow-500' :
                 'bg-red-500'
               }`}
-              style={{ width: `${Math.min(housingRatio, 100)}%` }}
+              style={{ width: `${Math.min(debtRatio, 100)}%` }}
             />
           </div>
           <div className="flex justify-between text-xs text-obsidian-text-muted mt-1">

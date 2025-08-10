@@ -120,6 +120,10 @@ export const translations = {
       salaryOptional: 'Cette information est facultative et chiffrée',
       salaryPrivacy: 'Seul vous pouvez voir cette information',
       removeSalary: 'Supprimer le salaire',
+      configureSalary: 'Configurez votre salaire pour une analyse complète',
+      configureMessage: 'Ajoutez votre salaire mensuel pour calculer votre taux d\'endettement et obtenir des recommandations personnalisées.',
+      configure: 'Configurer mon salaire',
+      ofSalary: 'du salaire',
       salaryUpdated: 'Salaire mis à jour avec succès',
       salaryRemoved: 'Salaire supprimé avec succès',
       salaryError: 'Erreur lors de la mise à jour du salaire',
@@ -185,7 +189,9 @@ export const translations = {
       healthGood: 'Budget sain',
       healthCaution: 'Attention au budget',
       healthDanger: 'Budget dépassé',
-      ofSalary: 'du salaire utilisé'
+      ofSalary: 'du salaire utilisé',
+      fixedUses: 'fixes:',
+      totalUses: 'total:'
     },
     
     // Expenses
@@ -217,10 +223,14 @@ export const translations = {
       yourAmount: 'Votre montant',
       sharedWith: 'Partagé avec',
       partnerName: 'Nom du partenaire',
+      partnerRequired: 'Requis pour créer automatiquement les remboursements',
+      shared: 'Partagé',
+      fullAmount: 'Montant total',
       splitBreakdown: 'Répartition',
       you: 'Vous',
       partner: 'Partenaire',
       housingAffordability: 'Analyse du taux d\'endettement',
+      debtRatioAnalysis: 'Analyse du taux d\'endettement',
       hideTips: 'Masquer les conseils',
       showTips: 'Voir des conseils pour réduire vos charges',
       helpfulResources: 'Ressources utiles',
@@ -262,7 +272,8 @@ export const translations = {
       descriptionPlaceholder: 'Description du remboursement',
       markAsReceived: 'Marquer comme reçu',
       receivedInfo: 'Le remboursement sera ajouté au prévisionnel final',
-      pendingInfo: 'Le remboursement sera affiché entre parenthèses (+montant)'
+      pendingInfo: 'Le remboursement sera affiché entre parenthèses (+montant)',
+      for: 'Remboursement pour'
     },
     
     // Forecast
@@ -313,10 +324,11 @@ export const translations = {
       addRecurringExpense: 'Ajouter une dépense récurrente',
       ofMonth: 'du mois',
       howToTitle: 'Comment utiliser les dépenses récurrentes ?',
-      howTo1: 'Ajoutez vos dépenses fixes mensuelles (loyer, abonnements, etc.)',
-      howTo2: 'Naviguez vers un mois spécifique',
-      howTo3: 'Cliquez sur "Dépenses récurrentes" puis "Appliquer au mois actuel"',
-      howTo4: 'Les dépenses seront ajoutées automatiquement (sans doublon)',
+      howTo1: 'Créez vos templates de dépenses fixes (loyer, abonnements, etc.)',
+      howTo2: 'Partagez vos dépenses si nécessaire (50/50, pourcentage, montant fixe)',
+      howTo3: 'Naviguez vers un mois spécifique et cliquez sur "Dépenses récurrentes"',
+      howTo4: 'Sélectionnez les templates à appliquer (évite les doublons automatiquement)',
+      howTo5: 'Les dépenses partagées créeront automatiquement des remboursements',
       deleteTitle: 'Supprimer la dépense récurrente'
     },
     
@@ -523,6 +535,10 @@ export const translations = {
       removeSalary: 'Remove salary',
       salaryUpdated: 'Salary updated successfully',
       salaryRemoved: 'Salary removed successfully',
+      configureSalary: 'Configure your salary for complete analysis',
+      configureMessage: 'Add your monthly salary to calculate your debt ratio and get personalized recommendations.',
+      configure: 'Configure my salary',
+      ofSalary: 'of salary',
       salaryError: 'Error updating salary',
       salaryInvalid: 'Salary must be a valid number',
       salaryNegative: 'Salary cannot be negative',
@@ -618,10 +634,14 @@ export const translations = {
       yourAmount: 'Your amount',
       sharedWith: 'Shared with',
       partnerName: 'Partner name',
+      partnerRequired: 'Required to automatically create reimbursements',
+      shared: 'Shared',
+      fullAmount: 'Full amount',
       splitBreakdown: 'Breakdown',
       you: 'You',
       partner: 'Partner',
       housingAffordability: 'Housing affordability analysis',
+      debtRatioAnalysis: 'Debt ratio analysis',
       hideTips: 'Hide tips',
       showTips: 'Show tips to reduce expenses',
       helpfulResources: 'Helpful resources',
@@ -663,7 +683,8 @@ export const translations = {
       descriptionPlaceholder: 'Reimbursement description',
       markAsReceived: 'Mark as received',
       receivedInfo: 'The reimbursement will be added to the final previsionnel',
-      pendingInfo: 'The reimbursement will be shown in parentheses (+amount)'
+      pendingInfo: 'The reimbursement will be shown in parentheses (+amount)',
+      for: 'Reimbursement for'
     },
     
     // Forecast

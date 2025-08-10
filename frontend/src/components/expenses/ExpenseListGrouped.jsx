@@ -94,7 +94,20 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
 
         const categoryTotal = Object.values(categoryData)
           .flat()
-          .reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+          .reduce((sum, expense) => {
+            // Calculate user's portion if shared
+            let amount = parseFloat(expense.amount);
+            if (expense.share_type && expense.share_type !== 'none') {
+              if (expense.share_type === 'equal') {
+                amount = amount / 2;
+              } else if (expense.share_type === 'percentage' && expense.share_value) {
+                amount = amount * (parseFloat(expense.share_value) / 100);
+              } else if (expense.share_type === 'amount' && expense.share_value) {
+                amount = parseFloat(expense.share_value);
+              }
+            }
+            return sum + amount;
+          }, 0);
 
         return (
           <div key={category}>
@@ -113,7 +126,20 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                 .map(subcategory => {
                   const subcategoryExpenses = categoryData[subcategory];
                   const subcategoryTotal = subcategoryExpenses.reduce(
-                    (sum, expense) => sum + parseFloat(expense.amount), 
+                    (sum, expense) => {
+                      // Calculate user's portion if shared
+                      let amount = parseFloat(expense.amount);
+                      if (expense.share_type && expense.share_type !== 'none') {
+                        if (expense.share_type === 'equal') {
+                          amount = amount / 2;
+                        } else if (expense.share_type === 'percentage' && expense.share_value) {
+                          amount = amount * (parseFloat(expense.share_value) / 100);
+                        } else if (expense.share_type === 'amount' && expense.share_value) {
+                          amount = parseFloat(expense.share_value);
+                        }
+                      }
+                      return sum + amount;
+                    },
                     0
                   );
 
@@ -129,7 +155,22 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                       </div>
                       
                       <div className="ml-2 sm:ml-4 space-y-1">
-                        {subcategoryExpenses.map(expense => (
+                        {subcategoryExpenses.map(expense => {
+                          // Calculate user's portion if shared
+                          let displayAmount = expense.amount;
+                          let isShared = expense.share_type && expense.share_type !== 'none';
+                          
+                          if (isShared) {
+                            if (expense.share_type === 'equal') {
+                              displayAmount = expense.amount / 2;
+                            } else if (expense.share_type === 'percentage' && expense.share_value) {
+                              displayAmount = expense.amount * (parseFloat(expense.share_value) / 100);
+                            } else if (expense.share_type === 'amount' && expense.share_value) {
+                              displayAmount = parseFloat(expense.share_value);
+                            }
+                          }
+                          
+                          return (
                           <div
                             key={expense.id}
                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-obsidian-bg rounded-lg border border-obsidian-border hover:border-obsidian-text-faint transition-colors"
@@ -148,7 +189,21 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                               )}
                               
                               <div className="flex-1">
-                                <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
+                                <div>
+                                  <span className="text-obsidian-text text-sm sm:text-base">{expense.description}</span>
+                                  {isShared && (
+                                    <span className="ml-2 text-xs bg-obsidian-accent/20 text-obsidian-accent px-2 py-0.5 rounded">
+                                      {t('expenses.shared')}
+                                    </span>
+                                  )}
+                                </div>
+                                {isShared && expense.share_with && (
+                                  <div className="text-xs text-obsidian-text-muted mt-1">
+                                    {t('expenses.sharedWith')} {expense.share_with}
+                                    {expense.share_type === 'equal' && ' (50/50)'}
+                                    {expense.share_type === 'percentage' && ` (${expense.share_value}%)`}
+                                  </div>
+                                )}
                               </div>
 
                               {category === 'reimbursement' && (
@@ -168,9 +223,16 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                             </div>
 
                             <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0">
-                              <span className={`font-semibold text-yellow-400 ${category === 'reimbursement' ? 'ml-3 sm:ml-4' : ''}`}>
-                                {formatCurrency(expense.amount)}
-                              </span>
+                              <div className="text-right">
+                                <span className={`font-semibold text-yellow-400 ${category === 'reimbursement' ? 'ml-3 sm:ml-4' : ''}`}>
+                                  {formatCurrency(displayAmount)}
+                                </span>
+                                {isShared && (
+                                  <div className="text-xs text-obsidian-text-muted">
+                                    {t('expenses.yourPart')}
+                                  </div>
+                                )}
+                              </div>
                               
                               <div className="flex items-center gap-1">
                                 <button
@@ -197,7 +259,8 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                               </div>
                             </div>
                           </div>
-                        ))}
+                        );
+                        })}
                       </div>
                     </div>
                   );

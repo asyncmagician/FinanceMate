@@ -5,6 +5,7 @@ exports.findById = async (id) => {
     const [rows] = await pool.execute(
       `SELECT id, month_id, category_id, subcategory, description, 
               amount, is_deducted, is_received,
+              share_type, share_value, share_with,
               DATE_FORMAT(date, '%Y-%m-%d') as date
        FROM expenses WHERE id = ?`,
       [id]
@@ -20,6 +21,7 @@ exports.getByMonth = async (monthId) => {
     const [rows] = await pool.execute(
       `SELECT e.id, e.month_id, e.category_id, e.subcategory, e.description, 
               e.amount, e.is_deducted, e.is_received,
+              e.share_type, e.share_value, e.share_with,
               DATE_FORMAT(e.date, '%Y-%m-%d') as date,
               c.name as category_name, c.type as category_type 
        FROM expenses e 
@@ -39,11 +41,11 @@ exports.create = async (expenseData) => {
     const { 
       month_id, category_id, subcategory, description, amount, 
       is_deducted, is_received, date,
-      share_type, share_value, share_with, full_amount 
+      share_type, share_value, share_with 
     } = expenseData;
     
-    // Store the original full amount if sharing is enabled
-    const storedAmount = full_amount || amount;
+    // Always store the full amount
+    const storedAmount = amount;
     
     const [result] = await pool.execute(
       `INSERT INTO expenses (
@@ -154,11 +156,11 @@ exports.createRecurring = async (recurringData) => {
     const { 
       user_id, category_id, subcategory, description, amount, 
       day_of_month, start_date, end_date, 
-      share_type, share_value, share_with, full_amount 
+      share_type, share_value, share_with 
     } = recurringData;
     
-    // Store the original full amount if sharing is enabled
-    const storedAmount = full_amount || amount;
+    // Always store the full amount
+    const storedAmount = amount;
     
     const [result] = await pool.execute(
       'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, share_type, share_value, share_with, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
