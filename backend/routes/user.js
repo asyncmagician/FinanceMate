@@ -16,4 +16,8 @@ router.delete('/account', userController.deleteAccount);
 router.get('/salary', userController.getSalary);
 router.put('/salary', userController.updateSalary);
 
+// Email preferences endpoints
+router.get('/email-preferences', userController.getEmailPreferences);
+router.put('/email-preferences', userController.updateEmailPreferences);
+
 module.exports = router;

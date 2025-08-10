@@ -153,3 +153,72 @@ exports.findByIdWithSalary = async (id) => {
     throw error;
   }
 };
+
+exports.getEmailPreferences = async (userId) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT 
+        email_notifications,
+        email_budget_alerts,
+        email_weekly_summary,
+        email_consent_date,
+        email_unsubscribe_token
+      FROM users WHERE id = ?`,
+      [userId]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateEmailPreferences = async (userId, preferences) => {
+  try {
+    const fields = [];
+    const values = [];
+    
+    Object.keys(preferences).forEach(key => {
+      fields.push(`${key} = ?`);
+      values.push(preferences[key]);
+    });
+    
+    values.push(userId);
+    
+    await pool.execute(
+      `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+      values
+    );
+    
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.findByUnsubscribeToken = async (token) => {
+  try {
+    const [rows] = await pool.execute(
+      'SELECT id, email FROM users WHERE email_unsubscribe_token = ?',
+      [token]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.generateUnsubscribeToken = async (userId) => {
+  try {
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    
+    await pool.execute(
+      'UPDATE users SET email_unsubscribe_token = ? WHERE id = ?',
+      [token, userId]
+    );
+    
+    return token;
+  } catch (error) {
+    throw error;
+  }
+};

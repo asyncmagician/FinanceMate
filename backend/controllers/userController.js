@@ -2,6 +2,7 @@ const userModel = require('../models/userModel');
 const monthModel = require('../models/monthModel');
 const expenseModel = require('../models/expenseModel');
 const { validateEncryptionSetup } = require('../services/encryptionService');
+const crypto = require('crypto');
 
 exports.deleteUserData = async (req, res) => {
   try {
@@ -105,5 +106,78 @@ exports.getSalary = async (req, res) => {
   } catch (error) {
     console.error('Get salary error:', error);
     res.status(500).json({ error: 'Erreur lors de la récupération du salaire' });
+  }
+};
+
+exports.getEmailPreferences = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const preferences = await userModel.getEmailPreferences(userId);
+    res.json(preferences);
+  } catch (error) {
+    console.error('Get email preferences error:', error);
+    res.status(500).json({ error: 'Error fetching email preferences' });
+  }
+};
+
+exports.updateEmailPreferences = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { 
+      email_notifications, 
+      email_budget_alerts, 
+      email_weekly_summary 
+    } = req.body;
+    
+    // Update preferences and consent date
+    const updates = {
+      email_notifications: Boolean(email_notifications),
+      email_budget_alerts: Boolean(email_budget_alerts),
+      email_weekly_summary: Boolean(email_weekly_summary),
+      email_consent_date: new Date()
+    };
+    
+    await userModel.updateEmailPreferences(userId, updates);
+    
+    res.json({ 
+      message: 'Email preferences updated successfully',
+      preferences: updates
+    });
+  } catch (error) {
+    console.error('Update email preferences error:', error);
+    res.status(500).json({ error: 'Error updating email preferences' });
+  }
+};
+
+exports.unsubscribeWithToken = async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    if (!token) {
+      return res.status(400).json({ error: 'Invalid unsubscribe token' });
+    }
+    
+    // Find user by unsubscribe token
+    const user = await userModel.findByUnsubscribeToken(token);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid or expired unsubscribe token' });
+    }
+    
+    // Disable all optional emails
+    await userModel.updateEmailPreferences(user.id, {
+      email_notifications: false,
+      email_budget_alerts: false,
+      email_weekly_summary: false,
+      email_consent_date: new Date()
+    });
+    
+    res.json({ 
+      message: 'You have been successfully unsubscribed from all optional emails',
+      email: user.email 
+    });
+  } catch (error) {
+    console.error('Unsubscribe error:', error);
+    res.status(500).json({ error: 'Error processing unsubscribe request' });
   }
 };
