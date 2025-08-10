@@ -151,10 +151,18 @@ exports.findRecurringById = async (id) => {
 
 exports.createRecurring = async (recurringData) => {
   try {
-    const { user_id, category_id, subcategory, description, amount, day_of_month, start_date, end_date, share_type, share_value, share_with } = recurringData;
+    const { 
+      user_id, category_id, subcategory, description, amount, 
+      day_of_month, start_date, end_date, 
+      share_type, share_value, share_with, full_amount 
+    } = recurringData;
+    
+    // Store the original full amount if sharing is enabled
+    const storedAmount = full_amount || amount;
+    
     const [result] = await pool.execute(
       'INSERT INTO recurring_expenses (user_id, category_id, subcategory, description, amount, share_type, share_value, share_with, day_of_month, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [user_id, category_id, subcategory || null, description, amount, share_type || 'none', share_value || null, share_with || null, day_of_month || 1, start_date, end_date || null]
+      [user_id, category_id, subcategory || null, description, storedAmount, share_type || 'none', share_value || null, share_with || null, day_of_month || 1, start_date, end_date || null]
     );
     return { id: result.insertId, ...recurringData };
   } catch (error) {
@@ -167,8 +175,15 @@ exports.updateRecurring = async (id, recurringData) => {
     const fields = [];
     const values = [];
     
+    // Filter out fields that don't exist in database
+    const allowedFields = [
+      'category_id', 'subcategory', 'description', 'amount',
+      'day_of_month', 'start_date', 'end_date', 'is_active',
+      'share_type', 'share_value', 'share_with'
+    ];
+    
     Object.keys(recurringData).forEach(key => {
-      if (key !== 'id' && recurringData[key] !== undefined) {
+      if (allowedFields.includes(key) && recurringData[key] !== undefined) {
         fields.push(`${key} = ?`);
         values.push(recurringData[key]);
       }
