@@ -7,6 +7,7 @@ import ExpenseForm from '../expenses/ExpenseForm';
 import ReimbursementForm from '../expenses/ReimbursementForm';
 import PrevisionnelCard from './PrevisionnelCard';
 import RecurringExpenseManager from '../recurring/RecurringExpenseManager';
+import HousingAffordability from '../expenses/HousingAffordability';
 
 export default function MonthView() {
   const { year, month } = useParams();
@@ -18,6 +19,14 @@ export default function MonthView() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showAddReimbursement, setShowAddReimbursement] = useState(false);
   const [showRecurringManager, setShowRecurringManager] = useState(false);
+  
+  // Calculate housing expenses
+  const housingExpenses = expenses
+    .filter(expense => 
+      expense.category_type === 'fixed' && 
+      (expense.subcategory === t('expenses.housing') || expense.subcategory === 'Logement')
+    )
+    .reduce((sum, expense) => sum + expense.amount, 0);
 
   const monthNames = [
     t('months.january'), t('months.february'), t('months.march'),
@@ -194,6 +203,15 @@ export default function MonthView() {
           onUpdateBalance={handleUpdateBalance}
         />
       </div>
+      
+      {housingExpenses > 0 && (
+        <div className="mb-6">
+          <HousingAffordability 
+            housingExpenses={housingExpenses}
+            isVisible={true}
+          />
+        </div>
+      )}
 
       <div className="card">
         <div className="flex items-center justify-between mb-4">
