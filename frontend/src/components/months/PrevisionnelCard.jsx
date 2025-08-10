@@ -15,6 +15,10 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
     loadUserSalary();
   }, []);
   
+  useEffect(() => {
+    setBalance(startingBalance);
+  }, [startingBalance]);
+  
   const loadUserSalary = async () => {
     try {
       const response = await api.getSalary();
@@ -224,6 +228,12 @@ export default function PrevisionnelCard({ previsionnel, startingBalance, onUpda
             </div>
           </div>
         )}
+        
+        <div className="mt-4 pt-3 border-t border-obsidian-border/30">
+          <p className="text-xs text-obsidian-text-muted italic">
+            {t('previsionnel.bankBalanceNote')}
+          </p>
+        </div>
       </div>
     </div>
   );

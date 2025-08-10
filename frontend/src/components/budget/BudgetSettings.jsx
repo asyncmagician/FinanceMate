@@ -125,7 +125,7 @@ export default function BudgetSettings({ year, month, onUpdate }) {
           {percentageUsed >= alertThreshold && (
             <div className="p-3 bg-orange-900/20 border border-orange-500 rounded-lg">
               <p className="text-orange-400 text-sm">
-                {t('budget.alertTriggered', { threshold: alertThreshold })}
+                {t('budget.alertTriggered').replace('{{threshold}}', alertThreshold)}
               </p>
             </div>
           )}
@@ -178,7 +178,7 @@ export default function BudgetSettings({ year, month, onUpdate }) {
               className="w-full"
             />
             <p className="text-xs text-obsidian-text-muted mt-1">
-              {t('budget.thresholdHint', { threshold: alertThreshold })}
+              {t('budget.thresholdHint').replace('{{threshold}}', alertThreshold)}
             </p>
           </div>
 

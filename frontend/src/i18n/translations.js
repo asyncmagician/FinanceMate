@@ -232,7 +232,7 @@ export const translations = {
     // Previsionnel
     previsionnel: {
       title: 'Prévisionnel',
-      startingBalance: 'Solde de départ',
+      startingBalance: 'Solde bancaire actuel*',
       update: 'Mettre à jour',
       updateBalance: 'Mettre à jour le solde',
       formula: 'Calcul: Solde de départ - Dépenses fixes - Dépenses variables + Remboursements',
@@ -247,7 +247,8 @@ export const translations = {
       healthDanger: 'Budget dépassé',
       ofSalary: 'du salaire utilisé',
       fixedUses: 'fixes:',
-      totalUses: 'total:'
+      totalUses: 'total:',
+      bankBalanceNote: '* Si vous avez oublié des dépenses, ajustez ce montant pour correspondre à votre solde bancaire réel. La banque est toujours la source de vérité.'
     },
     
     // Expenses
@@ -720,7 +721,7 @@ export const translations = {
     // Previsionnel
     previsionnel: {
       title: 'Forecast',
-      startingBalance: 'Starting balance',
+      startingBalance: 'Current Bank Balance*',
       update: 'Update',
       updateBalance: 'Update balance',
       formula: 'Calculation: Starting balance - Fixed expenses - Variable expenses + Reimbursements',
@@ -733,7 +734,10 @@ export const translations = {
       healthGood: 'Healthy budget',
       healthCaution: 'Caution - watch spending',
       healthDanger: 'Budget exceeded',
-      ofSalary: 'of salary used'
+      ofSalary: 'of salary used',
+      fixedUses: 'fixed:',
+      totalUses: 'total:',
+      bankBalanceNote: '* If you forgot any expenses, adjust this amount to match your actual bank balance. The bank is always the source of truth.'
     },
     
     // Expenses
