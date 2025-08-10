@@ -152,7 +152,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                               </div>
 
                               {category === 'reimbursement' && (
-                                <label className="flex items-center gap-2 text-sm cursor-pointer ml-2 sm:ml-4">
+                                <label className="flex items-center gap-2 text-sm cursor-pointer">
                                   <input
                                     type="checkbox"
                                     id={`received-${expense.id}`}
@@ -168,7 +168,7 @@ export default function ExpenseListGrouped({ expenses, onUpdate, onDelete, onEdi
                             </div>
 
                             <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0">
-                              <span className={`font-semibold text-yellow-400`}>
+                              <span className={`font-semibold text-yellow-400 ${category === 'reimbursement' ? 'ml-3 sm:ml-4' : ''}`}>
                                 {formatCurrency(expense.amount)}
                               </span>
                               
