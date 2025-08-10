@@ -28,9 +28,10 @@ export default function HousingAffordability({ housingExpenses = 0, totalFixedEx
     return null;
   }
 
-  // Use housing expenses if available, otherwise use total fixed expenses
-  const expensesToAnalyze = housingExpenses > 0 ? housingExpenses : totalFixedExpenses;
-  const isHousingSpecific = housingExpenses > 0;
+  // For debt ratio analysis, use total fixed expenses (all charges, not just housing)
+  // This aligns with French "taux d'endettement" which considers all fixed charges
+  const expensesToAnalyze = totalFixedExpenses;
+  const isHousingSpecific = false; // We're analyzing total debt ratio, not just housing
   const debtRatio = (expensesToAnalyze / userSalary) * 100;
   
   const getStatusColor = () => {
