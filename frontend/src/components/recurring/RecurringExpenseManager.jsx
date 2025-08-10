@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
-import ShareExpenseModal from './ShareExpenseModal';
+import ExpenseSharing from '../expenses/ExpenseSharing';
 
 export default function RecurringExpenseManager({ onClose, onApply }) {
   const { t } = useLanguage();
   const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [shareData, setShareData] = useState({});
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
@@ -78,16 +77,26 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
       return;
     }
     
+    const finalAmount = shareData.user_amount || parseFloat(formData.amount);
+    
     try {
       if (editingId) {
         await api.updateRecurringExpense(editingId, {
           ...formData,
-          amount: parseFloat(formData.amount)
+          amount: finalAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with,
+          full_amount: parseFloat(formData.amount)
         });
       } else {
         await api.createRecurringExpense({
           ...formData,
-          amount: parseFloat(formData.amount)
+          amount: finalAmount,
+          share_type: shareData.share_type || 'none',
+          share_value: shareData.share_value,
+          share_with: shareData.share_with,
+          full_amount: parseFloat(formData.amount)
         });
       }
       await loadRecurringExpenses();
@@ -251,6 +260,16 @@ export default function RecurringExpenseManager({ onClose, onApply }) {
                   {editingId ? t('edit') : t('create')}
                 </button>
               </div>
+              
+              {formData.category_id === 1 && formData.amount && (
+                <div className="mt-4">
+                  <ExpenseSharing
+                    shareData={shareData}
+                    onShareChange={setShareData}
+                    totalAmount={parseFloat(formData.amount) || 0}
+                  />
+                </div>
+              )}
             </form>
           )}
         </div>
