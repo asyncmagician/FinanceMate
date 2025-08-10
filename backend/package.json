@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "db:init": "node scripts/initDatabase.js",
-    "db:migrate": "node scripts/runMigration.js",
+    "db:migrate": "node scripts/runMigrations.js",
     "admin:create": "node scripts/createAdmin.js"
   },
   "dependencies": {
