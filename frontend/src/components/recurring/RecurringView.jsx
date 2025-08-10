@@ -8,6 +8,7 @@ export default function RecurringView() {
   const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
@@ -71,11 +72,18 @@ export default function RecurringView() {
     }
     
     try {
-      await api.createRecurringExpense({
-        ...formData,
-        amount: parseFloat(formData.amount),
-        start_date: new Date().toISOString().split('T')[0]
-      });
+      if (editingExpense) {
+        await api.updateRecurringExpense(editingExpense.id, {
+          ...formData,
+          amount: parseFloat(formData.amount)
+        });
+      } else {
+        await api.createRecurringExpense({
+          ...formData,
+          amount: parseFloat(formData.amount),
+          start_date: new Date().toISOString().split('T')[0]
+        });
+      }
       
       setFormData({
         description: '',
@@ -85,11 +93,25 @@ export default function RecurringView() {
         day_of_month: 1
       });
       setShowAddForm(false);
+      setEditingExpense(null);
       setErrors({});
       await loadRecurringExpenses();
     } catch (err) {
-      console.error('Failed to create recurring expense:', err);
+      console.error('Failed to save recurring expense:', err);
     }
+  };
+
+  const handleEdit = (expense) => {
+    setFormData({
+      description: expense.description,
+      amount: expense.amount.toString(),
+      category_id: expense.category_id,
+      subcategory: expense.subcategory || '',
+      day_of_month: expense.day_of_month
+    });
+    setEditingExpense(expense);
+    setShowAddForm(true);
+    setErrors({});
   };
 
   const handleDelete = async (id) => {
@@ -130,10 +152,30 @@ export default function RecurringView() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-obsidian-text">{t('recurring.templates', 'Templates de dépenses')}</h2>
           <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="btn-primary"
+            onClick={() => {
+              setShowAddForm(!showAddForm);
+              if (showAddForm) {
+                setEditingExpense(null);
+                setFormData({
+                  description: '',
+                  amount: '',
+                  category_id: 1,
+                  subcategory: '',
+                  day_of_month: 1
+                });
+                setErrors({});
+              }
+            }}
+            className="btn-primary p-2 sm:px-4"
+            title={editingExpense ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente'))}
           >
-            {showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente')}
+            <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                d={showAddForm ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+            </svg>
+            <span className="hidden sm:inline">
+              {editingExpense ? t('recurring.cancelEdit', 'Annuler l\'édition') : (showAddForm ? t('cancel') : t('recurring.addRecurringExpense', 'Ajouter une dépense récurrente'))}
+            </span>
           </button>
         </div>
 
@@ -220,12 +262,20 @@ export default function RecurringView() {
 
             <div className="flex gap-3">
               <button type="submit" className="btn-primary">
-                {t('create')}
+                {editingExpense ? t('edit') : t('create')}
               </button>
               <button 
                 type="button" 
                 onClick={() => {
                   setShowAddForm(false);
+                  setEditingExpense(null);
+                  setFormData({
+                    description: '',
+                    amount: '',
+                    category_id: 1,
+                    subcategory: '',
+                    day_of_month: 1
+                  });
                   setErrors({});
                 }}
                 className="btn-secondary"
@@ -263,8 +313,20 @@ export default function RecurringView() {
                   </span>
                   
                   <button
+                    onClick={() => handleEdit(expense)}
+                    className="text-obsidian-text-muted hover:text-obsidian-accent transition-colors p-2"
+                    title={t('edit')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                  
+                  <button
                     onClick={() => setDeleteConfirm(expense)}
                     className="text-obsidian-text-muted hover:text-obsidian-error transition-colors p-2"
+                    title={t('delete')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
